@@ -1,0 +1,1080 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Availability - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/provider.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Timepicker Library -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/timepicker@1.14.0/jquery.timepicker.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/timepicker@1.14.0/jquery.timepicker.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item active">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Manage Availability</h1>
+                    <p>Set your regular working hours and time off</p>
+                </div>
+
+                <!-- Availability Tabs -->
+                <div class="availability-tabs">
+                    <button class="availability-tab active" data-tab="regular">Regular Hours</button>
+                    <button class="availability-tab" data-tab="timeoff">Time Off</button>
+                    <button class="availability-tab" data-tab="holidays">Holidays</button>
+                </div>
+
+                <!-- Regular Hours Tab -->
+                <div class="tab-content active" id="regular-hours-tab">
+                    <div class="section-description">
+                        <p>Set your regular weekly availability. Customers will see these hours when booking.</p>
+                    </div>
+
+                    <!-- Weekly Schedule -->
+                    <div class="weekly-schedule">
+                        <div class="schedule-header">
+                            <div class="day-col">Day</div>
+                            <div class="status-col">Available</div>
+                            <div class="time-col">Start Time</div>
+                            <div class="time-col">End Time</div>
+                            <div class="break-col">Break</div>
+                        </div>
+
+                        <div class="schedule-rows" id="weekly-schedule">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Copy Settings -->
+                    <div class="copy-settings">
+                        <button class="btn btn-secondary" onclick="copyToWeekdays()">
+                            Copy to Weekdays
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyToWeekends()">
+                            Copy to Weekends
+                        </button>
+                        <button class="btn btn-secondary" onclick="copyToAll()">
+                            Copy to All Days
+                        </button>
+                    </div>
+
+                    <!-- Advanced Settings -->
+                    <div class="advanced-settings">
+                        <h3>Advanced Settings</h3>
+                        
+                        <div class="setting-group">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="same-day-booking">
+                                <span class="toggle-text">Allow same-day bookings</span>
+                            </label>
+                            <p class="setting-description">Customers can book appointments for today</p>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="toggle-label">
+                                <input type="checkbox" id="instant-booking" checked>
+                                <span class="toggle-text">Instant booking</span>
+                            </label>
+                            <p class="setting-description">Automatically accept bookings without manual approval</p>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="form-label">Booking notice required</label>
+                            <select id="booking-notice" class="form-select">
+                                <option value="0">No notice required</option>
+                                <option value="1">1 hour notice</option>
+                                <option value="2">2 hours notice</option>
+                                <option value="4" selected>4 hours notice</option>
+                                <option value="24">24 hours notice</option>
+                            </select>
+                            <p class="setting-description">Minimum time before booking</p>
+                        </div>
+
+                        <div class="setting-group">
+                            <label class="form-label">Maximum jobs per day</label>
+                            <input type="number" id="max-jobs" class="form-input" min="1" max="20" value="5">
+                            <p class="setting-description">Limit the number of jobs you can handle per day</p>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div class="save-section">
+                        <button class="btn btn-primary btn-large" onclick="saveRegularHours()">
+                            Save Availability
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Time Off Tab -->
+                <div class="tab-content" id="timeoff-tab">
+                    <div class="section-header">
+                        <h3>Time Off</h3>
+                        <button class="btn btn-primary" onclick="showAddTimeOffModal()">
+                            + Add Time Off
+                        </button>
+                    </div>
+
+                    <div class="timeoff-list" id="timeoff-list">
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading time off...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Holidays Tab -->
+                <div class="tab-content" id="holidays-tab">
+                    <div class="section-header">
+                        <h3>Holidays</h3>
+                        <p>Select holidays when you're closed</p>
+                    </div>
+
+                    <div class="holidays-grid" id="holidays-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+
+                    <div class="save-section">
+                        <button class="btn btn-primary" onclick="saveHolidays()">
+                            Save Holiday Settings
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Time Off Modal -->
+    <div class="modal" id="timeoff-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Time Off</h3>
+                <button class="close" onclick="closeModal('timeoff-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="timeoff-form" onsubmit="saveTimeOff(event)">
+                    <div class="form-group">
+                        <label class="form-label">Reason (Optional)</label>
+                        <input type="text" id="timeoff-reason" class="form-input" placeholder="e.g., Vacation, Sick day">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="timeoff-start" class="form-input" required 
+                                   min="<?php echo date('Y-m-d'); ?>">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="timeoff-end" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="timeoff-full-day" checked>
+                        <label for="timeoff-full-day">Full day</label>
+                    </div>
+
+                    <div class="form-row" id="timeoff-time-fields" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Start Time</label>
+                            <input type="text" id="timeoff-start-time" class="form-input timepicker">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Time</label>
+                            <input type="text" id="timeoff-end-time" class="form-input timepicker">
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('timeoff-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Add Time Off
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Time Off Modal -->
+    <div class="modal" id="edit-timeoff-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Time Off</h3>
+                <button class="close" onclick="closeModal('edit-timeoff-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-timeoff-form" onsubmit="updateTimeOff(event)">
+                    <input type="hidden" id="edit-timeoff-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Reason</label>
+                        <input type="text" id="edit-timeoff-reason" class="form-input">
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">Start Date</label>
+                            <input type="date" id="edit-timeoff-start" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Date</label>
+                            <input type="date" id="edit-timeoff-end" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="edit-timeoff-full-day" checked>
+                        <label for="edit-timeoff-full-day">Full day</label>
+                    </div>
+
+                    <div class="form-row" id="edit-timeoff-time-fields" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Start Time</label>
+                            <input type="text" id="edit-timeoff-start-time" class="form-input timepicker">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">End Time</label>
+                            <input type="text" id="edit-timeoff-end-time" class="form-input timepicker">
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('edit-timeoff-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Update Time Off
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Time Off</h3>
+                <button class="close" onclick="closeModal('delete-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this time off period?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('delete-modal')">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmDeleteTimeOff()">
+                        Delete
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let selectedTimeOffId = null;
+        let availabilityData = null;
+
+        const daysOfWeek = [
+            'sunday', 'monday', 'tuesday', 'wednesday', 
+            'thursday', 'friday', 'saturday'
+        ];
+
+        const dayNames = {
+            'sunday': 'Sunday',
+            'monday': 'Monday',
+            'tuesday': 'Tuesday',
+            'wednesday': 'Wednesday',
+            'thursday': 'Thursday',
+            'friday': 'Friday',
+            'saturday': 'Saturday'
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadAvailability();
+            loadTimeOff();
+            loadHolidays();
+            initTabs();
+            initTimepickers();
+            
+            // Full day toggle
+            document.getElementById('timeoff-full-day').addEventListener('change', (e) => {
+                document.getElementById('timeoff-time-fields').style.display = 
+                    e.target.checked ? 'none' : 'block';
+            });
+
+            document.getElementById('edit-timeoff-full-day').addEventListener('change', (e) => {
+                document.getElementById('edit-timeoff-time-fields').style.display = 
+                    e.target.checked ? 'none' : 'block';
+            });
+
+            // Validate end date >= start date
+            document.getElementById('timeoff-end').addEventListener('change', validateDates);
+            document.getElementById('edit-timeoff-end').addEventListener('change', validateEditDates);
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function initTabs() {
+            document.querySelectorAll('.availability-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.availability-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.tab-content').forEach(c => c.classList.remove('active'));
+                    
+                    tab.classList.add('active');
+                    document.getElementById(`${tab.dataset.tab}-tab`).classList.add('active');
+                });
+            });
+        }
+
+        function initTimepickers() {
+            $('.timepicker').timepicker({
+                timeFormat: 'h:mm p',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '10:00pm',
+                defaultTime: '9:00',
+                startEmpty: false,
+                dropdown: true,
+                scrollbar: true
+            });
+        }
+
+        async function loadAvailability() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/availability.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    availabilityData = data.availability;
+                    displayWeeklySchedule(data.availability);
+                    loadAdvancedSettings(data.settings);
+                }
+            } catch (error) {
+                console.error('Error loading availability:', error);
+            }
+        }
+
+        function displayWeeklySchedule(availability) {
+            const container = document.getElementById('weekly-schedule');
+            
+            let html = '';
+            
+            daysOfWeek.forEach((day, index) => {
+                const dayData = availability[day] || { available: false, start: '09:00', end: '17:00' };
+                
+                html += `
+                    <div class="schedule-row" data-day="${day}">
+                        <div class="day-col">${dayNames[day]}</div>
+                        <div class="status-col">
+                            <label class="toggle-switch-small">
+                                <input type="checkbox" class="day-available" 
+                                       ${dayData.available ? 'checked' : ''}
+                                       onchange="toggleDayAvailability('${day}')">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+                        <div class="time-col">
+                            <input type="text" class="timepicker start-time" 
+                                   value="${formatTimeForPicker(dayData.start)}"
+                                   ${!dayData.available ? 'disabled' : ''}
+                                   data-day="${day}" data-type="start">
+                        </div>
+                        <div class="time-col">
+                            <input type="text" class="timepicker end-time" 
+                                   value="${formatTimeForPicker(dayData.end)}"
+                                   ${!dayData.available ? 'disabled' : ''}
+                                   data-day="${day}" data-type="end">
+                        </div>
+                        <div class="break-col">
+                            <button class="btn-icon" onclick="addBreak('${day}')" 
+                                    ${!dayData.available ? 'disabled' : ''}>➕</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add breaks if any
+                if (dayData.breaks && dayData.breaks.length > 0) {
+                    dayData.breaks.forEach((breakPeriod, index) => {
+                        html += `
+                            <div class="break-row" data-day="${day}" data-break-index="${index}">
+                                <div class="day-col"></div>
+                                <div class="status-col">Break</div>
+                                <div class="time-col">
+                                    <input type="text" class="timepicker break-start" 
+                                           value="${formatTimeForPicker(breakPeriod.start)}">
+                                </div>
+                                <div class="time-col">
+                                    <input type="text" class="timepicker break-end" 
+                                           value="${formatTimeForPicker(breakPeriod.end)}">
+                                </div>
+                                <div class="break-col">
+                                    <button class="btn-icon" onclick="removeBreak('${day}', ${index})">🗑️</button>
+                                </div>
+                            </div>
+                        `;
+                    });
+                }
+            });
+
+            container.innerHTML = html;
+
+            // Reinitialize timepickers for new inputs
+            $('.timepicker').timepicker({
+                timeFormat: 'h:mm p',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '10:00pm',
+                startEmpty: false,
+                dropdown: true,
+                scrollbar: true
+            });
+
+            // Add change listeners to time inputs
+            document.querySelectorAll('.start-time, .end-time, .break-start, .break-end').forEach(input => {
+                input.addEventListener('change', (e) => {
+                    const day = e.target.dataset.day;
+                    const type = e.target.dataset.type;
+                    // Handle time change
+                });
+            });
+        }
+
+        function formatTimeForPicker(time) {
+            if (!time) return '9:00 AM';
+            const [hours, minutes] = time.split(':');
+            const date = new Date();
+            date.setHours(parseInt(hours), parseInt(minutes));
+            return date.toLocaleTimeString('en-US', { hour: 'numeric', minute: '2-digit', hour12: true });
+        }
+
+        function loadAdvancedSettings(settings) {
+            document.getElementById('same-day-booking').checked = settings.same_day_booking || false;
+            document.getElementById('instant-booking').checked = settings.instant_booking !== false;
+            document.getElementById('booking-notice').value = settings.booking_notice || 4;
+            document.getElementById('max-jobs').value = settings.max_jobs_per_day || 5;
+        }
+
+        function toggleDayAvailability(day) {
+            const row = document.querySelector(`.schedule-row[data-day="${day}"]`);
+            const checkbox = row.querySelector('.day-available');
+            const startInput = row.querySelector('.start-time');
+            const endInput = row.querySelector('.end-time');
+            const breakBtn = row.querySelector('.break-col button');
+
+            startInput.disabled = !checkbox.checked;
+            endInput.disabled = !checkbox.checked;
+            if (breakBtn) breakBtn.disabled = !checkbox.checked;
+        }
+
+        function addBreak(day) {
+            const row = document.querySelector(`.schedule-row[data-day="${day}"]`);
+            const breaksContainer = row.parentElement;
+            
+            const breakRow = document.createElement('div');
+            breakRow.className = 'break-row';
+            breakRow.dataset.day = day;
+            
+            breakRow.innerHTML = `
+                <div class="day-col"></div>
+                <div class="status-col">Break</div>
+                <div class="time-col">
+                    <input type="text" class="timepicker break-start" value="12:00 PM">
+                </div>
+                <div class="time-col">
+                    <input type="text" class="timepicker break-end" value="1:00 PM">
+                </div>
+                <div class="break-col">
+                    <button class="btn-icon" onclick="this.closest('.break-row').remove()">🗑️</button>
+                </div>
+            `;
+            
+            row.insertAdjacentElement('afterend', breakRow);
+            
+            // Initialize timepicker for new inputs
+            $(breakRow).find('.timepicker').timepicker({
+                timeFormat: 'h:mm p',
+                interval: 30,
+                minTime: '6:00am',
+                maxTime: '10:00pm',
+                startEmpty: false,
+                dropdown: true,
+                scrollbar: true
+            });
+        }
+
+        function removeBreak(day, index) {
+            document.querySelector(`.break-row[data-day="${day}"][data-break-index="${index}"]`).remove();
+        }
+
+        function copyToWeekdays() {
+            const weekdays = ['monday', 'tuesday', 'wednesday', 'thursday', 'friday'];
+            const sourceRow = document.querySelector('.schedule-row[data-day="monday"]');
+            
+            weekdays.forEach(day => {
+                if (day === 'monday') return;
+                const targetRow = document.querySelector(`.schedule-row[data-day="${day}"]`);
+                copyRowSettings(sourceRow, targetRow);
+            });
+        }
+
+        function copyToWeekends() {
+            const sourceRow = document.querySelector('.schedule-row[data-day="saturday"]');
+            const targetRow = document.querySelector('.schedule-row[data-day="sunday"]');
+            copyRowSettings(sourceRow, targetRow);
+        }
+
+        function copyToAll() {
+            const sourceRow = document.querySelector('.schedule-row[data-day="monday"]');
+            daysOfWeek.forEach(day => {
+                if (day === 'monday') return;
+                const targetRow = document.querySelector(`.schedule-row[data-day="${day}"]`);
+                copyRowSettings(sourceRow, targetRow);
+            });
+        }
+
+        function copyRowSettings(source, target) {
+            const sourceCheckbox = source.querySelector('.day-available');
+            const sourceStart = source.querySelector('.start-time');
+            const sourceEnd = source.querySelector('.end-time');
+            
+            const targetCheckbox = target.querySelector('.day-available');
+            const targetStart = target.querySelector('.start-time');
+            const targetEnd = target.querySelector('.end-time');
+
+            targetCheckbox.checked = sourceCheckbox.checked;
+            targetStart.value = sourceStart.value;
+            targetEnd.value = sourceEnd.value;
+            
+            // Trigger change event
+            const event = new Event('change', { bubbles: true });
+            targetCheckbox.dispatchEvent(event);
+        }
+
+        async function saveRegularHours() {
+            const availability = {};
+            
+            daysOfWeek.forEach(day => {
+                const row = document.querySelector(`.schedule-row[data-day="${day}"]`);
+                const checkbox = row.querySelector('.day-available');
+                const startInput = row.querySelector('.start-time');
+                const endInput = row.querySelector('.end-time');
+                
+                const dayData = {
+                    available: checkbox.checked,
+                    start: convertTo24Hour(startInput.value),
+                    end: convertTo24Hour(endInput.value),
+                    breaks: []
+                };
+
+                // Get breaks for this day
+                const breakRows = document.querySelectorAll(`.break-row[data-day="${day}"]`);
+                breakRows.forEach(breakRow => {
+                    const breakStart = breakRow.querySelector('.break-start');
+                    const breakEnd = breakRow.querySelector('.break-end');
+                    if (breakStart && breakEnd) {
+                        dayData.breaks.push({
+                            start: convertTo24Hour(breakStart.value),
+                            end: convertTo24Hour(breakEnd.value)
+                        });
+                    }
+                });
+
+                availability[day] = dayData;
+            });
+
+            const settings = {
+                same_day_booking: document.getElementById('same-day-booking').checked,
+                instant_booking: document.getElementById('instant-booking').checked,
+                booking_notice: parseInt(document.getElementById('booking-notice').value),
+                max_jobs_per_day: parseInt(document.getElementById('max-jobs').value)
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/update-availability.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        availability: availability,
+                        settings: settings
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Availability saved successfully', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to save availability', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving availability:', error);
+                showNotification('Failed to save availability', 'error');
+            }
+        }
+
+        function convertTo24Hour(timeStr) {
+            if (!timeStr) return '09:00';
+            
+            const [time, modifier] = timeStr.split(' ');
+            let [hours, minutes] = time.split(':');
+            
+            if (hours === '12') {
+                hours = '00';
+            }
+            
+            if (modifier === 'PM') {
+                hours = parseInt(hours, 10) + 12;
+            }
+            
+            return `${hours.toString().padStart(2, '0')}:${minutes}`;
+        }
+
+        async function loadTimeOff() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/timeoff.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayTimeOff(data.timeoff);
+                }
+            } catch (error) {
+                console.error('Error loading time off:', error);
+                document.getElementById('timeoff-list').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load time off. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayTimeOff(timeoff) {
+            const container = document.getElementById('timeoff-list');
+
+            if (timeoff.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No time off scheduled</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by start date
+            timeoff.sort((a, b) => new Date(a.start_date) - new Date(b.start_date));
+
+            container.innerHTML = timeoff.map(item => {
+                const startDate = new Date(item.start_date).toLocaleDateString();
+                const endDate = new Date(item.end_date).toLocaleDateString();
+                const isPast = new Date(item.end_date) < new Date();
+
+                return `
+                    <div class="timeoff-item ${isPast ? 'past' : ''}">
+                        <div class="timeoff-info">
+                            <div class="timeoff-dates">
+                                <strong>${startDate} - ${endDate}</strong>
+                                ${item.reason ? `<span class="timeoff-reason">${item.reason}</span>` : ''}
+                            </div>
+                            ${!item.full_day ? `
+                                <div class="timeoff-times">
+                                    ${item.start_time} - ${item.end_time}
+                                </div>
+                            ` : '<span class="full-day-badge">Full Day</span>'}
+                        </div>
+                        <div class="timeoff-actions">
+                            <button class="btn-icon" onclick="editTimeOff(${item.id})" title="Edit">✏️</button>
+                            <button class="btn-icon" onclick="showDeleteTimeOffModal(${item.id})" title="Delete">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function showAddTimeOffModal() {
+            document.getElementById('timeoff-form').reset();
+            document.getElementById('timeoff-start').valueAsDate = new Date();
+            
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('timeoff-end').valueAsDate = tomorrow;
+            
+            document.getElementById('timeoff-modal').classList.add('active');
+        }
+
+        function validateDates() {
+            const start = new Date(document.getElementById('timeoff-start').value);
+            const end = new Date(document.getElementById('timeoff-end').value);
+            
+            if (end < start) {
+                document.getElementById('timeoff-end').value = document.getElementById('timeoff-start').value;
+            }
+        }
+
+        function validateEditDates() {
+            const start = new Date(document.getElementById('edit-timeoff-start').value);
+            const end = new Date(document.getElementById('edit-timeoff-end').value);
+            
+            if (end < start) {
+                document.getElementById('edit-timeoff-end').value = document.getElementById('edit-timeoff-start').value;
+            }
+        }
+
+        async function saveTimeOff(e) {
+            e.preventDefault();
+
+            const timeoffData = {
+                reason: document.getElementById('timeoff-reason').value,
+                start_date: document.getElementById('timeoff-start').value,
+                end_date: document.getElementById('timeoff-end').value,
+                full_day: document.getElementById('timeoff-full-day').checked,
+                start_time: document.getElementById('timeoff-full-day').checked ? null : 
+                           convertTo24Hour(document.getElementById('timeoff-start-time').value),
+                end_time: document.getElementById('timeoff-full-day').checked ? null : 
+                         convertTo24Hour(document.getElementById('timeoff-end-time').value)
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/add-timeoff.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(timeoffData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Time off added successfully', 'success');
+                    closeModal('timeoff-modal');
+                    loadTimeOff();
+                } else {
+                    showNotification(data.message || 'Failed to add time off', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding time off:', error);
+                showNotification('Failed to add time off', 'error');
+            }
+        }
+
+        function editTimeOff(id) {
+            // Find timeoff data from loaded list
+            // Populate and show edit modal
+            document.getElementById('edit-timeoff-modal').classList.add('active');
+        }
+
+        async function updateTimeOff(e) {
+            e.preventDefault();
+            // Similar to saveTimeOff but with update
+        }
+
+        function showDeleteTimeOffModal(id) {
+            selectedTimeOffId = id;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        async function confirmDeleteTimeOff() {
+            if (!selectedTimeOffId) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/delete-timeoff.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ timeoff_id: selectedTimeOffId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Time off deleted', 'success');
+                    closeModal('delete-modal');
+                    loadTimeOff();
+                } else {
+                    showNotification(data.message || 'Failed to delete time off', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting time off:', error);
+                showNotification('Failed to delete time off', 'error');
+            }
+        }
+
+        async function loadHolidays() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/holidays.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayHolidays(data.holidays);
+                }
+            } catch (error) {
+                console.error('Error loading holidays:', error);
+            }
+        }
+
+        function displayHolidays(holidays) {
+            const container = document.getElementById('holidays-grid');
+            
+            const allHolidays = [
+                { name: 'New Year\'s Day', date: '2024-01-01' },
+                { name: 'Martin Luther King Jr. Day', date: '2024-01-15' },
+                { name: 'Presidents\' Day', date: '2024-02-19' },
+                { name: 'Memorial Day', date: '2024-05-27' },
+                { name: 'Juneteenth', date: '2024-06-19' },
+                { name: 'Independence Day', date: '2024-07-04' },
+                { name: 'Labor Day', date: '2024-09-02' },
+                { name: 'Columbus Day', date: '2024-10-14' },
+                { name: 'Veterans Day', date: '2024-11-11' },
+                { name: 'Thanksgiving', date: '2024-11-28' },
+                { name: 'Christmas Day', date: '2024-12-25' }
+            ];
+
+            container.innerHTML = allHolidays.map(holiday => {
+                const isChecked = holidays.some(h => h.date === holiday.date);
+                return `
+                    <label class="holiday-checkbox">
+                        <input type="checkbox" value="${holiday.date}" ${isChecked ? 'checked' : ''}>
+                        <span class="holiday-name">${holiday.name}</span>
+                        <span class="holiday-date">${new Date(holiday.date).toLocaleDateString()}</span>
+                    </label>
+                `;
+            }).join('');
+        }
+
+        async function saveHolidays() {
+            const selectedHolidays = [];
+            document.querySelectorAll('#holidays-grid input:checked').forEach(checkbox => {
+                selectedHolidays.push(checkbox.value);
+            });
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/update-holidays.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ holidays: selectedHolidays })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Holiday settings saved', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to save holidays', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving holidays:', error);
+                showNotification('Failed to save holidays', 'error');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            selectedTimeOffId = null;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.copyToWeekdays = copyToWeekdays;
+        window.copyToWeekends = copyToWeekends;
+        window.copyToAll = copyToAll;
+        window.toggleDayAvailability = toggleDayAvailability;
+        window.addBreak = addBreak;
+        window.removeBreak = removeBreak;
+        window.saveRegularHours = saveRegularHours;
+        window.showAddTimeOffModal = showAddTimeOffModal;
+        window.editTimeOff = editTimeOff;
+        window.showDeleteTimeOffModal = showDeleteTimeOffModal;
+        window.confirmDeleteTimeOff = confirmDeleteTimeOff;
+        window.saveHolidays = saveHolidays;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

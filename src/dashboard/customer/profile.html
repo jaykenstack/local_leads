@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Settings - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same structure) -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <!-- ... sidebar content ... -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search...">
+                </div>
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Profile Settings</h1>
+                </div>
+
+                <div class="profile-settings">
+                    <!-- Profile Picture -->
+                    <div class="settings-section">
+                        <h2>Profile Picture</h2>
+                        <div class="profile-picture-upload">
+                            <div class="current-picture">
+                                <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-picture">
+                                <div class="upload-overlay" onclick="document.getElementById('avatar-upload').click()">
+                                    <span>Change Photo</span>
+                                </div>
+                                <input type="file" id="avatar-upload" accept="image/*" style="display: none;">
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Personal Information -->
+                    <div class="settings-section">
+                        <h2>Personal Information</h2>
+                        <form id="profile-form">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">First Name</label>
+                                    <input type="text" name="first_name" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Last Name</label>
+                                    <input type="text" name="last_name" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Email Address</label>
+                                    <input type="email" name="email" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone Number</label>
+                                    <input type="tel" name="phone" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Changes</button>
+                        </form>
+                    </div>
+
+                    <!-- Default Address -->
+                    <div class="settings-section">
+                        <h2>Default Address</h2>
+                        <form id="address-form">
+                            <div class="form-group">
+                                <label class="form-label">Street Address</label>
+                                <input type="text" name="address" class="form-input">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">City</label>
+                                    <input type="text" name="city" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">State</label>
+                                    <input type="text" name="state" class="form-input">
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ZIP Code</label>
+                                    <input type="text" name="zip" class="form-input">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Address</button>
+                        </form>
+                    </div>
+
+                    <!-- Notification Preferences -->
+                    <div class="settings-section">
+                        <h2>Notification Preferences</h2>
+                        <form id="notification-form">
+                            <div class="checkbox-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="email_notifications" checked>
+                                    Email Notifications
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="sms_notifications" checked>
+                                    SMS Notifications
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="push_notifications" checked>
+                                    Push Notifications
+                                </label>
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="marketing_emails">
+                                    Marketing Emails
+                                </label>
+                            </div>
+                            <button type="submit" class="btn btn-primary">Save Preferences</button>
+                        </form>
+                    </div>
+
+                    <!-- Change Password -->
+                    <div class="settings-section">
+                        <h2>Change Password</h2>
+                        <form id="password-form">
+                            <div class="form-group">
+                                <label class="form-label">Current Password</label>
+                                <input type="password" name="current_password" class="form-input" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">New Password</label>
+                                    <input type="password" name="new_password" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Confirm New Password</label>
+                                    <input type="password" name="confirm_password" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Update Password</button>
+                        </form>
+                    </div>
+
+                    <!-- Danger Zone -->
+                    <div class="settings-section danger-zone">
+                        <h2>Danger Zone</h2>
+                        <div class="danger-actions">
+                            <button class="btn btn-danger" onclick="deactivateAccount()">
+                                Deactivate Account
+                            </button>
+                            <button class="btn btn-danger" onclick="deleteAccount()">
+                                Delete Account
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadProfile);
+
+        async function loadProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Populate form
+                    document.querySelector('[name="first_name"]').value = data.user.first_name;
+                    document.querySelector('[name="last_name"]').value = data.user.last_name;
+                    document.querySelector('[name="email"]').value = data.user.email;
+                    document.querySelector('[name="phone"]').value = data.user.phone || '';
+                    
+                    if (data.user.address) {
+                        document.querySelector('[name="address"]').value = data.user.address || '';
+                        document.querySelector('[name="city"]').value = data.user.city || '';
+                        document.querySelector('[name="state"]').value = data.user.state || '';
+                        document.querySelector('[name="zip"]').value = data.user.zip || '';
+                    }
+
+                    if (data.user.avatar) {
+                        document.getElementById('profile-picture').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+
+                    // Set notification preferences
+                    if (data.user.notifications) {
+                        document.querySelector('[name="email_notifications"]').checked = 
+                            data.user.notifications.email !== false;
+                        document.querySelector('[name="sms_notifications"]').checked = 
+                            data.user.notifications.sms !== false;
+                        document.querySelector('[name="push_notifications"]').checked = 
+                            data.user.notifications.push !== false;
+                        document.querySelector('[name="marketing_emails"]').checked = 
+                            data.user.notifications.marketing === true;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+                showNotification('Failed to load profile', 'error');
+            }
+        }
+
+        // Profile form submission
+        document.getElementById('profile-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const data = {
+                first_name: formData.get('first_name'),
+                last_name: formData.get('last_name'),
+                email: formData.get('email'),
+                phone: formData.get('phone')
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/update-profile.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Profile updated successfully', 'success');
+                } else {
+                    showNotification(result.message || 'Failed to update profile', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating profile:', error);
+                showNotification('Failed to update profile', 'error');
+            }
+        });
+
+        // Avatar upload
+        document.getElementById('avatar-upload').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/upload-avatar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-picture').src = data.avatar_url;
+                    document.getElementById('header-avatar').src = data.avatar_url;
+                    showNotification('Profile picture updated', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to upload image', 'error');
+                }
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                showNotification('Failed to upload image', 'error');
+            }
+        });
+
+        // Password form
+        document.getElementById('password-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const formData = new FormData(e.target);
+            const newPassword = formData.get('new_password');
+            const confirmPassword = formData.get('confirm_password');
+
+            if (newPassword !== confirmPassword) {
+                showNotification('Passwords do not match', 'error');
+                return;
+            }
+
+            const data = {
+                current_password: formData.get('current_password'),
+                new_password: newPassword
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/change-password.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Password updated successfully', 'success');
+                    e.target.reset();
+                } else {
+                    showNotification(result.message || 'Failed to update password', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating password:', error);
+                showNotification('Failed to update password', 'error');
+            }
+        });
+
+        // Notification preferences
+        document.getElementById('notification-form').addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const data = {
+                email: document.querySelector('[name="email_notifications"]').checked,
+                sms: document.querySelector('[name="sms_notifications"]').checked,
+                push: document.querySelector('[name="push_notifications"]').checked,
+                marketing: document.querySelector('[name="marketing_emails"]').checked
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/update-notifications.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(data)
+                });
+
+                const result = await response.json();
+
+                if (result.success) {
+                    showNotification('Notification preferences updated', 'success');
+                } else {
+                    showNotification(result.message || 'Failed to update preferences', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating notifications:', error);
+                showNotification('Failed to update preferences', 'error');
+            }
+        });
+
+        function deactivateAccount() {
+            if (confirm('Are you sure you want to deactivate your account? You can reactivate it later by logging in.')) {
+                // Implement deactivation
+            }
+        }
+
+        function deleteAccount() {
+            if (confirm('Are you sure you want to permanently delete your account? This action cannot be undone.')) {
+                // Implement deletion
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

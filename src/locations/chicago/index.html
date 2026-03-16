@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Professionals in Chicago - UrgentServices</title>
+    <meta name="description" content="Find trusted service professionals in Chicago. 24/7 emergency services across the Windy City.">
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/locations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header"></div>
+
+    <main>
+        <!-- City Hero -->
+        <section class="city-hero chicago">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Service Professionals in Chicago</h1>
+                    <p>Trusted providers across the Windy City</p>
+                    
+                    <div class="service-quick-links">
+                        <a href="#plumbing" class="quick-link">🚰 Plumbing</a>
+                        <a href="#electrical" class="quick-link">⚡ Electrical</a>
+                        <a href="#hvac" class="quick-link">❄️ HVAC</a>
+                        <a href="#locksmith" class="quick-link">🔑 Locksmith</a>
+                        <a href="#pest" class="quick-link">🐜 Pest Control</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Area Navigation -->
+        <section class="area-nav">
+            <div class="container">
+                <div class="area-tabs">
+                    <button class="area-tab active" onclick="filterArea('all')">All Chicago</button>
+                    <button class="area-tab" onclick="filterArea('downtown')">Downtown</button>
+                    <button class="area-tab" onclick="filterArea('north')">North Side</button>
+                    <button class="area-tab" onclick="filterArea('south')">South Side</button>
+                    <button class="area-tab" onclick="filterArea('west')">West Side</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Area Stats -->
+        <section class="area-stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="chi-total-providers">0</span>
+                        <span class="stat-label">Total Providers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="chi-emergency-providers">0</span>
+                        <span class="stat-label">24/7 Emergency</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="chi-avg-rating">0.0</span>
+                        <span class="stat-label">Average Rating</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="chi-response-time">20</span>
+                        <span class="stat-label">Avg Response (min)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services by Category -->
+        <section class="services-section">
+            <div class="container">
+                <h2 id="plumbing">🚰 Plumbing Services in Chicago</h2>
+                <div class="service-category" id="chi-plumbing">
+                    <div class="loading-state">Loading plumbing providers...</div>
+                </div>
+
+                <h2 id="electrical">⚡ Electrical Services in Chicago</h2>
+                <div class="service-category" id="chi-electrical">
+                    <div class="loading-state">Loading electrical providers...</div>
+                </div>
+
+                <h2 id="hvac">❄️ HVAC Services in Chicago</h2>
+                <div class="service-category" id="chi-hvac">
+                    <div class="loading-state">Loading HVAC providers...</div>
+                </div>
+
+                <h2 id="locksmith">🔑 Locksmith Services in Chicago</h2>
+                <div class="service-category" id="chi-locksmith">
+                    <div class="loading-state">Loading locksmith providers...</div>
+                </div>
+
+                <h2 id="pest">🐜 Pest Control Services in Chicago</h2>
+                <div class="service-category" id="chi-pest">
+                    <div class="loading-state">Loading pest control providers...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-banner">
+            <div class="container">
+                <div class="emergency-content">
+                    <h2>Need Emergency Service in Chicago?</h2>
+                    <p>Available 24/7 across the city</p>
+                    <a href="tel:+1234567890" class="btn btn-large btn-emergency">
+                        📞 Call Chicago Emergency Line
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Areas -->
+        <section class="areas-section">
+            <div class="container">
+                <h2>Service Areas in Chicago</h2>
+                <div class="areas-grid" id="chi-areas">
+                    <div class="area-card">
+                        <h3>Downtown & Near North</h3>
+                        <ul>
+                            <li>The Loop</li>
+                            <li>River North</li>
+                            <li>Gold Coast</li>
+                            <li>Streeterville</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>North Side</h3>
+                        <ul>
+                            <li>Lincoln Park</li>
+                            <li>Lakeview</li>
+                            <li>Wrigleyville</li>
+                            <li>Andersonville</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>West Side</h3>
+                        <ul>
+                            <li>Wicker Park</li>
+                            <li>Bucktown</li>
+                            <li>Logan Square</li>
+                            <li>Humboldt Park</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>South Side</h3>
+                        <ul>
+                            <li>Hyde Park</li>
+                            <li>Bridgeport</li>
+                            <li>Pilsen</li>
+                            <li>Bronzeville</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Reviews -->
+        <section class="reviews-section">
+            <div class="container">
+                <h2>What Chicago Customers Say</h2>
+                <div class="reviews-grid" id="chi-reviews">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Chicago FAQs -->
+        <section class="faq-section">
+            <div class="container">
+                <h2>Frequently Asked Questions About Chicago Services</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Do you handle both residential and commercial in Chicago?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, our providers serve both residential and commercial clients throughout Chicago.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Are providers licensed in Chicago?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>All providers meet Chicago licensing requirements and are fully insured.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script>
+        // Similar JavaScript to NYC page with Chicago-specific data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadChicagoStats();
+            loadChicagoProviders();
+            loadChicagoReviews();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadChicagoStats() {
+            try {
+                const response = await fetch('/api/locations/city-stats.php?city=chicago');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('chi-total-providers').textContent = data.total_providers;
+                    document.getElementById('chi-emergency-providers').textContent = data.emergency_providers;
+                    document.getElementById('chi-avg-rating').textContent = data.avg_rating.toFixed(1);
+                }
+            } catch (error) {
+                console.error('Error loading Chicago stats:', error);
+            }
+        }
+
+        async function loadChicagoProviders() {
+            // Similar to NYC provider loading with Chicago-specific data
+        }
+
+        async function loadChicagoReviews() {
+            // Similar to NYC reviews loading with Chicago-specific data
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.textContent = '▼';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.textContent = '▲';
+            }
+        }
+    </script>
+</body>
+</html>

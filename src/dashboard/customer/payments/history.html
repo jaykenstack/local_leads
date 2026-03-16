@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment History - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/payments.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Payments</div>
+                    <a href="/src/dashboard/customer/payments/methods.html" class="nav-item">
+                        <span class="nav-icon">💳</span>
+                        Payment Methods
+                    </a>
+                    <a href="/src/dashboard/customer/payments/history.html" class="nav-item active">
+                        <span class="nav-icon">📜</span>
+                        Payment History
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search transactions..." id="search-transactions">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Payment History</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="exportTransactions()">
+                            📥 Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards" id="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-label">Total Spent</div>
+                        <div class="card-value" id="total-spent">$0.00</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-label">This Month</div>
+                        <div class="card-value" id="month-spent">$0.00</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-label">Average per Service</div>
+                        <div class="card-value" id="average-spent">$0.00</div>
+                    </div>
+                    <div class="summary-card">
+                        <div class="card-label">Total Transactions</div>
+                        <div class="card-value" id="total-count">0</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <div class="date-range">
+                        <select id="date-range" class="form-select" onchange="loadTransactions()">
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 3 Months</option>
+                            <option value="180">Last 6 Months</option>
+                            <option value="365">Last Year</option>
+                            <option value="all">All Time</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-type">
+                        <select id="transaction-type" class="form-select" onchange="loadTransactions()">
+                            <option value="all">All Transactions</option>
+                            <option value="payment">Payments</option>
+                            <option value="refund">Refunds</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="transactions-table-wrapper">
+                    <table class="transactions-table" id="transactions-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Description</th>
+                                <th>Service</th>
+                                <th>Provider</th>
+                                <th>Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-body">
+                            <tr>
+                                <td colspan="7" class="text-center">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <p>Loading transactions...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Invoice Modal -->
+    <div class="modal" id="invoice-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Invoice Details</h3>
+                <button class="close" onclick="closeModal('invoice-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="invoice-content">
+                <!-- Invoice content loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentDateRange = '30';
+        let currentType = 'all';
+        let searchTerm = '';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadTransactions();
+            loadSummary();
+
+            // Search input
+            const searchInput = document.getElementById('search-transactions');
+            searchInput.addEventListener('input', debounce(() => {
+                searchTerm = searchInput.value;
+                currentPage = 1;
+                loadTransactions();
+            }, 500));
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadTransactions() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = `/api/payments/transaction-history.php?page=${currentPage}&days=${currentDateRange}&type=${currentType}&search=${encodeURIComponent(searchTerm)}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayTransactions(data.transactions);
+                    displayPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                document.getElementById('transactions-body').innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center error-state">
+                            <p>Failed to load transactions. Please try again.</p>
+                            <button class="btn btn-primary" onclick="loadTransactions()">Retry</button>
+                        </td>
+                    </tr>
+                `;
+            }
+        }
+
+        async function loadSummary() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/payments/summary.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-spent').textContent = formatCurrency(data.summary.total_spent);
+                    document.getElementById('month-spent').textContent = formatCurrency(data.summary.month_spent);
+                    document.getElementById('average-spent').textContent = formatCurrency(data.summary.average_spent);
+                    document.getElementById('total-count').textContent = data.summary.total_count;
+                }
+            } catch (error) {
+                console.error('Error loading summary:', error);
+            }
+        }
+
+        function displayTransactions(transactions) {
+            const tbody = document.getElementById('transactions-body');
+
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="7" class="text-center">
+                            <div class="empty-state">
+                                <p>No transactions found</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = transactions.map(t => `
+                <tr class="transaction-row ${t.status.toLowerCase()}">
+                    <td>${new Date(t.created_at).toLocaleDateString()}</td>
+                    <td>
+                        <div class="transaction-description">
+                            <strong>${t.description}</strong>
+                            ${t.transaction_id ? `<span class="transaction-id">ID: ${t.transaction_id}</span>` : ''}
+                        </div>
+                    </td>
+                    <td>${t.service_name || '—'}</td>
+                    <td>${t.provider_name || '—'}</td>
+                    <td class="transaction-amount ${t.transaction_type === 'refund' ? 'refund' : ''}">
+                        ${t.transaction_type === 'refund' ? '-' : ''}${formatCurrency(t.amount)}
+                    </td>
+                    <td>
+                        <span class="status-badge status-${t.status.toLowerCase()}">
+                            ${t.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn btn-small btn-secondary" onclick="viewInvoice(${t.invoice_id})">
+                            View Invoice
+                        </button>
+                        <button class="btn btn-small btn-secondary" onclick="downloadInvoice(${t.invoice_id})">
+                            📥
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            if (pagination.total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination-controls">';
+            
+            // Previous button
+            html += `
+                <button class="page-btn" ${pagination.page === 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    ←
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (
+                    i === 1 ||
+                    i === pagination.total_pages ||
+                    (i >= pagination.page - 2 && i <= pagination.page + 2)
+                ) {
+                    html += `
+                        <button class="page-btn ${i === pagination.page ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === pagination.page - 3 || i === pagination.page + 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" ${pagination.page === pagination.total_pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    →
+                </button>
+            `;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadTransactions();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount / 100);
+        }
+
+        async function viewInvoice(invoiceId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/payments/invoice.php?id=${invoiceId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayInvoice(data.invoice);
+                    document.getElementById('invoice-modal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading invoice:', error);
+                showNotification('Failed to load invoice', 'error');
+            }
+        }
+
+        function displayInvoice(invoice) {
+            const container = document.getElementById('invoice-content');
+            
+            container.innerHTML = `
+                <div class="invoice">
+                    <div class="invoice-header">
+                        <div class="invoice-logo">UrgentServices</div>
+                        <div class="invoice-title">INVOICE</div>
+                        <div class="invoice-number">${invoice.invoice_number}</div>
+                    </div>
+
+                    <div class="invoice-dates">
+                        <div>Date: ${invoice.invoice_date}</div>
+                        <div>Due Date: ${invoice.due_date}</div>
+                    </div>
+
+                    <div class="invoice-addresses">
+                        <div class="from-address">
+                            <strong>From:</strong>
+                            <p>${invoice.from.name}</p>
+                            <p>${invoice.from.address}</p>
+                            <p>${invoice.from.email}</p>
+                        </div>
+                        <div class="to-address">
+                            <strong>To:</strong>
+                            <p>${invoice.to.name}</p>
+                            <p>${invoice.to.address}</p>
+                            <p>${invoice.to.email}</p>
+                        </div>
+                    </div>
+
+                    <div class="invoice-items">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Description</th>
+                                    <th>Qty</th>
+                                    <th>Unit Price</th>
+                                    <th>Amount</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                ${invoice.items.map(item => `
+                                    <tr>
+                                        <td>${item.description}</td>
+                                        <td>${item.quantity}</td>
+                                        <td>${formatCurrency(item.unit_price * 100)}</td>
+                                        <td>${formatCurrency(item.amount * 100)}</td>
+                                    </tr>
+                                `).join('')}
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <div class="invoice-totals">
+                        <div class="total-row">Subtotal: ${formatCurrency(invoice.subtotal * 100)}</div>
+                        <div class="total-row">Platform Fee: ${formatCurrency(invoice.platform_fee * 100)}</div>
+                        <div class="total-row">Tax: ${formatCurrency(invoice.tax * 100)}</div>
+                        <div class="grand-total">Total: ${formatCurrency(invoice.total * 100)}</div>
+                    </div>
+
+                    <div class="invoice-payment">
+                        <p><strong>Payment Method:</strong> ${invoice.payment.method}</p>
+                        <p><strong>Transaction ID:</strong> ${invoice.payment.transaction_id}</p>
+                        <p><strong>Paid At:</strong> ${invoice.payment.paid_at}</p>
+                    </div>
+
+                    <div class="invoice-actions">
+                        <button class="btn btn-primary" onclick="downloadInvoice(${invoice.id})">
+                            Download PDF
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function downloadInvoice(invoiceId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/payments/invoice.php?id=${invoiceId}&format=pdf`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const blob = await response.blob();
+                const url = window.URL.createObjectURL(blob);
+                const a = document.createElement('a');
+                a.href = url;
+                a.download = `invoice-${invoiceId}.pdf`;
+                a.click();
+                window.URL.revokeObjectURL(url);
+            } catch (error) {
+                console.error('Error downloading invoice:', error);
+                showNotification('Failed to download invoice', 'error');
+            }
+        }
+
+        function exportTransactions() {
+            const dateRange = document.getElementById('date-range').value;
+            const type = document.getElementById('transaction-type').value;
+            
+            window.location.href = `/api/payments/export.php?days=${dateRange}&type=${type}`;
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Filter change handlers
+        document.getElementById('date-range').addEventListener('change', (e) => {
+            currentDateRange = e.target.value;
+            currentPage = 1;
+            loadTransactions();
+        });
+
+        document.getElementById('transaction-type').addEventListener('change', (e) => {
+            currentType = e.target.value;
+            currentPage = 1;
+            loadTransactions();
+        });
+    </script>
+</body>
+</html>

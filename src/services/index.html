@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Services - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/services.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="services-hero">
+            <div class="container">
+                <h1>Professional Services at Your Fingertips</h1>
+                <p>Connect with trusted, verified professionals for all your urgent needs</p>
+                
+                <div class="hero-search">
+                    <input type="text" placeholder="What service do you need?" id="service-search">
+                    <input type="text" placeholder="Your location" id="location-search">
+                    <button class="btn btn-primary btn-large" onclick="searchServices()">
+                        Find Professionals
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Categories Grid -->
+        <section class="categories-section">
+            <div class="container">
+                <h2>Browse by Category</h2>
+                <div class="categories-grid">
+                    <a href="/src/services/plumbing/" class="category-card plumbing">
+                        <div class="category-icon">🔧</div>
+                        <h3>Plumbing</h3>
+                        <p>Emergency plumbing, repairs, installations</p>
+                        <span class="category-cta">Find a Plumber →</span>
+                    </a>
+
+                    <a href="/src/services/electrical/" class="category-card electrical">
+                        <div class="category-icon">⚡</div>
+                        <h3>Electrical</h3>
+                        <p>Wiring, repairs, panel upgrades</p>
+                        <span class="category-cta">Find an Electrician →</span>
+                    </a>
+
+                    <a href="/src/services/hvac/" class="category-card hvac">
+                        <div class="category-icon">❄️</div>
+                        <h3>HVAC</h3>
+                        <p>Heating, cooling, ventilation</p>
+                        <span class="category-cta">Find HVAC Tech →</span>
+                    </a>
+
+                    <a href="/src/services/locksmith/" class="category-card locksmith">
+                        <div class="category-icon">🔑</div>
+                        <h3>Locksmith</h3>
+                        <p>Lockouts, repairs, security systems</p>
+                        <span class="category-cta">Find a Locksmith →</span>
+                    </a>
+
+                    <a href="/src/services/pest-control/" class="category-card pest">
+                        <div class="category-icon">🐜</div>
+                        <h3>Pest Control</h3>
+                        <p>Extermination, prevention, removal</p>
+                        <span class="category-cta">Find Exterminator →</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Services -->
+        <section class="popular-section">
+            <div class="container">
+                <h2>Most Requested Services</h2>
+                <div class="popular-grid" id="popular-services">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <div class="container">
+                <h2>How It Works</h2>
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-number">1</div>
+                        <div class="step-icon">🔍</div>
+                        <h3>Describe Your Need</h3>
+                        <p>Tell us what service you need and when</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">2</div>
+                        <div class="step-icon">📋</div>
+                        <h3>Get Matched</h3>
+                        <p>Receive quotes from verified professionals</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">3</div>
+                        <div class="step-icon">✅</div>
+                        <h3>Choose & Book</h3>
+                        <p>Select the best pro and schedule service</p>
+                    </div>
+                    <div class="step-card">
+                        <div class="step-number">4</div>
+                        <div class="step-icon">💰</div>
+                        <h3>Pay Securely</h3>
+                        <p>Pay online only when satisfied</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-banner">
+            <div class="container">
+                <div class="emergency-content">
+                    <h2>Need Emergency Service?</h2>
+                    <p>Available 24/7 for urgent situations</p>
+                    <a href="tel:+1234567890" class="btn btn-large btn-emergency">
+                        📞 Call Emergency Line
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Featured Providers -->
+        <section class="featured-section">
+            <div class="container">
+                <h2>Featured Providers</h2>
+                <div class="providers-grid" id="featured-providers">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Areas -->
+        <section class="areas-section">
+            <div class="container">
+                <h2>We Serve These Areas</h2>
+                <div class="areas-grid" id="service-areas">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials-section">
+            <div class="container">
+                <h2>What Our Customers Say</h2>
+                <div class="testimonials-slider" id="testimonials">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Ready to Get Started?</h2>
+                    <p>Join thousands of satisfied customers who found their perfect service professional</p>
+                    <div class="cta-buttons">
+                        <a href="/src/auth/signup.html" class="btn btn-primary btn-large">
+                            Create Account
+                        </a>
+                        <a href="/src/services/" class="btn btn-secondary btn-large">
+                            Browse Services
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadPopularServices();
+            loadFeaturedProviders();
+            loadServiceAreas();
+            loadTestimonials();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadPopularServices() {
+            try {
+                const response = await fetch('/api/services/popular.php?limit=6');
+                const data = await response.json();
+
+                const container = document.getElementById('popular-services');
+                
+                if (data.success) {
+                    container.innerHTML = data.services.map(service => `
+                        <a href="/src/services/${service.category}/" class="popular-card">
+                            <span class="service-icon">${service.icon}</span>
+                            <h4>${service.name}</h4>
+                            <p>${service.description}</p>
+                        </a>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading popular services:', error);
+            }
+        }
+
+        async function loadFeaturedProviders() {
+            try {
+                const response = await fetch('/api/providers/featured.php?limit=4');
+                const data = await response.json();
+
+                const container = document.getElementById('featured-providers');
+                
+                if (data.success) {
+                    container.innerHTML = data.providers.map(provider => `
+                        <div class="provider-card">
+                            <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${provider.business_name}" class="provider-avatar">
+                            <h4>${provider.business_name}</h4>
+                            <div class="provider-rating">
+                                ${generateStarRating(provider.rating)}
+                                <span>(${provider.review_count})</span>
+                            </div>
+                            <p class="provider-services">${provider.services.join(', ')}</p>
+                            <button class="btn btn-secondary" onclick="viewProvider(${provider.id})">
+                                View Profile
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading featured providers:', error);
+            }
+        }
+
+        async function loadServiceAreas() {
+            try {
+                const response = await fetch('/api/locations/popular.php?limit=8');
+                const data = await response.json();
+
+                const container = document.getElementById('service-areas');
+                
+                if (data.success) {
+                    container.innerHTML = data.areas.map(area => `
+                        <a href="/src/locations/${area.city.toLowerCase()}/" class="area-card">
+                            <span class="area-name">${area.city}</span>
+                            <span class="area-count">${area.provider_count} providers</span>
+                        </a>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading service areas:', error);
+            }
+        }
+
+        async function loadTestimonials() {
+            try {
+                const response = await fetch('/api/reviews/featured.php?limit=3');
+                const data = await response.json();
+
+                const container = document.getElementById('testimonials');
+                
+                if (data.success) {
+                    container.innerHTML = data.reviews.map(review => `
+                        <div class="testimonial-card">
+                            <div class="testimonial-rating">${generateStarRating(review.rating)}</div>
+                            <p class="testimonial-content">"${review.comment}"</p>
+                            <div class="testimonial-author">
+                                <img src="${review.customer_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                     alt="${review.customer_name}" class="author-avatar">
+                                <div>
+                                    <div class="author-name">${review.customer_name}</div>
+                                    <div class="author-service">${review.service_name}</div>
+                                </div>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading testimonials:', error);
+            }
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function viewProvider(id) {
+            window.location.href = `/src/public/reviews/?provider=${id}`;
+        }
+
+        function searchServices() {
+            const service = document.getElementById('service-search').value;
+            const location = document.getElementById('location-search').value;
+            
+            if (service && location) {
+                window.location.href = `/src/search/?q=${encodeURIComponent(service)}&location=${encodeURIComponent(location)}`;
+            } else if (service) {
+                window.location.href = `/src/services/${service.toLowerCase()}/`;
+            } else {
+                showNotification('Please enter a service or location', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

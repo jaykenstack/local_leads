@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Provider Dashboard - UrgentServices</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/provider.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                    <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
+                        <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                        📷
+                    </div>
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type" id="profile-verified">
+                    <span class="verification-badge">✓ Verified</span>
+                </div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                        <span class="badge badge-primary" id="leads-badge">0</span>
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                        <span class="badge badge-error" id="message-badge">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                        <span class="badge badge-success" id="credits-badge">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/payouts.html" class="nav-item">
+                        <span class="nav-icon">🏦</span>
+                        Payouts
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Reviews
+                        <span class="badge badge-warning" id="reviews-badge">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search leads, customers...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification" onclick="window.location.href='/src/dashboard/provider/notifications.html'">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile" onclick="window.location.href='/src/dashboard/provider/profile.html'">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1>Welcome back, <span id="welcome-name">Provider</span>! 👋</h1>
+                    <p>Here's your business performance overview.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="dashboard-cards">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Active Leads</span>
+                            <span class="stat-card-icon">🎯</span>
+                        </div>
+                        <div class="stat-card-value" id="active-leads">0</div>
+                        <div class="stat-card-change" id="leads-change">Ready to respond</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">This Month's Earnings</span>
+                            <span class="stat-card-icon">💰</span>
+                        </div>
+                        <div class="stat-card-value" id="monthly-earnings">$0</div>
+                        <div class="stat-card-change" id="earnings-change">↑ 0% from last month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Completed Jobs</span>
+                            <span class="stat-card-icon">✅</span>
+                        </div>
+                        <div class="stat-card-value" id="completed-jobs">0</div>
+                        <div class="stat-card-change" id="jobs-change">This month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Rating</span>
+                            <span class="stat-card-icon">⭐</span>
+                        </div>
+                        <div class="stat-card-value" id="avg-rating">0.0</div>
+                        <div class="stat-card-change" id="rating-count">0 reviews</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h2>Quick Actions</h2>
+                    <div class="quick-actions-grid">
+                        <a href="/src/dashboard/provider/leads.html" class="quick-action-card">
+                            <span class="quick-action-icon">🎯</span>
+                            <span class="quick-action-title">View New Leads</span>
+                            <span class="quick-action-desc">Respond to customer requests</span>
+                        </a>
+                        <a href="/src/dashboard/provider/availability.html" class="quick-action-card">
+                            <span class="quick-action-icon">📅</span>
+                            <span class="quick-action-title">Update Availability</span>
+                            <span class="quick-action-desc">Set your working hours</span>
+                        </a>
+                        <a href="/src/dashboard/provider/subscriptions/plans.html" class="quick-action-card">
+                            <span class="quick-action-icon">⭐</span>
+                            <span class="quick-action-title">Upgrade Plan</span>
+                            <span class="quick-action-desc">Get more leads</span>
+                        </a>
+                        <a href="/src/dashboard/provider/subscriptions/credits.html" class="quick-action-card">
+                            <span class="quick-action-icon">💰</span>
+                            <span class="quick-action-title">Buy Credits</span>
+                            <span class="quick-action-desc">Purchase additional leads</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3>Earnings Overview</h3>
+                        <canvas id="earnings-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Lead Conversion</h3>
+                        <canvas id="conversion-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Leads -->
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h2>Recent Leads</h2>
+                        <a href="/src/dashboard/provider/leads.html" class="view-all">View All →</a>
+                    </div>
+                    
+                    <div class="dashboard-table">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Customer</th>
+                                        <th>Service</th>
+                                        <th>Description</th>
+                                        <th>Budget</th>
+                                        <th>Status</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-leads-body">
+                                    <tr>
+                                        <td colspan="7" class="text-center">Loading leads...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Reviews -->
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h2>Pending Reviews</h2>
+                        <a href="/src/dashboard/provider/reviews/pending.html" class="view-all">View All →</a>
+                    </div>
+
+                    <div class="pending-reviews" id="pending-reviews">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Templates -->
+    <template id="lead-row-template">
+        <tr>
+            <td class="lead-date"></td>
+            <td class="lead-customer"></td>
+            <td class="lead-service"></td>
+            <td class="lead-description"></td>
+            <td class="lead-budget"></td>
+            <td><span class="status-badge"></span></td>
+            <td class="lead-actions"></td>
+        </tr>
+    </template>
+
+    <template id="pending-review-template">
+        <div class="pending-review-item">
+            <div class="review-content">
+                <p class="review-text"></p>
+                <div class="review-meta"></div>
+            </div>
+            <button class="btn btn-primary btn-small">Respond</button>
+        </div>
+    </template>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProviderProfile();
+            loadDashboardStats();
+            loadRecentLeads();
+            loadPendingReviews();
+            initCharts();
+        });
+
+        async function loadProviderProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    document.getElementById('welcome-name').textContent = data.user.first_name;
+                    
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+
+                    // Show verification status
+                    if (data.user.verified) {
+                        document.getElementById('profile-verified').innerHTML = '<span class="verification-badge">✓ Verified</span>';
+                    } else {
+                        document.getElementById('profile-verified').innerHTML = '<span class="verification-badge warning">Pending Verification</span>';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/dashboard-stats.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update stats
+                    document.getElementById('active-leads').textContent = data.stats.active_leads;
+                    document.getElementById('monthly-earnings').textContent = formatCurrency(data.stats.monthly_earnings);
+                    document.getElementById('completed-jobs').textContent = data.stats.completed_jobs;
+                    document.getElementById('avg-rating').textContent = data.stats.avg_rating.toFixed(1);
+
+                    // Update badges
+                    if (data.stats.new_leads > 0) {
+                        document.getElementById('leads-badge').textContent = data.stats.new_leads;
+                    }
+                    if (data.stats.unread_messages > 0) {
+                        document.getElementById('message-badge').textContent = data.stats.unread_messages;
+                    }
+                    if (data.stats.credits_remaining > 0) {
+                        document.getElementById('credits-badge').textContent = data.stats.credits_remaining;
+                    }
+                    if (data.stats.pending_reviews > 0) {
+                        document.getElementById('reviews-badge').textContent = data.stats.pending_reviews;
+                    }
+                    if (data.stats.unread_notifications > 0) {
+                        document.getElementById('notification-badge').textContent = data.stats.unread_notifications;
+                    }
+
+                    // Update change indicators
+                    if (data.stats.earnings_change) {
+                        const changeEl = document.getElementById('earnings-change');
+                        const change = data.stats.earnings_change;
+                        changeEl.innerHTML = `${change > 0 ? '↑' : '↓'} ${Math.abs(change)}% from last month`;
+                        changeEl.className = change > 0 ? 'change-positive' : 'change-negative';
+                    }
+
+                    document.getElementById('jobs-change').textContent = `${data.stats.jobs_this_month} this month`;
+                    document.getElementById('rating-count').textContent = `${data.stats.total_reviews} reviews`;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadRecentLeads() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/recent-leads.php?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const tbody = document.getElementById('recent-leads-body');
+                
+                if (!data.success || data.leads.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="7" class="text-center">No recent leads</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.leads.map(lead => `
+                    <tr>
+                        <td>${new Date(lead.created_at).toLocaleDateString()}</td>
+                        <td>${lead.customer_name}</td>
+                        <td>${lead.service_name}</td>
+                        <td>${lead.description.substring(0, 50)}${lead.description.length > 50 ? '...' : ''}</td>
+                        <td>${formatCurrency(lead.budget_min)} - ${formatCurrency(lead.budget_max)}</td>
+                        <td><span class="status-badge status-${lead.status.toLowerCase()}">${lead.status}</span></td>
+                        <td>
+                            <button class="btn btn-small btn-primary" onclick="viewLead(${lead.id})">View</button>
+                            <button class="btn btn-small btn-secondary" onclick="submitBid(${lead.id})">Bid</button>
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recent leads:', error);
+                document.getElementById('recent-leads-body').innerHTML = 
+                    '<tr><td colspan="7" class="text-center">Error loading leads</td></tr>';
+            }
+        }
+
+        async function loadPendingReviews() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/pending-reviews.php?limit=3', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('pending-reviews');
+                
+                if (!data.success || data.reviews.length === 0) {
+                    container.innerHTML = '<p class="text-center">No pending reviews</p>';
+                    return;
+                }
+
+                container.innerHTML = data.reviews.map(review => `
+                    <div class="pending-review-item">
+                        <div class="review-content">
+                            <p class="review-text">"${review.comment.substring(0, 100)}${review.comment.length > 100 ? '...' : ''}"</p>
+                            <div class="review-meta">
+                                <span>⭐ ${review.rating}</span>
+                                <span>${review.customer_name}</span>
+                                <span>${new Date(review.created_at).toLocaleDateString()}</span>
+                            </div>
+                        </div>
+                        <button class="btn btn-primary btn-small" onclick="respondToReview(${review.id})">
+                            Respond
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading pending reviews:', error);
+            }
+        }
+
+        function initCharts() {
+            // Earnings Chart
+            const earningsCtx = document.getElementById('earnings-chart')?.getContext('2d');
+            if (earningsCtx) {
+                new Chart(earningsCtx, {
+                    type: 'line',
+                    data: {
+                        labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                        datasets: [{
+                            label: 'Earnings',
+                            data: [1200, 1900, 3000, 2500, 4200, 3800],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                            tension: 0.4,
+                            fill: true
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                display: false
+                            }
+                        }
+                    }
+                });
+            }
+
+            // Conversion Chart
+            const convCtx = document.getElementById('conversion-chart')?.getContext('2d');
+            if (convCtx) {
+                new Chart(convCtx, {
+                    type: 'doughnut',
+                    data: {
+                        labels: ['Converted', 'Pending', 'Lost'],
+                        datasets: [{
+                            data: [65, 25, 10],
+                            backgroundColor: ['#10b981', '#f59e0b', '#ef4444']
+                        }]
+                    },
+                    options: {
+                        responsive: true,
+                        maintainAspectRatio: false,
+                        plugins: {
+                            legend: {
+                                position: 'bottom'
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '$0';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function viewLead(id) {
+            window.location.href = `/src/dashboard/provider/lead-details.html?id=${id}`;
+        }
+
+        function submitBid(id) {
+            window.location.href = `/src/dashboard/provider/submit-bid.html?lead=${id}`;
+        }
+
+        function respondToReview(id) {
+            window.location.href = `/src/dashboard/provider/reviews/respond.html?id=${id}`;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Avatar upload
+        document.getElementById('avatar-input').addEventListener('change', async (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const formData = new FormData();
+            formData.append('avatar', file);
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/upload-avatar.php', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-avatar').src = data.avatar_url;
+                    document.getElementById('header-avatar').src = data.avatar_url;
+                    showNotification('Profile picture updated', 'success');
+                }
+            } catch (error) {
+                console.error('Error uploading avatar:', error);
+                showNotification('Failed to upload image', 'error');
+            }
+        });
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

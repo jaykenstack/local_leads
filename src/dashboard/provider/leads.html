@@ -1,0 +1,684 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Leads - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/provider.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same as index.html) -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item active">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search leads..." id="search-leads">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Leads</h1>
+                    <div class="header-stats">
+                        <div class="stat">
+                            <span class="stat-label">Credits Remaining:</span>
+                            <span class="stat-value" id="credits-remaining">0</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="buyCredits()">Buy Credits</button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All Leads</button>
+                        <button class="filter-tab" data-filter="new">New</button>
+                        <button class="filter-tab" data-filter="viewed">Viewed</button>
+                        <button class="filter-tab" data-filter="responded">Responded</button>
+                        <button class="filter-tab" data-filter="converted">Converted</button>
+                        <button class="filter-tab" data-filter="expired">Expired</button>
+                    </div>
+
+                    <div class="filter-actions">
+                        <select class="form-select" id="sort-leads">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="budget_high">Highest Budget</option>
+                            <option value="budget_low">Lowest Budget</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Leads Grid -->
+                <div class="leads-grid" id="leads-grid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading leads...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Lead Details Modal -->
+    <div class="modal modal-lg" id="lead-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Lead Details</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="lead-details-content">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer" id="lead-modal-footer">
+                <!-- Actions loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Submit Bid Modal -->
+    <div class="modal" id="bid-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Submit Bid</h3>
+                <button class="close" onclick="closeModal('bid-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="bid-form" onsubmit="submitBid(event)">
+                    <input type="hidden" id="bid-lead-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Bid Amount ($)</label>
+                        <input type="number" id="bid-amount" class="form-input" required min="1" step="0.01">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Estimated Hours</label>
+                        <input type="number" id="bid-hours" class="form-input" required min="0.5" step="0.5">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Message to Customer</label>
+                        <textarea id="bid-message" class="form-textarea" rows="4" required
+                                  placeholder="Introduce yourself and explain why you're the best choice..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Estimated Start Date</label>
+                        <input type="date" id="bid-start-date" class="form-input" required>
+                    </div>
+
+                    <div class="form-checkbox">
+                        <input type="checkbox" id="bid-emergency">
+                        <label for="bid-emergency">I can start immediately (emergency service)</label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('bid-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Submit Bid
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let currentSort = 'newest';
+        let searchTerm = '';
+        let selectedLead = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadCredits();
+            loadLeads();
+
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    currentPage = 1;
+                    loadLeads();
+                });
+            });
+
+            // Sort select
+            document.getElementById('sort-leads').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                loadLeads();
+            });
+
+            // Search input
+            document.getElementById('search-leads').addEventListener('input', debounce(() => {
+                searchTerm = document.getElementById('search-leads').value;
+                currentPage = 1;
+                loadLeads();
+            }, 500));
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadCredits() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/subscriptions/credits.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('credits-remaining').textContent = data.credits.balance;
+                }
+            } catch (error) {
+                console.error('Error loading credits:', error);
+            }
+        }
+
+        async function loadLeads() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = `/api/provider/leads.php?page=${currentPage}&filter=${currentFilter}&sort=${currentSort}&search=${encodeURIComponent(searchTerm)}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayLeads(data.leads);
+                    displayPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading leads:', error);
+                document.getElementById('leads-grid').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load leads. Please try again.</p>
+                        <button class="btn btn-primary" onclick="loadLeads()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayLeads(leads) {
+            const container = document.getElementById('leads-grid');
+
+            if (leads.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/public/assets/icons/leads-icon.svg" alt="No leads">
+                        <h3>No Leads Found</h3>
+                        <p>${searchTerm ? 'No leads match your search.' : 'Check back later for new opportunities.'}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = leads.map(lead => `
+                <div class="lead-card ${lead.urgency === 'emergency' ? 'emergency' : ''}" onclick="viewLeadDetails(${lead.id})">
+                    <div class="lead-header">
+                        <div class="lead-customer">
+                            <strong>${lead.customer_name}</strong>
+                            <span class="lead-time">${timeAgo(lead.created_at)}</span>
+                        </div>
+                        <span class="lead-urgency ${lead.urgency}">${lead.urgency}</span>
+                    </div>
+
+                    <div class="lead-body">
+                        <h4>${lead.title}</h4>
+                        <p class="lead-description">${lead.description.substring(0, 120)}${lead.description.length > 120 ? '...' : ''}</p>
+                        
+                        <div class="lead-details">
+                            <span class="lead-budget">💰 ${formatCurrency(lead.budget_min)} - ${formatCurrency(lead.budget_max)}</span>
+                            <span class="lead-location">📍 ${lead.city}, ${lead.state}</span>
+                        </div>
+                    </div>
+
+                    <div class="lead-footer">
+                        <div class="lead-status">
+                            <span class="status-badge status-${lead.status.toLowerCase()}">${lead.status}</span>
+                        </div>
+                        <div class="lead-actions" onclick="event.stopPropagation()">
+                            ${lead.status === 'new' ? `
+                                <button class="btn btn-primary btn-small" onclick="showBidModal(${lead.id})">
+                                    Submit Bid
+                                </button>
+                            ` : ''}
+                            <button class="btn btn-secondary btn-small" onclick="markAsViewed(${lead.id})">
+                                Mark Viewed
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            if (pagination.total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination-controls">';
+            
+            // Previous button
+            html += `
+                <button class="page-btn" ${pagination.page === 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    ←
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (
+                    i === 1 ||
+                    i === pagination.total_pages ||
+                    (i >= pagination.page - 2 && i <= pagination.page + 2)
+                ) {
+                    html += `
+                        <button class="page-btn ${i === pagination.page ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === pagination.page - 3 || i === pagination.page + 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" ${pagination.page === pagination.total_pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    →
+                </button>
+            `;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadLeads();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        async function viewLeadDetails(leadId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/provider/lead-details.php?id=${leadId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayLeadDetails(data.lead);
+                    document.getElementById('lead-modal').classList.add('active');
+                    
+                    // Mark as viewed
+                    await markAsViewed(leadId, false);
+                }
+            } catch (error) {
+                console.error('Error loading lead details:', error);
+                showNotification('Failed to load lead details', 'error');
+            }
+        }
+
+        function displayLeadDetails(lead) {
+            const content = document.getElementById('lead-details-content');
+            const footer = document.getElementById('lead-modal-footer');
+
+            content.innerHTML = `
+                <div class="lead-details">
+                    <div class="detail-section">
+                        <h4>Customer Information</h4>
+                        <p><strong>Name:</strong> ${lead.customer_name}</p>
+                        <p><strong>Location:</strong> ${lead.address}, ${lead.city}, ${lead.state} ${lead.zip}</p>
+                        <p><strong>Contact:</strong> <a href="tel:${lead.phone}">${lead.phone}</a> | <a href="mailto:${lead.email}">${lead.email}</a></p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>Service Request</h4>
+                        <p><strong>Service:</strong> ${lead.service_name}</p>
+                        <p><strong>Title:</strong> ${lead.title}</p>
+                        <p><strong>Description:</strong> ${lead.description}</p>
+                        <p><strong>Urgency:</strong> <span class="lead-urgency ${lead.urgency}">${lead.urgency}</span></p>
+                    </div>
+
+                    <div class="detail-section">
+                        <h4>Budget & Timeline</h4>
+                        <p><strong>Budget Range:</strong> ${formatCurrency(lead.budget_min)} - ${formatCurrency(lead.budget_max)}</p>
+                        <p><strong>Preferred Date:</strong> ${lead.preferred_date ? new Date(lead.preferred_date).toLocaleDateString() : 'Flexible'}</p>
+                        <p><strong>Preferred Time:</strong> ${lead.preferred_time || 'Flexible'}</p>
+                    </div>
+
+                    ${lead.photos && lead.photos.length > 0 ? `
+                        <div class="detail-section">
+                            <h4>Attached Photos</h4>
+                            <div class="photo-gallery">
+                                ${lead.photos.map(photo => `
+                                    <img src="${photo}" alt="Service photo" onclick="viewImage('${photo}')">
+                                `).join('')}
+                            </div>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            if (lead.status === 'new') {
+                footer.innerHTML = `
+                    <button class="btn btn-primary" onclick="showBidModal(${lead.id})">
+                        Submit Bid
+                    </button>
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        Close
+                    </button>
+                `;
+            } else {
+                footer.innerHTML = `
+                    <button class="btn btn-secondary" onclick="closeModal()">
+                        Close
+                    </button>
+                `;
+            }
+        }
+
+        function showBidModal(leadId) {
+            document.getElementById('bid-lead-id').value = leadId;
+            
+            // Set default start date to tomorrow
+            const tomorrow = new Date();
+            tomorrow.setDate(tomorrow.getDate() + 1);
+            document.getElementById('bid-start-date').value = tomorrow.toISOString().split('T')[0];
+            
+            closeModal('lead-modal');
+            document.getElementById('bid-modal').classList.add('active');
+        }
+
+        async function submitBid(e) {
+            e.preventDefault();
+
+            const leadId = document.getElementById('bid-lead-id').value;
+            const amount = document.getElementById('bid-amount').value;
+            const hours = document.getElementById('bid-hours').value;
+            const message = document.getElementById('bid-message').value;
+            const startDate = document.getElementById('bid-start-date').value;
+            const emergency = document.getElementById('bid-emergency').checked;
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/submit-bid.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        lead_id: leadId,
+                        amount: parseFloat(amount),
+                        estimated_hours: parseFloat(hours),
+                        message: message,
+                        start_date: startDate,
+                        emergency: emergency
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Bid submitted successfully!', 'success');
+                    closeModal('bid-modal');
+                    loadLeads();
+                } else {
+                    showNotification(data.message || 'Failed to submit bid', 'error');
+                }
+            } catch (error) {
+                console.error('Error submitting bid:', error);
+                showNotification('Failed to submit bid', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        async function markAsViewed(leadId, reload = true) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/provider/mark-lead-viewed.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ lead_id: leadId })
+                });
+
+                if (reload) {
+                    loadLeads();
+                }
+            } catch (error) {
+                console.error('Error marking lead as viewed:', error);
+            }
+        }
+
+        function buyCredits() {
+            window.location.href = '/src/dashboard/provider/subscriptions/credits.html';
+        }
+
+        function timeAgo(dateString) {
+            const date = new Date(dateString);
+            const now = new Date();
+            const seconds = Math.floor((now - date) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)}m ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)}h ago`;
+            if (seconds < 604800) return `${Math.floor(seconds / 86400)}d ago`;
+            return date.toLocaleDateString();
+        }
+
+        function formatCurrency(amount) {
+            if (!amount) return '$0';
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD',
+                minimumFractionDigits: 0,
+                maximumFractionDigits: 0
+            }).format(amount);
+        }
+
+        function closeModal(modalId = 'lead-modal') {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function viewImage(url) {
+            const modal = document.createElement('div');
+            modal.className = 'modal image-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="close" onclick="this.closest('.modal').remove()">&times;</button>
+                    <img src="${url}" alt="Full size image" style="max-width: 100%; max-height: 80vh;">
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

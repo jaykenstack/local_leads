@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/messages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same structure) -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <!-- ... sidebar content ... -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search messages...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content messages-page">
+                <div class="messages-container">
+                    <!-- Conversations List -->
+                    <div class="conversations-sidebar" id="conversations-view">
+                        <div class="conversations-header">
+                            <h2>Messages</h2>
+                            <button class="btn btn-icon" onclick="markAllAsRead()" title="Mark all as read">✓✓</button>
+                        </div>
+                        
+                        <div class="conversations-search">
+                            <input type="text" placeholder="Search conversations..." id="search-conversations">
+                        </div>
+
+                        <div class="conversations-list" id="conversations-list">
+                            <!-- Loaded dynamically -->
+                        </div>
+                    </div>
+
+                    <!-- Message View -->
+                    <div class="message-view" id="messages-view" style="display: none;">
+                        <div class="message-header" id="message-header">
+                            <!-- Loaded dynamically -->
+                        </div>
+
+                        <div class="messages-container" id="messages-container">
+                            <!-- Messages loaded dynamically -->
+                        </div>
+
+                        <div class="message-input-container">
+                            <div class="message-status-bar" id="message-status-bar"></div>
+                            <div class="message-input-wrapper">
+                                <textarea class="message-input" id="message-input" 
+                                          placeholder="Type a message..." rows="1"></textarea>
+                                <button class="btn btn-icon" id="attach-file" title="Attach file">📎</button>
+                                <button class="btn btn-primary" id="send-message">Send</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script src="/public/scripts/messages.js" type="module"></script>
+</body>
+</html>

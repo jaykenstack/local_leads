@@ -1,0 +1,41 @@
+<header class="header">
+    <div class="container header-content">
+        <a href="/" class="logo">
+            <span class="logo-text">Urgent<span>Services</span></span>
+        </a>
+        
+        <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+            <span></span>
+            <span></span>
+            <span></span>
+        </button>
+        
+        <nav class="nav" id="mainNav">
+            <a href="/">Home</a>
+            <a href="/src/services/">Services</a>
+            <a href="/src/locations/">Locations</a>
+            <a href="/about.html">About</a>
+            <a href="/contact.html">Contact</a>
+            
+            <div class="nav-buttons">
+                <a href="/src/auth/login.html" class="btn btn-outline">Log In</a>
+                <a href="/src/auth/signup.html" class="btn btn-primary">Sign Up Free</a>
+            </div>
+        </nav>
+    </div>
+</header>
+
+<script>
+    // Mobile menu toggle
+    document.addEventListener('DOMContentLoaded', function() {
+        const menuToggle = document.getElementById('menuToggle');
+        const mainNav = document.getElementById('mainNav');
+        
+        if (menuToggle && mainNav) {
+            menuToggle.addEventListener('click', function() {
+                mainNav.classList.toggle('active');
+                menuToggle.classList.toggle('active');
+            });
+        }
+    });
+</script>

@@ -1,0 +1,481 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Dashboard - UrgentServices</title>
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                    <div class="avatar-upload" onclick="document.getElementById('avatar-input').click()">
+                        <input type="file" id="avatar-input" accept="image/*" style="display: none;">
+                        📷
+                    </div>
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                        <span class="badge badge-primary" id="requests-badge" style="display: none;">0</span>
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                        <span class="badge badge-error" id="message-badge" style="display: none;">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Payments</div>
+                    <a href="/src/dashboard/customer/payments/methods.html" class="nav-item">
+                        <span class="nav-icon">💳</span>
+                        Payment Methods
+                    </a>
+                    <a href="/src/dashboard/customer/payments/history.html" class="nav-item">
+                        <span class="nav-icon">📜</span>
+                        Payment History
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <!-- Header -->
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search services, providers...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification" onclick="window.location.href='/src/dashboard/customer/notifications.html'">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile" onclick="window.location.href='/src/dashboard/customer/profile.html'">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <!-- Dashboard Content -->
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1>Welcome back, <span id="welcome-name">Customer</span>! 👋</h1>
+                    <p>Here's what's happening with your service requests today.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="dashboard-cards">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Active Requests</span>
+                            <span class="stat-card-icon">📋</span>
+                        </div>
+                        <div class="stat-card-value" id="active-requests">0</div>
+                        <div class="stat-card-change" id="active-requests-change">Awaiting responses</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Completed Services</span>
+                            <span class="stat-card-icon">✅</span>
+                        </div>
+                        <div class="stat-card-value" id="completed-services">0</div>
+                        <div class="stat-card-change" id="completed-services-change">Total completed</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Saved Providers</span>
+                            <span class="stat-card-icon">⭐</span>
+                        </div>
+                        <div class="stat-card-value" id="saved-providers">0</div>
+                        <div class="stat-card-change">
+                            <a href="/src/dashboard/customer/saved-providers.html">View all →</a>
+                        </div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Spent</span>
+                            <span class="stat-card-icon">💰</span>
+                        </div>
+                        <div class="stat-card-value" id="total-spent">$0</div>
+                        <div class="stat-card-change">Lifetime total</div>
+                    </div>
+                </div>
+
+                <!-- Quick Actions -->
+                <div class="quick-actions-section">
+                    <h2>Quick Actions</h2>
+                    <div class="quick-actions-grid">
+                        <a href="/src/services/" class="quick-action-card">
+                            <span class="quick-action-icon">🔧</span>
+                            <span class="quick-action-title">New Service Request</span>
+                            <span class="quick-action-desc">Find a provider for your needs</span>
+                        </a>
+                        <a href="/src/dashboard/customer/reviews/write-review.html" class="quick-action-card">
+                            <span class="quick-action-icon">✏️</span>
+                            <span class="quick-action-title">Write a Review</span>
+                            <span class="quick-action-desc">Share your experience</span>
+                        </a>
+                        <a href="/src/services/emergency.html" class="quick-action-card emergency">
+                            <span class="quick-action-icon">🚨</span>
+                            <span class="quick-action-title">Emergency Service</span>
+                            <span class="quick-action-desc">24/7 immediate assistance</span>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Recent Requests -->
+                <div class="recent-requests-section">
+                    <div class="section-header">
+                        <h2>Recent Requests</h2>
+                        <a href="/src/dashboard/customer/my-requests.html" class="view-all">View All →</a>
+                    </div>
+                    
+                    <div class="dashboard-table" id="recent-requests">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>Date</th>
+                                        <th>Service</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Provider</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="recent-requests-body">
+                                    <tr>
+                                        <td colspan="6" class="text-center">Loading requests...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Reviews -->
+                <div class="pending-reviews-section">
+                    <div class="section-header">
+                        <h2>Services Needing Review</h2>
+                        <a href="/src/dashboard/customer/reviews/pending.html" class="view-all">View All →</a>
+                    </div>
+
+                    <div class="pending-reviews-grid" id="pending-reviews">
+                        <div class="text-center">Loading...</div>
+                    </div>
+                </div>
+
+                <!-- Recommended Providers -->
+                <div class="recommended-section">
+                    <h2>Recommended Providers</h2>
+                    <div class="provider-grid" id="recommended-providers">
+                        <div class="text-center">Loading recommendations...</div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Templates -->
+    <template id="request-row-template">
+        <tr>
+            <td class="request-date"></td>
+            <td class="request-service"></td>
+            <td class="request-description"></td>
+            <td><span class="status-badge"></span></td>
+            <td class="request-provider"></td>
+            <td class="request-actions"></td>
+        </tr>
+    </template>
+
+    <template id="pending-review-template">
+        <div class="pending-review-card">
+            <div class="pending-review-header">
+                <h4 class="provider-name"></h4>
+                <span class="service-date"></span>
+            </div>
+            <p class="service-description"></p>
+            <button class="btn btn-primary btn-small" onclick="writeReview()">Write Review</button>
+        </div>
+    </template>
+
+    <template id="provider-card-template">
+        <div class="provider-card">
+            <img src="" alt="" class="provider-avatar">
+            <h4 class="provider-name"></h4>
+            <div class="provider-rating"></div>
+            <p class="provider-services"></p>
+            <button class="btn btn-secondary btn-small" onclick="viewProvider()">View Profile</button>
+        </div>
+    </template>
+
+    <!-- Scripts -->
+    <script src="/public/scripts/dashboard.js" type="module"></script>
+    <script>
+        // Load customer dashboard data
+        document.addEventListener('DOMContentLoaded', async () => {
+            await loadCustomerDashboard();
+            await loadRecentRequests();
+            await loadPendingReviews();
+            await loadRecommendedProviders();
+        });
+
+        async function loadCustomerDashboard() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/dashboard.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    // Update profile
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    document.getElementById('welcome-name').textContent = data.user.first_name;
+                    
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+
+                    // Update stats
+                    document.getElementById('active-requests').textContent = data.stats.active_requests;
+                    document.getElementById('completed-services').textContent = data.stats.completed_services;
+                    document.getElementById('saved-providers').textContent = data.stats.saved_providers;
+                    document.getElementById('total-spent').textContent = `$${data.stats.total_spent}`;
+
+                    // Update badges
+                    if (data.stats.pending_reviews > 0) {
+                        document.getElementById('requests-badge').textContent = data.stats.pending_reviews;
+                        document.getElementById('requests-badge').style.display = 'inline';
+                    }
+
+                    if (data.stats.unread_messages > 0) {
+                        document.getElementById('message-badge').textContent = data.stats.unread_messages;
+                        document.getElementById('message-badge').style.display = 'inline';
+                    }
+
+                    if (data.stats.unread_notifications > 0) {
+                        document.getElementById('notification-badge').textContent = data.stats.unread_notifications;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading dashboard:', error);
+            }
+        }
+
+        async function loadRecentRequests() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/recent-requests.php?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const tbody = document.getElementById('recent-requests-body');
+                
+                if (!data.success || data.requests.length === 0) {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No recent requests</td></tr>';
+                    return;
+                }
+
+                tbody.innerHTML = data.requests.map(request => `
+                    <tr>
+                        <td>${new Date(request.created_at).toLocaleDateString()}</td>
+                        <td>${request.service_name}</td>
+                        <td>${request.title.substring(0, 50)}${request.title.length > 50 ? '...' : ''}</td>
+                        <td><span class="status-badge status-${request.status.toLowerCase()}">${request.status}</span></td>
+                        <td>${request.provider_name || 'Not assigned'}</td>
+                        <td>
+                            <button class="btn btn-small btn-secondary" onclick="viewRequest(${request.id})">View</button>
+                            ${request.status === 'completed' && !request.reviewed ? 
+                                `<button class="btn btn-small btn-primary" onclick="writeReview(${request.id})">Review</button>` : ''}
+                        </td>
+                    </tr>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recent requests:', error);
+                document.getElementById('recent-requests-body').innerHTML = 
+                    '<tr><td colspan="6" class="text-center">Error loading requests</td></tr>';
+            }
+        }
+
+        async function loadPendingReviews() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/pending-reviews.php?limit=3', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('pending-reviews');
+                
+                if (!data.success || data.pending.length === 0) {
+                    container.innerHTML = '<div class="text-center">No pending reviews</div>';
+                    return;
+                }
+
+                container.innerHTML = data.pending.map(item => `
+                    <div class="pending-review-card">
+                        <div class="pending-review-header">
+                            <h4>${item.provider_name}</h4>
+                            <span class="service-date">${new Date(item.completed_at).toLocaleDateString()}</span>
+                        </div>
+                        <p>${item.service_name}</p>
+                        <button class="btn btn-primary btn-small" onclick="writeReview(${item.request_id})">
+                            Write Review
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading pending reviews:', error);
+            }
+        }
+
+        async function loadRecommendedProviders() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/recommended-providers.php?limit=4', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('recommended-providers');
+                
+                if (!data.success || data.providers.length === 0) {
+                    container.innerHTML = '<div class="text-center">No recommendations available</div>';
+                    return;
+                }
+
+                container.innerHTML = data.providers.map(provider => `
+                    <div class="provider-card">
+                        <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                             alt="${provider.business_name}" class="provider-avatar">
+                        <h4>${provider.business_name}</h4>
+                        <div class="provider-rating">
+                            ${generateStarRating(provider.rating)}
+                            <span>(${provider.review_count} reviews)</span>
+                        </div>
+                        <p>${provider.services.join(', ')}</p>
+                        <button class="btn btn-secondary btn-small" onclick="viewProvider(${provider.id})">
+                            View Profile
+                        </button>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading recommendations:', error);
+            }
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function viewRequest(id) {
+            window.location.href = `/src/dashboard/customer/request-details.html?id=${id}`;
+        }
+
+        function writeReview(requestId) {
+            window.location.href = `/src/dashboard/customer/reviews/write-review.html?request=${requestId}`;
+        }
+
+        function viewProvider(id) {
+            window.location.href = `/src/public/reviews/?provider=${id}`;
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        // Sidebar toggle for mobile
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,414 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pending Reviews - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/reviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/pending.html" class="nav-item active">
+                        <span class="nav-icon">⏳</span>
+                        Pending Reviews
+                        <span class="badge badge-warning" id="pending-count">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search pending services...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Pending Reviews</h1>
+                    <p>Services that need your feedback</p>
+                </div>
+
+                <!-- Urgency Banner -->
+                <div class="urgency-banner" id="urgency-banner" style="display: none;">
+                    <div class="banner-content">
+                        <span class="banner-icon">⏰</span>
+                        <div class="banner-text">
+                            <strong>Your feedback matters!</strong>
+                            <p>Reviews help providers improve and help others make informed decisions.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Pending Reviews List -->
+                <div class="pending-list" id="pending-list">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading pending reviews...</p>
+                    </div>
+                </div>
+
+                <!-- Reminder Settings -->
+                <div class="reminder-settings">
+                    <h3>Review Reminders</h3>
+                    <p>Get reminded to leave reviews for completed services</p>
+                    
+                    <div class="reminder-options">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="reminder-email" checked>
+                            <span>Email reminders</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="reminder-push" checked>
+                            <span>Push notifications</span>
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="reminder-sms">
+                            <span>SMS reminders</span>
+                        </label>
+                    </div>
+
+                    <div class="reminder-frequency">
+                        <select class="form-select" id="reminder-frequency">
+                            <option value="1">1 day after service</option>
+                            <option value="3" selected>3 days after service</option>
+                            <option value="7">1 week after service</option>
+                        </select>
+                    </div>
+
+                    <button class="btn btn-secondary" onclick="saveReminderSettings()">
+                        Save Reminder Settings
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadPendingReviews();
+            loadReminderSettings();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadPendingReviews() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/customer/pending.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    updatePendingCount(data.pending.length);
+                    displayPendingReviews(data.pending);
+                    
+                    // Show urgency banner if there are many pending
+                    if (data.pending.length >= 3) {
+                        document.getElementById('urgency-banner').style.display = 'block';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading pending reviews:', error);
+                document.getElementById('pending-list').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load pending reviews. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayPendingReviews(pending) {
+            const container = document.getElementById('pending-list');
+
+            if (pending.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/public/assets/icons/check-icon.svg" alt="All caught up">
+                        <h3>All Caught Up!</h3>
+                        <p>You have no pending reviews. Thanks for your feedback!</p>
+                        <a href="/src/services/" class="btn btn-primary">Book Another Service</a>
+                    </div>
+                `;
+                return;
+            }
+
+            // Sort by urgency (older first)
+            pending.sort((a, b) => new Date(a.completed_at) - new Date(b.completed_at));
+
+            container.innerHTML = pending.map(item => {
+                const daysAgo = Math.floor((new Date() - new Date(item.completed_at)) / (1000 * 60 * 60 * 24));
+                const urgencyClass = daysAgo > 7 ? 'urgent' : daysAgo > 3 ? 'warning' : 'normal';
+                
+                return `
+                    <div class="pending-item ${urgencyClass}">
+                        <div class="item-content">
+                            <div class="provider-info">
+                                <img src="${item.provider_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                     alt="${item.provider_name}" class="provider-avatar">
+                                <div>
+                                    <h3>${item.provider_name}</h3>
+                                    <p class="service-name">${item.service_name}</p>
+                                    <p class="service-date">Completed on ${new Date(item.completed_at).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            
+                            <div class="urgency-indicator">
+                                ${daysAgo === 0 ? 'Today' : daysAgo === 1 ? 'Yesterday' : `${daysAgo} days ago`}
+                            </div>
+                        </div>
+
+                        <div class="service-description">
+                            <p><strong>Service:</strong> ${item.description}</p>
+                        </div>
+
+                        <div class="item-actions">
+                            <button class="btn btn-primary" onclick="writeReview(${item.request_id})">
+                                Write Review
+                            </button>
+                            <button class="btn btn-secondary" onclick="remindLater(${item.request_id})">
+                                Remind Later
+                            </button>
+                            <button class="btn-icon" onclick="skipReview(${item.request_id})" title="Skip review">⏭️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function updatePendingCount(count) {
+            const badge = document.getElementById('pending-count');
+            badge.textContent = count;
+            
+            if (count === 0) {
+                badge.style.display = 'none';
+            } else {
+                badge.style.display = 'inline';
+            }
+        }
+
+        function writeReview(requestId) {
+            window.location.href = `/src/dashboard/customer/reviews/write-review.html?request=${requestId}`;
+        }
+
+        async function remindLater(requestId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/reviews/remind-later.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ request_id: requestId })
+                });
+
+                showNotification('We\'ll remind you in 3 days', 'success');
+            } catch (error) {
+                console.error('Error setting reminder:', error);
+            }
+        }
+
+        async function skipReview(requestId) {
+            if (!confirm('Are you sure you want to skip this review? You won\'t be reminded again.')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/reviews/skip.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ request_id: requestId })
+                });
+
+                showNotification('Review skipped', 'info');
+                loadPendingReviews();
+            } catch (error) {
+                console.error('Error skipping review:', error);
+            }
+        }
+
+        async function loadReminderSettings() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/reminder-settings.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('reminder-email').checked = data.settings.email;
+                    document.getElementById('reminder-push').checked = data.settings.push;
+                    document.getElementById('reminder-sms').checked = data.settings.sms;
+                    document.getElementById('reminder-frequency').value = data.settings.frequency || '3';
+                }
+            } catch (error) {
+                console.error('Error loading reminder settings:', error);
+            }
+        }
+
+        async function saveReminderSettings() {
+            const settings = {
+                email: document.getElementById('reminder-email').checked,
+                push: document.getElementById('reminder-push').checked,
+                sms: document.getElementById('reminder-sms').checked,
+                frequency: document.getElementById('reminder-frequency').value
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/update-reminder-settings.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Reminder settings saved', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to save settings', 'error');
+                }
+            } catch (error) {
+                console.error('Error saving reminder settings:', error);
+                showNotification('Failed to save settings', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

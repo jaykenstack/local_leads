@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Email - UrgentServices</title>
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div id="verification-loading" class="verification-status">
+                <div class="spinner"></div>
+                <h2>Verifying your email...</h2>
+            </div>
+
+            <div id="verification-success" class="verification-status" style="display: none;">
+                <div class="success-icon">✅</div>
+                <h2>Email Verified!</h2>
+                <p>Your email has been successfully verified.</p>
+                <p>You can now access all features of your account.</p>
+                <a href="/src/auth/login.html" class="btn btn-primary">Continue to Login</a>
+            </div>
+
+            <div id="verification-failed" class="verification-status" style="display: none;">
+                <div class="error-icon">❌</div>
+                <h2>Verification Failed</h2>
+                <p>The verification link is invalid or has expired.</p>
+                <button onclick="resendVerification()" class="btn btn-primary">Resend Verification Email</button>
+                <a href="/src/auth/login.html" class="btn btn-secondary">Back to Login</a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const token = new URLSearchParams(window.location.search).get('token');
+        
+        if (token) {
+            fetch(`/api/auth/verify.php?token=${token}`)
+                .then(r => r.json())
+                .then(data => {
+                    document.getElementById('verification-loading').style.display = 'none';
+                    if (data.success) {
+                        document.getElementById('verification-success').style.display = 'block';
+                    } else {
+                        document.getElementById('verification-failed').style.display = 'block';
+                    }
+                });
+        } else {
+            document.getElementById('verification-loading').style.display = 'none';
+            document.getElementById('verification-failed').style.display = 'block';
+        }
+
+        function resendVerification() {
+            const email = prompt('Please enter your email address:');
+            if (email) {
+                fetch('/api/auth/resend-verification.php', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({email})
+                }).then(() => {
+                    alert('Verification email sent! Please check your inbox.');
+                });
+            }
+        }
+    </script>
+</body>
+</html>

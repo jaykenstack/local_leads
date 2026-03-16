@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Customers - Admin</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same as admin index) -->
+        <aside class="dashboard-sidebar">
+            <!-- ... same sidebar as admin index ... -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                <div class="header-search">
+                    <input type="text" placeholder="Search customers...">
+                </div>
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Customers</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="exportData()">
+                            📥 Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <select id="status-filter" class="form-select">
+                        <option value="all">All Status</option>
+                        <option value="active">Active</option>
+                        <option value="inactive">Inactive</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+
+                    <select id="date-filter" class="form-select">
+                        <option value="all">All Time</option>
+                        <option value="today">Today</option>
+                        <option value="week">This Week</option>
+                        <option value="month">This Month</option>
+                    </select>
+                </div>
+
+                <!-- Customers Table -->
+                <div class="table-wrapper">
+                    <table id="customers-table" class="display">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Customer</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Location</th>
+                                <th>Joined</th>
+                                <th>Requests</th>
+                                <th>Spent</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="customers-body">
+                            <tr>
+                                <td colspan="10" class="text-center">Loading customers...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let customersTable;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAccess();
+            loadCustomers();
+        });
+
+        async function checkAdminAccess() {
+            const token = localStorage.getItem('auth_token');
+            // ... same as admin index
+        }
+
+        async function loadCustomers() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/customers.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    populateCustomersTable(data.customers);
+                }
+            } catch (error) {
+                console.error('Error loading customers:', error);
+            }
+        }
+
+        function populateCustomersTable(customers) {
+            const tbody = document.getElementById('customers-body');
+            
+            tbody.innerHTML = customers.map(customer => `
+                <tr>
+                    <td>#${customer.id}</td>
+                    <td>
+                        <div class="user-info">
+                            <img src="${customer.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${customer.name}" class="user-avatar-small">
+                            <span>${customer.name}</span>
+                        </div>
+                    </td>
+                    <td>${customer.email}</td>
+                    <td>${customer.phone || '—'}</td>
+                    <td>${customer.city || '—'}</td>
+                    <td>${new Date(customer.joined).toLocaleDateString()}</td>
+                    <td>${customer.total_requests}</td>
+                    <td>$${customer.total_spent}</td>
+                    <td>
+                        <span class="status-badge status-${customer.status}">
+                            ${customer.status}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-small btn-secondary" onclick="viewCustomer(${customer.id})">
+                            View
+                        </button>
+                        <button class="btn-small btn-danger" onclick="suspendUser(${customer.id})">
+                            Suspend
+                        </button>
+                    </td>
+                </tr>
+            `).join('');
+
+            // Initialize DataTable
+            if ($.fn.DataTable.isDataTable('#customers-table')) {
+                $('#customers-table').DataTable().destroy();
+            }
+            
+            customersTable = $('#customers-table').DataTable({
+                pageLength: 25,
+                order: [[0, 'desc']]
+            });
+        }
+
+        function viewCustomer(id) {
+            window.location.href = `/src/dashboard/admin/user-details.html?id=${id}&type=customer`;
+        }
+
+        function suspendUser(id) {
+            if (confirm('Suspend this customer?')) {
+                // API call to suspend
+            }
+        }
+
+        function exportData() {
+            window.location.href = '/api/admin/export-customers.php';
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,1010 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verification - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/provider.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item active">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                        <span class="badge badge-warning" id="verification-badge">Pending</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Verification Center</h1>
+                    <p>Complete your verification to build trust and get more leads</p>
+                </div>
+
+                <!-- Verification Progress -->
+                <div class="verification-progress">
+                    <div class="progress-header">
+                        <h2>Verification Progress</h2>
+                        <span class="progress-percentage" id="progress-percentage">0%</span>
+                    </div>
+                    <div class="progress-bar">
+                        <div class="progress-fill" id="progress-fill" style="width: 0%"></div>
+                    </div>
+                    <div class="progress-steps" id="progress-steps">
+                        <!-- Steps will be loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Identity Verification -->
+                <div class="verification-section" id="identity-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <span class="section-icon">🆔</span>
+                            <h2>Identity Verification</h2>
+                        </div>
+                        <span class="section-status pending" id="identity-status">Pending</span>
+                    </div>
+                    
+                    <div class="section-content">
+                        <p class="section-description">
+                            Verify your identity to confirm you're a real person. This helps build trust with customers.
+                        </p>
+
+                        <div class="verification-methods">
+                            <div class="method-card" onclick="selectMethod('drivers-license')">
+                                <div class="method-icon">🚗</div>
+                                <div class="method-info">
+                                    <h3>Driver's License</h3>
+                                    <p>Upload your driver's license</p>
+                                </div>
+                                <div class="method-radio">
+                                    <input type="radio" name="id-method" value="drivers-license">
+                                </div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('passport')">
+                                <div class="method-icon">🛂</div>
+                                <div class="method-info">
+                                    <h3>Passport</h3>
+                                    <p>Upload your passport</p>
+                                </div>
+                                <div class="method-radio">
+                                    <input type="radio" name="id-method" value="passport">
+                                </div>
+                            </div>
+
+                            <div class="method-card" onclick="selectMethod('state-id')">
+                                <div class="method-icon">🆔</div>
+                                <div class="method-info">
+                                    <h3>State ID</h3>
+                                    <p>Upload your state ID card</p>
+                                </div>
+                                <div class="method-radio">
+                                    <input type="radio" name="id-method" value="state-id">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-area" id="identity-upload" style="display: none;">
+                            <div class="upload-box" onclick="document.getElementById('identity-file').click()">
+                                <input type="file" id="identity-file" accept="image/*,.pdf" style="display: none;">
+                                <span class="upload-icon">📤</span>
+                                <span class="upload-text">Click to upload or drag and drop</span>
+                                <span class="upload-hint">PDF, JPG, or PNG (max 10MB)</span>
+                            </div>
+                            <div class="file-preview" id="identity-preview"></div>
+                        </div>
+
+                        <button class="btn btn-primary" id="identity-submit" onclick="submitIdentity()" disabled>
+                            Submit for Verification
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Business License -->
+                <div class="verification-section" id="license-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <span class="section-icon">📄</span>
+                            <h2>Business License</h2>
+                        </div>
+                        <span class="section-status pending" id="license-status">Pending</span>
+                    </div>
+                    
+                    <div class="section-content">
+                        <p class="section-description">
+                            Upload your business license or professional certification to verify your credentials.
+                        </p>
+
+                        <div class="license-info">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>License Number</label>
+                                    <input type="text" id="license-number" class="form-input" placeholder="Enter license number">
+                                </div>
+                                <div class="info-item">
+                                    <label>Issuing State/Agency</label>
+                                    <input type="text" id="license-issuer" class="form-input" placeholder="e.g., State Board">
+                                </div>
+                                <div class="info-item">
+                                    <label>Expiration Date</label>
+                                    <input type="date" id="license-expiry" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-area">
+                            <div class="upload-box" onclick="document.getElementById('license-file').click()">
+                                <input type="file" id="license-file" accept="image/*,.pdf" style="display: none;">
+                                <span class="upload-icon">📤</span>
+                                <span class="upload-text">Click to upload license document</span>
+                                <span class="upload-hint">PDF, JPG, or PNG (max 10MB)</span>
+                            </div>
+                            <div class="file-preview" id="license-preview"></div>
+                        </div>
+
+                        <button class="btn btn-primary" id="license-submit" onclick="submitLicense()" disabled>
+                            Submit License
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Insurance Verification -->
+                <div class="verification-section" id="insurance-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <span class="section-icon">🛡️</span>
+                            <h2>Insurance Verification</h2>
+                        </div>
+                        <span class="section-status pending" id="insurance-status">Pending</span>
+                    </div>
+                    
+                    <div class="section-content">
+                        <p class="section-description">
+                            Upload your insurance certificate to show you're covered. This is required for most services.
+                        </p>
+
+                        <div class="insurance-info">
+                            <div class="info-grid">
+                                <div class="info-item">
+                                    <label>Insurance Provider</label>
+                                    <input type="text" id="insurance-provider" class="form-input" placeholder="Insurance company name">
+                                </div>
+                                <div class="info-item">
+                                    <label>Policy Number</label>
+                                    <input type="text" id="insurance-policy" class="form-input" placeholder="Enter policy number">
+                                </div>
+                                <div class="info-item">
+                                    <label>Coverage Amount</label>
+                                    <select id="insurance-coverage" class="form-select">
+                                        <option value="">Select coverage</option>
+                                        <option value="500000">$500,000</option>
+                                        <option value="1000000">$1,000,000</option>
+                                        <option value="2000000">$2,000,000</option>
+                                        <option value="5000000">$5,000,000</option>
+                                    </select>
+                                </div>
+                                <div class="info-item">
+                                    <label>Expiration Date</label>
+                                    <input type="date" id="insurance-expiry" class="form-input">
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="upload-area">
+                            <div class="upload-box" onclick="document.getElementById('insurance-file').click()">
+                                <input type="file" id="insurance-file" accept="image/*,.pdf" style="display: none;">
+                                <span class="upload-icon">📤</span>
+                                <span class="upload-text">Click to upload insurance certificate</span>
+                                <span class="upload-hint">PDF, JPG, or PNG (max 10MB)</span>
+                            </div>
+                            <div class="file-preview" id="insurance-preview"></div>
+                        </div>
+
+                        <button class="btn btn-primary" id="insurance-submit" onclick="submitInsurance()" disabled>
+                            Submit Insurance
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Background Check -->
+                <div class="verification-section" id="background-section">
+                    <div class="section-header">
+                        <div class="header-left">
+                            <span class="section-icon">🔍</span>
+                            <h2>Background Check</h2>
+                        </div>
+                        <span class="section-status pending" id="background-status">Required</span>
+                    </div>
+                    
+                    <div class="section-content">
+                        <p class="section-description">
+                            We partner with Checkr to perform background checks. This helps ensure safety for all customers.
+                        </p>
+
+                        <div class="background-check-card">
+                            <div class="check-info">
+                                <h3>What's included:</h3>
+                                <ul>
+                                    <li>✓ County criminal search (7 years)</li>
+                                    <li>✓ Federal criminal search</li>
+                                    <li>✓ Sex offender registry</li>
+                                    <li>✓ Social Security verification</li>
+                                </ul>
+                            </div>
+                            
+                            <div class="check-price">
+                                <span class="price">$29.99</span>
+                                <span class="note">One-time fee</span>
+                            </div>
+
+                            <button class="btn btn-primary btn-large" onclick="initiateBackgroundCheck()" id="background-btn">
+                                Start Background Check
+                            </button>
+
+                            <p class="privacy-note">
+                                Your information is securely processed by Checkr. Results are typically available within 24-48 hours.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Verification Status Summary -->
+                <div class="verification-summary">
+                    <h3>Verification Status</h3>
+                    <div class="summary-grid" id="summary-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Help Section -->
+                <div class="help-section">
+                    <h3>Need Help?</h3>
+                    <p>If you have questions about verification, contact our support team.</p>
+                    <div class="help-actions">
+                        <a href="/support/verification" class="btn btn-secondary">View Guide</a>
+                        <a href="/contact" class="btn btn-secondary">Contact Support</a>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Document Preview Modal -->
+    <div class="modal" id="preview-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Document Preview</h3>
+                <button class="close" onclick="closeModal('preview-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="preview-content">
+                <img src="" alt="Document preview" id="preview-image" style="max-width: 100%;">
+                <iframe id="preview-pdf" style="display: none; width: 100%; height: 500px;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('preview-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div class="modal" id="confirm-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3 id="confirm-title">Confirm Submission</h3>
+                <button class="close" onclick="closeModal('confirm-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="confirm-message">
+                Are you sure you want to submit these documents for verification?
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="closeModal('confirm-modal')">Cancel</button>
+                <button class="btn btn-primary" onclick="confirmSubmission()" id="confirm-btn">Confirm</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Success!</h3>
+                <button class="close" onclick="closeModal('success-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">✓</div>
+                <p id="success-message">Your documents have been submitted for verification.</p>
+                <p>We'll notify you once they're reviewed (usually within 24-48 hours).</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('success-modal')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let verificationState = {
+            identity: { status: 'pending', files: [] },
+            license: { status: 'pending', data: {}, files: [] },
+            insurance: { status: 'pending', data: {}, files: [] },
+            background: { status: 'required' }
+        };
+
+        let currentMethod = null;
+        let pendingSubmission = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadVerificationStatus();
+            initFileUploads();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadVerificationStatus() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/verification-status.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    verificationState = data.verification;
+                    updateVerificationUI();
+                }
+            } catch (error) {
+                console.error('Error loading verification status:', error);
+            }
+        }
+
+        function updateVerificationUI() {
+            // Update status badges
+            updateSectionStatus('identity', verificationState.identity.status);
+            updateSectionStatus('license', verificationState.license.status);
+            updateSectionStatus('insurance', verificationState.insurance.status);
+            updateSectionStatus('background', verificationState.background.status);
+
+            // Update verification badge in sidebar
+            const badge = document.getElementById('verification-badge');
+            const overallStatus = getOverallStatus();
+            
+            if (overallStatus === 'verified') {
+                badge.textContent = 'Verified';
+                badge.className = 'badge badge-success';
+            } else if (overallStatus === 'pending') {
+                badge.textContent = 'Pending';
+                badge.className = 'badge badge-warning';
+            } else {
+                badge.textContent = 'Required';
+                badge.className = 'badge badge-error';
+            }
+
+            // Update progress
+            updateProgress();
+
+            // Update summary grid
+            updateSummaryGrid();
+        }
+
+        function updateSectionStatus(section, status) {
+            const element = document.getElementById(`${section}-status`);
+            if (!element) return;
+
+            element.textContent = formatStatus(status);
+            element.className = `section-status ${status}`;
+
+            // Enable/disable submit buttons based on files
+            if (status === 'verified') {
+                const submitBtn = document.getElementById(`${section}-submit`);
+                if (submitBtn) {
+                    submitBtn.disabled = true;
+                    submitBtn.textContent = 'Verified ✓';
+                }
+            }
+        }
+
+        function formatStatus(status) {
+            const statusMap = {
+                'pending': 'Pending Review',
+                'verified': 'Verified ✓',
+                'rejected': 'Action Required',
+                'required': 'Required',
+                'in_progress': 'In Progress'
+            };
+            return statusMap[status] || status;
+        }
+
+        function getOverallStatus() {
+            const sections = ['identity', 'license', 'insurance', 'background'];
+            const allVerified = sections.every(s => verificationState[s]?.status === 'verified');
+            
+            if (allVerified) return 'verified';
+            
+            const hasPending = sections.some(s => 
+                ['pending', 'in_progress'].includes(verificationState[s]?.status)
+            );
+            
+            if (hasPending) return 'pending';
+            
+            return 'required';
+        }
+
+        function updateProgress() {
+            const sections = ['identity', 'license', 'insurance', 'background'];
+            const total = sections.length;
+            const completed = sections.filter(s => 
+                verificationState[s]?.status === 'verified'
+            ).length;
+
+            const percentage = Math.round((completed / total) * 100);
+            
+            document.getElementById('progress-percentage').textContent = percentage + '%';
+            document.getElementById('progress-fill').style.width = percentage + '%';
+
+            // Update steps
+            const stepsContainer = document.getElementById('progress-steps');
+            stepsContainer.innerHTML = sections.map((section, index) => {
+                const status = verificationState[section]?.status;
+                const isCompleted = status === 'verified';
+                const isActive = status === 'in_progress' || status === 'pending';
+                
+                let stepClass = 'step';
+                if (isCompleted) stepClass += ' completed';
+                if (isActive) stepClass += ' active';
+
+                return `
+                    <div class="${stepClass}">
+                        <div class="step-number">${index + 1}</div>
+                        <div class="step-label">${formatSectionName(section)}</div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function formatSectionName(section) {
+            const names = {
+                'identity': 'Identity',
+                'license': 'License',
+                'insurance': 'Insurance',
+                'background': 'Background'
+            };
+            return names[section];
+        }
+
+        function updateSummaryGrid() {
+            const grid = document.getElementById('summary-grid');
+            
+            grid.innerHTML = `
+                <div class="summary-item">
+                    <span class="summary-label">Identity Verification</span>
+                    <span class="summary-value ${verificationState.identity.status}">
+                        ${formatStatus(verificationState.identity.status)}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Business License</span>
+                    <span class="summary-value ${verificationState.license.status}">
+                        ${formatStatus(verificationState.license.status)}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Insurance</span>
+                    <span class="summary-value ${verificationState.insurance.status}">
+                        ${formatStatus(verificationState.insurance.status)}
+                    </span>
+                </div>
+                <div class="summary-item">
+                    <span class="summary-label">Background Check</span>
+                    <span class="summary-value ${verificationState.background.status}">
+                        ${formatStatus(verificationState.background.status)}
+                    </span>
+                </div>
+            `;
+        }
+
+        function initFileUploads() {
+            // Identity upload
+            setupFileUpload('identity-file', 'identity-preview', 'identity-submit');
+            
+            // License upload
+            setupFileUpload('license-file', 'license-preview', 'license-submit');
+            
+            // Insurance upload
+            setupFileUpload('insurance-file', 'insurance-preview', 'insurance-submit');
+
+            // Enable/disable submit buttons based on form completion
+            document.getElementById('license-number').addEventListener('input', validateLicenseForm);
+            document.getElementById('license-issuer').addEventListener('input', validateLicenseForm);
+            document.getElementById('license-expiry').addEventListener('input', validateLicenseForm);
+            
+            document.getElementById('insurance-provider').addEventListener('input', validateInsuranceForm);
+            document.getElementById('insurance-policy').addEventListener('input', validateInsuranceForm);
+            document.getElementById('insurance-coverage').addEventListener('change', validateInsuranceForm);
+            document.getElementById('insurance-expiry').addEventListener('input', validateInsuranceForm);
+        }
+
+        function setupFileUpload(inputId, previewId, submitId) {
+            const input = document.getElementById(inputId);
+            const preview = document.getElementById(previewId);
+            const submitBtn = document.getElementById(submitId);
+
+            input.addEventListener('change', (e) => {
+                const file = e.target.files[0];
+                if (file) {
+                    displayFilePreview(file, preview);
+                    submitBtn.disabled = false;
+                    
+                    // Store file
+                    const type = inputId.split('-')[0];
+                    verificationState[type].files = [file];
+                }
+            });
+
+            // Drag and drop support
+            const uploadBox = input.closest('.upload-area').querySelector('.upload-box');
+            
+            uploadBox.addEventListener('dragover', (e) => {
+                e.preventDefault();
+                uploadBox.classList.add('dragover');
+            });
+
+            uploadBox.addEventListener('dragleave', () => {
+                uploadBox.classList.remove('dragover');
+            });
+
+            uploadBox.addEventListener('drop', (e) => {
+                e.preventDefault();
+                uploadBox.classList.remove('dragover');
+                
+                const file = e.dataTransfer.files[0];
+                if (file) {
+                    input.files = e.dataTransfer.files;
+                    displayFilePreview(file, preview);
+                    submitBtn.disabled = false;
+                }
+            });
+        }
+
+        function displayFilePreview(file, previewElement) {
+            const reader = new FileReader();
+            
+            reader.onload = (e) => {
+                if (file.type.startsWith('image/')) {
+                    previewElement.innerHTML = `
+                        <div class="preview-item">
+                            <img src="${e.target.result}" alt="Preview">
+                            <button class="remove-file" onclick="removeFile(this)">×</button>
+                        </div>
+                    `;
+                } else {
+                    previewElement.innerHTML = `
+                        <div class="preview-item file">
+                            <span class="file-icon">📄</span>
+                            <span class="file-name">${file.name}</span>
+                            <span class="file-size">${formatFileSize(file.size)}</span>
+                            <button class="remove-file" onclick="removeFile(this)">×</button>
+                        </div>
+                    `;
+                }
+            };
+
+            reader.readAsDataURL(file);
+        }
+
+        function removeFile(button) {
+            const preview = button.closest('.file-preview');
+            preview.innerHTML = '';
+            
+            // Find associated submit button
+            const section = preview.closest('.verification-section');
+            const submitBtn = section.querySelector('.btn-primary');
+            if (submitBtn) {
+                submitBtn.disabled = true;
+            }
+        }
+
+        function selectMethod(method) {
+            currentMethod = method;
+            
+            // Update UI
+            document.querySelectorAll('.method-card').forEach(card => {
+                card.classList.remove('selected');
+            });
+            event.currentTarget.classList.add('selected');
+            
+            // Show upload area
+            document.getElementById('identity-upload').style.display = 'block';
+            
+            // Enable radio
+            document.querySelector(`input[name="id-method"][value="${method}"]`).checked = true;
+        }
+
+        function validateLicenseForm() {
+            const number = document.getElementById('license-number').value;
+            const issuer = document.getElementById('license-issuer').value;
+            const expiry = document.getElementById('license-expiry').value;
+            const hasFile = verificationState.license.files.length > 0;
+
+            const isValid = number && issuer && expiry && hasFile;
+            document.getElementById('license-submit').disabled = !isValid;
+        }
+
+        function validateInsuranceForm() {
+            const provider = document.getElementById('insurance-provider').value;
+            const policy = document.getElementById('insurance-policy').value;
+            const coverage = document.getElementById('insurance-coverage').value;
+            const expiry = document.getElementById('insurance-expiry').value;
+            const hasFile = verificationState.insurance.files.length > 0;
+
+            const isValid = provider && policy && coverage && expiry && hasFile;
+            document.getElementById('insurance-submit').disabled = !isValid;
+        }
+
+        function submitIdentity() {
+            if (!currentMethod) {
+                showNotification('Please select an ID type', 'error');
+                return;
+            }
+
+            if (verificationState.identity.files.length === 0) {
+                showNotification('Please upload your ID', 'error');
+                return;
+            }
+
+            pendingSubmission = 'identity';
+            document.getElementById('confirm-title').textContent = 'Submit Identity Verification';
+            document.getElementById('confirm-message').innerHTML = `
+                <p>You're about to submit your ${currentMethod.replace('-', ' ')} for verification.</p>
+                <p>Make sure all information is clearly visible.</p>
+            `;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function submitLicense() {
+            verificationState.license.data = {
+                number: document.getElementById('license-number').value,
+                issuer: document.getElementById('license-issuer').value,
+                expiry: document.getElementById('license-expiry').value
+            };
+
+            if (verificationState.license.files.length === 0) {
+                showNotification('Please upload your license', 'error');
+                return;
+            }
+
+            pendingSubmission = 'license';
+            document.getElementById('confirm-title').textContent = 'Submit Business License';
+            document.getElementById('confirm-message').innerHTML = `
+                <p>You're about to submit your business license for verification.</p>
+                <p>License: ${verificationState.license.data.number}</p>
+                <p>Issuer: ${verificationState.license.data.issuer}</p>
+            `;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        function submitInsurance() {
+            verificationState.insurance.data = {
+                provider: document.getElementById('insurance-provider').value,
+                policy: document.getElementById('insurance-policy').value,
+                coverage: document.getElementById('insurance-coverage').value,
+                expiry: document.getElementById('insurance-expiry').value
+            };
+
+            if (verificationState.insurance.files.length === 0) {
+                showNotification('Please upload your insurance certificate', 'error');
+                return;
+            }
+
+            pendingSubmission = 'insurance';
+            document.getElementById('confirm-title').textContent = 'Submit Insurance';
+            document.getElementById('confirm-message').innerHTML = `
+                <p>You're about to submit your insurance information for verification.</p>
+                <p>Provider: ${verificationState.insurance.data.provider}</p>
+                <p>Policy: ${verificationState.insurance.data.policy}</p>
+            `;
+            document.getElementById('confirm-modal').classList.add('active');
+        }
+
+        async function confirmSubmission() {
+            if (!pendingSubmission) return;
+
+            const submitBtn = document.getElementById('confirm-btn');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const formData = new FormData();
+
+                // Add data based on submission type
+                switch(pendingSubmission) {
+                    case 'identity':
+                        formData.append('type', 'identity');
+                        formData.append('method', currentMethod);
+                        formData.append('document', verificationState.identity.files[0]);
+                        break;
+                    
+                    case 'license':
+                        formData.append('type', 'license');
+                        formData.append('number', verificationState.license.data.number);
+                        formData.append('issuer', verificationState.license.data.issuer);
+                        formData.append('expiry', verificationState.license.data.expiry);
+                        formData.append('document', verificationState.license.files[0]);
+                        break;
+                    
+                    case 'insurance':
+                        formData.append('type', 'insurance');
+                        formData.append('provider', verificationState.insurance.data.provider);
+                        formData.append('policy', verificationState.insurance.data.policy);
+                        formData.append('coverage', verificationState.insurance.data.coverage);
+                        formData.append('expiry', verificationState.insurance.data.expiry);
+                        formData.append('document', verificationState.insurance.files[0]);
+                        break;
+                }
+
+                const response = await fetch('/api/provider/submit-verification.php', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeModal('confirm-modal');
+                    document.getElementById('success-message').textContent = 
+                        `Your ${pendingSubmission} documents have been submitted successfully.`;
+                    document.getElementById('success-modal').classList.add('active');
+                    
+                    // Update status
+                    verificationState[pendingSubmission].status = 'pending';
+                    updateVerificationUI();
+                } else {
+                    showNotification(data.message || 'Submission failed', 'error');
+                }
+            } catch (error) {
+                console.error('Error submitting verification:', error);
+                showNotification('Failed to submit verification', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+                pendingSubmission = null;
+            }
+        }
+
+        async function initiateBackgroundCheck() {
+            if (!confirm('You will be redirected to Checkr to complete your background check. Continue?')) return;
+
+            const btn = document.getElementById('background-btn');
+            const originalText = btn.innerHTML;
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Redirecting...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/initiate-background-check.php', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success && data.redirect_url) {
+                    window.location.href = data.redirect_url;
+                } else {
+                    showNotification(data.message || 'Failed to initiate background check', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error initiating background check:', error);
+                showNotification('Failed to initiate background check', 'error');
+                btn.disabled = false;
+                btn.innerHTML = originalText;
+            }
+        }
+
+        function previewDocument(file, type) {
+            const modal = document.getElementById('preview-modal');
+            const previewImage = document.getElementById('preview-image');
+            const previewPdf = document.getElementById('preview-pdf');
+
+            if (type === 'pdf') {
+                previewImage.style.display = 'none';
+                previewPdf.style.display = 'block';
+                previewPdf.src = URL.createObjectURL(file);
+            } else {
+                previewPdf.style.display = 'none';
+                previewImage.style.display = 'block';
+                
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                    previewImage.src = e.target.result;
+                };
+                reader.readAsDataURL(file);
+            }
+
+            modal.classList.add('active');
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.selectMethod = selectMethod;
+        window.submitIdentity = submitIdentity;
+        window.submitLicense = submitLicense;
+        window.submitInsurance = submitInsurance;
+        window.initiateBackgroundCheck = initiateBackgroundCheck;
+        window.previewDocument = previewDocument;
+        window.removeFile = removeFile;
+        window.confirmSubmission = confirmSubmission;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

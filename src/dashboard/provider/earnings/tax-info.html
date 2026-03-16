@@ -1,0 +1,894 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Information - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/earnings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Overview
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/transactions.html" class="nav-item">
+                        <span class="nav-icon">📜</span>
+                        Transactions
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/payouts.html" class="nav-item">
+                        <span class="nav-icon">🏦</span>
+                        Payouts
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/tax-info.html" class="nav-item active">
+                        <span class="nav-icon">📋</span>
+                        Tax Info
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search tax documents...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Tax Information</h1>
+                    <p>Manage your tax documents and view annual earnings summaries</p>
+                </div>
+
+                <!-- Tax Year Selector -->
+                <div class="tax-year-selector">
+                    <label for="tax-year">Select Tax Year:</label>
+                    <select id="tax-year" class="form-select" onchange="loadTaxYearData()">
+                        <option value="2024">2024</option>
+                        <option value="2023">2023</option>
+                        <option value="2022">2022</option>
+                        <option value="2021">2021</option>
+                    </select>
+                </div>
+
+                <!-- Annual Summary Cards -->
+                <div class="annual-summary">
+                    <h2>Annual Summary <span id="selected-year">2024</span></h2>
+                    <div class="summary-grid">
+                        <div class="summary-card">
+                            <div class="card-icon">💰</div>
+                            <div class="card-content">
+                                <span class="card-label">Gross Earnings</span>
+                                <span class="card-value" id="gross-earnings">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="card-icon">💸</div>
+                            <div class="card-content">
+                                <span class="card-label">Platform Fees</span>
+                                <span class="card-value" id="platform-fees">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="card-icon">📊</div>
+                            <div class="card-content">
+                                <span class="card-label">Net Earnings</span>
+                                <span class="card-value" id="net-earnings">$0.00</span>
+                            </div>
+                        </div>
+
+                        <div class="summary-card">
+                            <div class="card-icon">📝</div>
+                            <div class="card-content">
+                                <span class="card-label">Transactions</span>
+                                <span class="card-value" id="transaction-count">0</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Forms Section -->
+                <div class="tax-forms-section">
+                    <h2>Tax Forms</h2>
+                    <div class="forms-grid" id="forms-grid">
+                        <!-- 1099-K Form -->
+                        <div class="form-card">
+                            <div class="form-icon">📄</div>
+                            <div class="form-info">
+                                <h3>1099-K</h3>
+                                <p class="form-year">2024</p>
+                                <p class="form-status available">Available Now</p>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" onclick="downloadForm('1099k', 2024)">
+                                    Download PDF
+                                </button>
+                                <button class="btn-icon" onclick="viewForm('1099k', 2024)" title="View">👁️</button>
+                            </div>
+                        </div>
+
+                        <!-- 1099-NEC Form -->
+                        <div class="form-card">
+                            <div class="form-icon">📄</div>
+                            <div class="form-info">
+                                <h3>1099-NEC</h3>
+                                <p class="form-year">2024</p>
+                                <p class="form-status pending">Coming Soon</p>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" disabled>Not Available</button>
+                            </div>
+                        </div>
+
+                        <!-- Annual Summary -->
+                        <div class="form-card">
+                            <div class="form-icon">📊</div>
+                            <div class="form-info">
+                                <h3>Annual Summary</h3>
+                                <p class="form-year">2024</p>
+                                <p class="form-status available">Available Now</p>
+                            </div>
+                            <div class="form-actions">
+                                <button class="btn btn-secondary" onclick="downloadSummary(2024)">
+                                    Download PDF
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tax Settings -->
+                <div class="tax-settings-section">
+                    <h2>Tax Settings</h2>
+                    
+                    <div class="settings-card">
+                        <h3>Business Information</h3>
+                        <form id="business-info-form" onsubmit="updateBusinessInfo(event)">
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Legal Business Name</label>
+                                    <input type="text" id="business-legal-name" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Business Type</label>
+                                    <select id="business-type" class="form-select">
+                                        <option value="sole_proprietor">Sole Proprietor</option>
+                                        <option value="llc">LLC</option>
+                                        <option value="corporation">Corporation</option>
+                                        <option value="partnership">Partnership</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Tax ID / EIN</label>
+                                <input type="text" id="tax-id" class="form-input" placeholder="XX-XXXXXXX">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Business Address</label>
+                                <input type="text" id="business-address" class="form-input" placeholder="Street address">
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <input type="text" id="business-city" class="form-input" placeholder="City">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="business-state" class="form-input" placeholder="State">
+                                </div>
+                                <div class="form-group">
+                                    <input type="text" id="business-zip" class="form-input" placeholder="ZIP code">
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Update Business Information</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>Tax Withholding</h3>
+                        <form id="withholding-form" onsubmit="updateWithholding(event)">
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="backup-withholding">
+                                    <span>I am subject to backup withholding</span>
+                                </label>
+                                <p class="field-note">Check this if the IRS has notified you that you are subject to backup withholding</p>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" id="fatca">
+                                    <span>I am subject to FATCA reporting</span>
+                                </label>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary">Save Withholding Settings</button>
+                        </form>
+                    </div>
+
+                    <div class="settings-card">
+                        <h3>W-9 Form</h3>
+                        <p>Provide your tax information to receive payments</p>
+                        <div class="w9-status">
+                            <span class="status-badge status-success">Verified</span>
+                            <span>W-9 received and verified on Jan 15, 2024</span>
+                        </div>
+                        <div class="w9-actions">
+                            <button class="btn btn-secondary" onclick="downloadW9()">
+                                Download W-9
+                            </button>
+                            <button class="btn btn-secondary" onclick="updateW9()">
+                                Update W-9
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Monthly Breakdown -->
+                <div class="monthly-breakdown">
+                    <h2>Monthly Breakdown - <span id="breakdown-year">2024</span></h2>
+                    <div class="table-wrapper">
+                        <table id="monthly-table">
+                            <thead>
+                                <tr>
+                                    <th>Month</th>
+                                    <th>Gross Earnings</th>
+                                    <th>Platform Fees</th>
+                                    <th>Net Earnings</th>
+                                    <th>Transactions</th>
+                                    <th>Details</th>
+                                </tr>
+                            </thead>
+                            <tbody id="monthly-body">
+                                <!-- Loaded dynamically -->
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <th>Total</th>
+                                    <th id="total-gross">$0.00</th>
+                                    <th id="total-fees">$0.00</th>
+                                    <th id="total-net">$0.00</th>
+                                    <th id="total-transactions">0</th>
+                                    <th></th>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Tax Resources -->
+                <div class="tax-resources">
+                    <h2>Tax Resources</h2>
+                    <div class="resources-grid">
+                        <a href="#" class="resource-card">
+                            <span class="resource-icon">📘</span>
+                            <h4>Tax Guide for Independent Contractors</h4>
+                            <p>Learn about tax obligations and deductions</p>
+                        </a>
+                        <a href="#" class="resource-card">
+                            <span class="resource-icon">📊</span>
+                            <h4>Estimated Tax Calculator</h4>
+                            <p>Estimate your quarterly tax payments</p>
+                        </a>
+                        <a href="#" class="resource-card">
+                            <span class="resource-icon">📝</span>
+                            <h4>Deduction Checklist</h4>
+                            <p>Common deductions for service professionals</p>
+                        </a>
+                        <a href="#" class="resource-card">
+                            <span class="resource-icon">📅</span>
+                            <h4>Tax Deadline Calendar</h4>
+                            <p>Important dates for tax filing</p>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- FAQ Section -->
+                <div class="tax-faq">
+                    <h2>Frequently Asked Questions</h2>
+                    <div class="faq-list">
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>When will I receive my tax forms?</span>
+                                <span class="faq-icon">▼</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>Tax forms (1099-K and 1099-NEC) are typically available by January 31st of each year for the previous calendar year. You'll receive an email notification when your forms are ready.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>What's the difference between 1099-K and 1099-NEC?</span>
+                                <span class="faq-icon">▼</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>1099-K reports payment card transactions, while 1099-NEC reports non-employee compensation. If you earn over $600, you may receive both forms.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>How do I update my tax information?</span>
+                                <span class="faq-icon">▼</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>You can update your tax information in the Tax Settings section above. Changes may take 2-3 business days to process.</p>
+                            </div>
+                        </div>
+
+                        <div class="faq-item">
+                            <div class="faq-question" onclick="toggleFAQ(this)">
+                                <span>Do I need to pay estimated taxes?</span>
+                                <span class="faq-icon">▼</span>
+                            </div>
+                            <div class="faq-answer">
+                                <p>If you expect to owe at least $1,000 in taxes, you may need to make quarterly estimated tax payments. Consult with a tax professional for advice specific to your situation.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- View Form Modal -->
+    <div class="modal" id="view-form-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3 id="form-modal-title">Tax Form</h3>
+                <button class="close" onclick="closeModal('view-form-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <iframe id="form-viewer" style="width:100%; height:500px; border:none;"></iframe>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="downloadCurrentForm()">Download</button>
+                <button class="btn btn-primary" onclick="closeModal('view-form-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Update W-9 Modal -->
+    <div class="modal" id="w9-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Update W-9 Form</h3>
+                <button class="close" onclick="closeModal('w9-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="upload-area" onclick="document.getElementById('w9-file').click()">
+                    <input type="file" id="w9-file" accept=".pdf,.jpg,.png" style="display: none;">
+                    <span class="upload-icon">📤</span>
+                    <span class="upload-text">Click to upload W-9 form</span>
+                    <span class="upload-hint">PDF, JPG, or PNG (max 10MB)</span>
+                </div>
+                <div class="file-preview" id="w9-preview"></div>
+                <div class="checkbox-group">
+                    <label class="checkbox-label">
+                        <input type="checkbox" id="w9-certify" required>
+                        <span>I certify that the information provided is accurate and complete</span>
+                    </label>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('w9-modal')">Cancel</button>
+                    <button class="btn btn-primary" onclick="uploadW9()">Upload W-9</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentTaxYear = 2024;
+        let monthlyData = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadTaxYearData();
+            loadBusinessInfo();
+            loadWithholdingSettings();
+            
+            // Set current year in selector
+            const currentYear = new Date().getFullYear();
+            document.getElementById('tax-year').value = currentYear;
+            document.getElementById('selected-year').textContent = currentYear;
+            document.getElementById('breakdown-year').textContent = currentYear;
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadTaxYearData() {
+            const yearSelect = document.getElementById('tax-year');
+            const year = yearSelect ? parseInt(yearSelect.value) : 2024;
+            
+            currentTaxYear = year;
+            document.getElementById('selected-year').textContent = year;
+            document.getElementById('breakdown-year').textContent = year;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/provider/earnings/tax-summary.php?year=${year}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    updateAnnualSummary(data.summary);
+                    updateMonthlyBreakdown(data.monthly);
+                    updateTaxForms(data.forms);
+                }
+            } catch (error) {
+                console.error('Error loading tax data:', error);
+                showNotification('Failed to load tax data', 'error');
+            }
+        }
+
+        function updateAnnualSummary(summary) {
+            document.getElementById('gross-earnings').textContent = formatCurrency(summary.gross);
+            document.getElementById('platform-fees').textContent = formatCurrency(summary.fees);
+            document.getElementById('net-earnings').textContent = formatCurrency(summary.net);
+            document.getElementById('transaction-count').textContent = summary.transactions;
+        }
+
+        function updateMonthlyBreakdown(monthly) {
+            monthlyData = monthly;
+            const tbody = document.getElementById('monthly-body');
+            
+            const months = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+
+            let totalGross = 0, totalFees = 0, totalNet = 0, totalTransactions = 0;
+
+            tbody.innerHTML = months.map((month, index) => {
+                const data = monthly[index] || { gross: 0, fees: 0, net: 0, transactions: 0 };
+                
+                totalGross += data.gross;
+                totalFees += data.fees;
+                totalNet += data.net;
+                totalTransactions += data.transactions;
+
+                return `
+                    <tr>
+                        <td>${month}</td>
+                        <td class="amount">${formatCurrency(data.gross)}</td>
+                        <td class="amount">${formatCurrency(data.fees)}</td>
+                        <td class="amount">${formatCurrency(data.net)}</td>
+                        <td class="amount">${data.transactions}</td>
+                        <td>
+                            <button class="btn-small btn-secondary" onclick="viewMonthlyDetails(${index + 1})">
+                                View Details
+                            </button>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            document.getElementById('total-gross').textContent = formatCurrency(totalGross);
+            document.getElementById('total-fees').textContent = formatCurrency(totalFees);
+            document.getElementById('total-net').textContent = formatCurrency(totalNet);
+            document.getElementById('total-transactions').textContent = totalTransactions;
+        }
+
+        function updateTaxForms(forms) {
+            const container = document.getElementById('forms-grid');
+            
+            // Update form availability based on data
+            const formCards = container.querySelectorAll('.form-card');
+            
+            forms.forEach(form => {
+                if (form.type === '1099k' && form.available) {
+                    const card = formCards[0];
+                    card.querySelector('.form-status').textContent = 'Available Now';
+                    card.querySelector('.form-status').className = 'form-status available';
+                    card.querySelector('button').disabled = false;
+                }
+            });
+        }
+
+        async function loadBusinessInfo() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/business-info.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('business-legal-name').value = data.business_name || '';
+                    document.getElementById('business-type').value = data.business_type || 'sole_proprietor';
+                    document.getElementById('tax-id').value = data.tax_id || '';
+                    document.getElementById('business-address').value = data.address || '';
+                    document.getElementById('business-city').value = data.city || '';
+                    document.getElementById('business-state').value = data.state || '';
+                    document.getElementById('business-zip').value = data.zip || '';
+                }
+            } catch (error) {
+                console.error('Error loading business info:', error);
+            }
+        }
+
+        async function loadWithholdingSettings() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/withholding-settings.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('backup-withholding').checked = data.backup_withholding || false;
+                    document.getElementById('fatca').checked = data.fatca || false;
+                }
+            } catch (error) {
+                console.error('Error loading withholding settings:', error);
+            }
+        }
+
+        async function updateBusinessInfo(e) {
+            e.preventDefault();
+
+            const businessData = {
+                legal_name: document.getElementById('business-legal-name').value,
+                business_type: document.getElementById('business-type').value,
+                tax_id: document.getElementById('tax-id').value,
+                address: document.getElementById('business-address').value,
+                city: document.getElementById('business-city').value,
+                state: document.getElementById('business-state').value,
+                zip: document.getElementById('business-zip').value
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/update-business-info.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(businessData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Business information updated successfully', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to update business information', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating business info:', error);
+                showNotification('Failed to update business information', 'error');
+            }
+        }
+
+        async function updateWithholding(e) {
+            e.preventDefault();
+
+            const settings = {
+                backup_withholding: document.getElementById('backup-withholding').checked,
+                fatca: document.getElementById('fatca').checked
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/update-withholding.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(settings)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Withholding settings updated', 'success');
+                } else {
+                    showNotification(data.message || 'Failed to update settings', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating withholding:', error);
+                showNotification('Failed to update settings', 'error');
+            }
+        }
+
+        function downloadForm(formType, year) {
+            window.location.href = `/api/provider/earnings/tax-form.php?type=${formType}&year=${year}`;
+        }
+
+        function viewForm(formType, year) {
+            document.getElementById('form-modal-title').textContent = `Tax Form ${year}`;
+            document.getElementById('form-viewer').src = `/api/provider/earnings/tax-form.php?type=${formType}&year=${year}&view=1`;
+            document.getElementById('view-form-modal').classList.add('active');
+        }
+
+        function downloadCurrentForm() {
+            const iframe = document.getElementById('form-viewer');
+            const src = iframe.src.replace('&view=1', '');
+            window.location.href = src;
+        }
+
+        function downloadSummary(year) {
+            window.location.href = `/api/provider/earnings/annual-summary.php?year=${year}`;
+        }
+
+        function updateW9() {
+            document.getElementById('w9-modal').classList.add('active');
+        }
+
+        function downloadW9() {
+            window.location.href = '/api/provider/earnings/w9.php';
+        }
+
+        function uploadW9() {
+            const file = document.getElementById('w9-file').files[0];
+            const certify = document.getElementById('w9-certify').checked;
+
+            if (!file) {
+                showNotification('Please select a file', 'error');
+                return;
+            }
+
+            if (!certify) {
+                showNotification('Please certify the information is accurate', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('w9', file);
+
+            fetch('/api/provider/earnings/upload-w9.php', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                },
+                body: formData
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    showNotification('W-9 uploaded successfully', 'success');
+                    closeModal('w9-modal');
+                } else {
+                    showNotification(data.message || 'Failed to upload W-9', 'error');
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading W-9:', error);
+                showNotification('Failed to upload W-9', 'error');
+            });
+        }
+
+        function viewMonthlyDetails(month) {
+            const monthNames = [
+                'January', 'February', 'March', 'April', 'May', 'June',
+                'July', 'August', 'September', 'October', 'November', 'December'
+            ];
+            
+            // Show modal with detailed transaction list for the month
+            const monthData = monthlyData[month - 1];
+            if (!monthData) return;
+
+            // You can implement a detailed view modal here
+            showNotification(`Viewing details for ${monthNames[month - 1]}`, 'info');
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.textContent = '▼';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.textContent = '▲';
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // File upload preview
+        document.getElementById('w9-file').addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                const preview = document.getElementById('w9-preview');
+                preview.innerHTML = `
+                    <div class="preview-item">
+                        <span class="file-icon">📄</span>
+                        <span class="file-name">${file.name}</span>
+                        <button class="remove-file" onclick="document.getElementById('w9-file').value = ''; this.parentElement.remove()">×</button>
+                    </div>
+                `;
+            }
+        });
+
+        // Make functions global
+        window.loadTaxYearData = loadTaxYearData;
+        window.downloadForm = downloadForm;
+        window.viewForm = viewForm;
+        window.downloadCurrentForm = downloadCurrentForm;
+        window.downloadSummary = downloadSummary;
+        window.updateW9 = updateW9;
+        window.downloadW9 = downloadW9;
+        window.uploadW9 = uploadW9;
+        window.viewMonthlyDetails = viewMonthlyDetails;
+        window.toggleFAQ = toggleFAQ;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

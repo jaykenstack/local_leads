@@ -1,0 +1,698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Methods - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/payments.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Stripe.js -->
+    <script src="https://js.stripe.com/v3/"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Payments</div>
+                    <a href="/src/dashboard/customer/payments/methods.html" class="nav-item active">
+                        <span class="nav-icon">💳</span>
+                        Payment Methods
+                    </a>
+                    <a href="/src/dashboard/customer/payments/history.html" class="nav-item">
+                        <span class="nav-icon">📜</span>
+                        Payment History
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Payment Methods</h1>
+                    <p>Manage your payment methods for faster checkout</p>
+                </div>
+
+                <!-- Payment Methods Grid -->
+                <div class="payment-methods-grid" id="payment-methods-grid">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading your payment methods...</p>
+                    </div>
+                </div>
+
+                <!-- Add Payment Method Button -->
+                <div class="add-method-section">
+                    <button class="btn btn-primary btn-large" onclick="showAddMethodModal()">
+                        + Add New Payment Method
+                    </button>
+                </div>
+
+                <!-- Billing Address Section -->
+                <div class="billing-section">
+                    <h2>Default Billing Address</h2>
+                    <div class="billing-address-card" id="billing-address-card">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="editBillingAddress()">
+                        Edit Billing Address
+                    </button>
+                </div>
+
+                <!-- Security Note -->
+                <div class="security-note">
+                    <div class="note-icon">🔒</div>
+                    <div class="note-content">
+                        <h4>Your payment information is secure</h4>
+                        <p>All payment data is encrypted and processed securely through Stripe. We never store your full card details on our servers.</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Add Payment Method Modal -->
+    <div class="modal" id="add-method-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Payment Method</h3>
+                <button class="close" onclick="closeModal('add-method-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="add-payment-form" onsubmit="handleAddPaymentMethod(event)">
+                    <!-- Card Element will be inserted here -->
+                    <div class="form-group">
+                        <label class="form-label">Cardholder Name</label>
+                        <input type="text" id="cardholder-name" class="form-input" required 
+                               placeholder="Name as it appears on card">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Card Details</label>
+                        <div id="card-element" class="form-input stripe-element">
+                            <!-- Stripe Element will be inserted here -->
+                        </div>
+                        <div id="card-errors" class="error-message" role="alert"></div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="set-default" checked>
+                            <span>Set as default payment method</span>
+                        </label>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="save-billing">
+                            <span>Save billing address for future use</span>
+                        </label>
+                    </div>
+
+                    <div id="billing-fields" style="display: none;">
+                        <h4>Billing Address</h4>
+                        <div class="form-group">
+                            <input type="text" id="billing-address" class="form-input" placeholder="Street Address">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <input type="text" id="billing-city" class="form-input" placeholder="City">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="billing-state" class="form-input" placeholder="State">
+                            </div>
+                            <div class="form-group">
+                                <input type="text" id="billing-zip" class="form-input" placeholder="ZIP Code">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('add-method-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary" id="add-payment-submit">
+                            Add Payment Method
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Billing Address Modal -->
+    <div class="modal" id="billing-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Billing Address</h3>
+                <button class="close" onclick="closeModal('billing-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="billing-form" onsubmit="handleBillingUpdate(event)">
+                    <div class="form-group">
+                        <label class="form-label">Full Name</label>
+                        <input type="text" id="billing-name" class="form-input" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Street Address</label>
+                        <input type="text" id="billing-street" class="form-input" required>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">City</label>
+                            <input type="text" id="billing-city-edit" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">State</label>
+                            <input type="text" id="billing-state-edit" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label">ZIP Code</label>
+                            <input type="text" id="billing-zip-edit" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Country</label>
+                            <select id="billing-country" class="form-select">
+                                <option value="US">United States</option>
+                                <option value="CA">Canada</option>
+                                <option value="UK">United Kingdom</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Phone Number</label>
+                        <input type="tel" id="billing-phone" class="form-input">
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('billing-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save Address
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Remove Confirmation Modal -->
+    <div class="modal" id="remove-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Remove Payment Method</h3>
+                <button class="close" onclick="closeModal('remove-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to remove this payment method?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('remove-modal')">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmRemove()">
+                        Remove Payment Method
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Stripe configuration
+        const stripe = Stripe(STRIPE_PUBLIC_KEY);
+        let elements = stripe.elements();
+        let cardElement = null;
+        let selectedMethodId = null;
+        let paymentMethods = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadPaymentMethods();
+            loadBillingAddress();
+            initStripeElements();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function initStripeElements() {
+            // Create card Element
+            cardElement = elements.create('card', {
+                style: {
+                    base: {
+                        fontSize: '16px',
+                        color: '#424770',
+                        '::placeholder': {
+                            color: '#aab7c4'
+                        }
+                    }
+                }
+            });
+
+            // Mount card Element
+            cardElement.mount('#card-element');
+
+            // Handle validation errors
+            cardElement.on('change', ({error}) => {
+                const displayError = document.getElementById('card-errors');
+                if (error) {
+                    displayError.textContent = error.message;
+                } else {
+                    displayError.textContent = '';
+                }
+            });
+        }
+
+        async function loadPaymentMethods() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/payments/get-methods.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    paymentMethods = data.methods;
+                    displayPaymentMethods(data.methods);
+                }
+            } catch (error) {
+                console.error('Error loading payment methods:', error);
+                document.getElementById('payment-methods-grid').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load payment methods. Please try again.</p>
+                        <button class="btn btn-primary" onclick="loadPaymentMethods()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayPaymentMethods(methods) {
+            const container = document.getElementById('payment-methods-grid');
+
+            if (methods.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/public/assets/icons/credit-card.svg" alt="No payment methods">
+                        <h3>No Payment Methods Added</h3>
+                        <p>Add a payment method to make checkout faster and easier.</p>
+                        <button class="btn btn-primary" onclick="showAddMethodModal()">
+                            Add Payment Method
+                        </button>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = methods.map(method => `
+                <div class="payment-method-card ${method.is_default ? 'default' : ''}" id="method-${method.id}">
+                    <div class="card-brand">
+                        <img src="/public/assets/icons/card-${method.card_brand.toLowerCase()}.svg" 
+                             alt="${method.card_brand}"
+                             onerror="this.src='/public/assets/icons/card-default.svg'">
+                    </div>
+                    
+                    <div class="card-details">
+                        <div class="card-number">
+                            •••• •••• •••• ${method.card_last4}
+                        </div>
+                        <div class="card-expiry">
+                            Expires ${method.card_exp_month}/${method.card_exp_year}
+                        </div>
+                        ${method.is_default ? '<span class="default-badge">Default</span>' : ''}
+                    </div>
+
+                    <div class="card-actions">
+                        <button class="btn-icon" onclick="editPaymentMethod(${method.id})" title="Edit">
+                            ✏️
+                        </button>
+                        <button class="btn-icon" onclick="showRemoveModal(${method.id})" title="Remove">
+                            🗑️
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        async function loadBillingAddress() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/billing-address.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayBillingAddress(data.address);
+                }
+            } catch (error) {
+                console.error('Error loading billing address:', error);
+            }
+        }
+
+        function displayBillingAddress(address) {
+            const container = document.getElementById('billing-address-card');
+
+            if (!address || !address.street) {
+                container.innerHTML = `
+                    <div class="no-address">
+                        <p>No billing address on file</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <div class="address-details">
+                    <p><strong>${address.name}</strong></p>
+                    <p>${address.street}</p>
+                    <p>${address.city}, ${address.state} ${address.zip}</p>
+                    <p>${address.country}</p>
+                    ${address.phone ? `<p>${address.phone}</p>` : ''}
+                </div>
+            `;
+        }
+
+        function showAddMethodModal() {
+            document.getElementById('add-method-modal').classList.add('active');
+            // Reset form
+            document.getElementById('cardholder-name').value = '';
+            document.getElementById('set-default').checked = true;
+            document.getElementById('save-billing').checked = false;
+            document.getElementById('billing-fields').style.display = 'none';
+        }
+
+        // Toggle billing fields when checkbox changes
+        document.getElementById('save-billing').addEventListener('change', (e) => {
+            document.getElementById('billing-fields').style.display = e.target.checked ? 'block' : 'none';
+        });
+
+        async function handleAddPaymentMethod(e) {
+            e.preventDefault();
+
+            const cardholderName = document.getElementById('cardholder-name').value;
+            const setDefault = document.getElementById('set-default').checked;
+            const saveBilling = document.getElementById('save-billing').checked;
+
+            if (!cardholderName) {
+                showNotification('Please enter cardholder name', 'error');
+                return;
+            }
+
+            // Disable submit button
+            const submitBtn = document.getElementById('add-payment-submit');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Adding...';
+
+            try {
+                // Create payment method with Stripe
+                const { paymentMethod, error } = await stripe.createPaymentMethod({
+                    type: 'card',
+                    card: cardElement,
+                    billing_details: {
+                        name: cardholderName
+                    }
+                });
+
+                if (error) {
+                    showNotification(error.message, 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                    return;
+                }
+
+                // Prepare billing details if saving
+                let billingDetails = null;
+                if (saveBilling) {
+                    billingDetails = {
+                        address: document.getElementById('billing-address').value,
+                        city: document.getElementById('billing-city').value,
+                        state: document.getElementById('billing-state').value,
+                        zip: document.getElementById('billing-zip').value
+                    };
+                }
+
+                // Save payment method to server
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/payments/add-method.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        payment_method_id: paymentMethod.id,
+                        set_default: setDefault,
+                        billing_details: billingDetails
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Payment method added successfully', 'success');
+                    closeModal('add-method-modal');
+                    loadPaymentMethods();
+                } else {
+                    showNotification(data.message || 'Failed to add payment method', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding payment method:', error);
+                showNotification('Failed to add payment method', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function showRemoveModal(methodId) {
+            selectedMethodId = methodId;
+            document.getElementById('remove-modal').classList.add('active');
+        }
+
+        async function confirmRemove() {
+            if (!selectedMethodId) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/payments/remove-method.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ method_id: selectedMethodId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Payment method removed', 'success');
+                    closeModal('remove-modal');
+                    loadPaymentMethods();
+                } else {
+                    showNotification(data.message || 'Failed to remove payment method', 'error');
+                }
+            } catch (error) {
+                console.error('Error removing payment method:', error);
+                showNotification('Failed to remove payment method', 'error');
+            }
+        }
+
+        function editPaymentMethod(methodId) {
+            // For now, just show remove option
+            showRemoveModal(methodId);
+        }
+
+        function editBillingAddress() {
+            // Populate form with existing data
+            // Then show modal
+            document.getElementById('billing-modal').classList.add('active');
+        }
+
+        async function handleBillingUpdate(e) {
+            e.preventDefault();
+
+            const billingData = {
+                name: document.getElementById('billing-name').value,
+                street: document.getElementById('billing-street').value,
+                city: document.getElementById('billing-city-edit').value,
+                state: document.getElementById('billing-state-edit').value,
+                zip: document.getElementById('billing-zip-edit').value,
+                country: document.getElementById('billing-country').value,
+                phone: document.getElementById('billing-phone').value
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/update-billing-address.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(billingData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Billing address updated', 'success');
+                    closeModal('billing-modal');
+                    loadBillingAddress();
+                } else {
+                    showNotification(data.message || 'Failed to update address', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating billing address:', error);
+                showNotification('Failed to update address', 'error');
+            }
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            selectedMethodId = null;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Providers - Admin</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <aside class="dashboard-sidebar">
+            <!-- Same sidebar -->
+        </aside>
+
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle">☰</button>
+                <div class="header-search">
+                    <input type="text" placeholder="Search providers...">
+                </div>
+                <div class="header-actions">
+                    <div class="header-notification">🔔</div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Service Providers</h1>
+                    <div class="header-actions">
+                        <button class="btn btn-secondary" onclick="exportData()">
+                            📥 Export CSV
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Verification Summary -->
+                <div class="summary-cards">
+                    <div class="summary-card" onclick="filterByStatus('all')">
+                        <div class="card-value" id="total-providers">0</div>
+                        <div class="card-label">Total Providers</div>
+                    </div>
+                    <div class="summary-card" onclick="filterByStatus('verified')">
+                        <div class="card-value" id="verified-providers">0</div>
+                        <div class="card-label">Verified</div>
+                    </div>
+                    <div class="summary-card" onclick="filterByStatus('pending')">
+                        <div class="card-value" id="pending-providers">0</div>
+                        <div class="card-label">Pending</div>
+                    </div>
+                    <div class="summary-card" onclick="filterByStatus('suspended')">
+                        <div class="card-value" id="suspended-providers">0</div>
+                        <div class="card-label">Suspended</div>
+                    </div>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-bar">
+                    <select id="verification-filter" class="form-select">
+                        <option value="all">All Providers</option>
+                        <option value="verified">Verified Only</option>
+                        <option value="pending">Pending Verification</option>
+                        <option value="suspended">Suspended</option>
+                    </select>
+
+                    <select id="service-filter" class="form-select">
+                        <option value="all">All Services</option>
+                        <option value="plumbing">Plumbing</option>
+                        <option value="electrical">Electrical</option>
+                        <option value="hvac">HVAC</option>
+                        <option value="locksmith">Locksmith</option>
+                        <option value="pest">Pest Control</option>
+                    </select>
+                </div>
+
+                <!-- Providers Table -->
+                <div class="table-wrapper">
+                    <table id="providers-table" class="display">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Business</th>
+                                <th>Owner</th>
+                                <th>Email</th>
+                                <th>Phone</th>
+                                <th>Services</th>
+                                <th>Joined</th>
+                                <th>Jobs</th>
+                                <th>Rating</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="providers-body">
+                            <tr>
+                                <td colspan="11" class="text-center">Loading providers...</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let providersTable;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAccess();
+            loadProviderStats();
+            loadProviders();
+        });
+
+        async function loadProviderStats() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/provider-stats.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-providers').textContent = data.total;
+                    document.getElementById('verified-providers').textContent = data.verified;
+                    document.getElementById('pending-providers').textContent = data.pending;
+                    document.getElementById('suspended-providers').textContent = data.suspended;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadProviders() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/providers.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    populateProvidersTable(data.providers);
+                }
+            } catch (error) {
+                console.error('Error loading providers:', error);
+            }
+        }
+
+        function populateProvidersTable(providers) {
+            const tbody = document.getElementById('providers-body');
+            
+            tbody.innerHTML = providers.map(provider => `
+                <tr>
+                    <td>#${provider.id}</td>
+                    <td>
+                        <div class="business-info">
+                            <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${provider.business_name}" class="business-avatar">
+                            <div>
+                                <strong>${provider.business_name}</strong>
+                                <small>${provider.years_in_business} years</small>
+                            </div>
+                        </div>
+                    </td>
+                    <td>${provider.owner_name}</td>
+                    <td>${provider.email}</td>
+                    <td>${provider.phone}</td>
+                    <td>${provider.services.join(', ')}</td>
+                    <td>${new Date(provider.joined).toLocaleDateString()}</td>
+                    <td>${provider.total_jobs}</td>
+                    <td>
+                        <div class="rating">
+                            <span class="stars">${'★'.repeat(Math.floor(provider.rating))}</span>
+                            <span>(${provider.review_count})</span>
+                        </div>
+                    </td>
+                    <td>
+                        <span class="status-badge status-${provider.status}">
+                            ${provider.verified ? 'Verified' : 'Pending'}
+                        </span>
+                    </td>
+                    <td>
+                        <button class="btn-small btn-secondary" onclick="viewProvider(${provider.id})">
+                            View
+                        </button>
+                        ${!provider.verified ? `
+                            <button class="btn-small btn-success" onclick="verifyProvider(${provider.id})">
+                                ✓ Verify
+                            </button>
+                        ` : ''}
+                    </td>
+                </tr>
+            `).join('');
+
+            // Initialize DataTable
+            if ($.fn.DataTable.isDataTable('#providers-table')) {
+                $('#providers-table').DataTable().destroy();
+            }
+            
+            providersTable = $('#providers-table').DataTable({
+                pageLength: 25,
+                order: [[0, 'desc']]
+            });
+        }
+
+        function filterByStatus(status) {
+            // Filter table by status
+        }
+
+        function viewProvider(id) {
+            window.location.href = `/src/dashboard/admin/user-details.html?id=${id}&type=provider`;
+        }
+
+        async function verifyProvider(id) {
+            if (!confirm('Verify this provider?')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/verify-provider.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ provider_id: id })
+                });
+
+                if (response.ok) {
+                    showNotification('Provider verified', 'success');
+                    loadProviders();
+                    loadProviderStats();
+                }
+            } catch (error) {
+                console.error('Error verifying provider:', error);
+            }
+        }
+    </script>
+</body>
+</html>

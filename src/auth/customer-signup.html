@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Customer Sign Up - UrgentServices</title>
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <span class="customer-badge">Customer</span>
+                <h1>Get Help Now</h1>
+                <p>Connect with trusted service professionals</p>
+            </div>
+
+            <form id="customer-signup-form" onsubmit="handleCustomerSignup(event)">
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">First Name *</label>
+                        <input type="text" name="first_name" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Last Name *</label>
+                        <input type="text" name="last_name" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Email *</label>
+                    <input type="email" name="email" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phone *</label>
+                    <input type="tel" name="phone" class="form-input" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Address (Optional)</label>
+                    <input type="text" name="address" class="form-input" placeholder="Street address">
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">City</label>
+                        <input type="text" name="city" class="form-input">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">ZIP Code</label>
+                        <input type="text" name="zip" class="form-input">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Password *</label>
+                        <input type="password" name="password" class="form-input" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label">Confirm Password *</label>
+                        <input type="password" name="confirm_password" class="form-input" required>
+                    </div>
+                </div>
+
+                <div class="form-checkbox">
+                    <input type="checkbox" id="terms" required>
+                    <label for="terms">
+                        I agree to the <a href="/terms.html">Terms of Service</a> and 
+                        <a href="/privacy.html">Privacy Policy</a>
+                    </label>
+                </div>
+
+                <div class="form-checkbox">
+                    <input type="checkbox" id="offers">
+                    <label for="offers">
+                        I'd like to receive special offers and updates
+                    </label>
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-large" style="width: 100%;">
+                    Create Account
+                </button>
+
+                <div class="auth-divider">
+                    <span>OR</span>
+                </div>
+
+                <div class="social-login">
+                    <button type="button" class="social-btn google" onclick="socialLogin('google', 'customer')">
+                        <img src="/public/assets/icons/google.svg" alt="Google"> Sign up with Google
+                    </button>
+                    <button type="button" class="social-btn facebook" onclick="socialLogin('facebook', 'customer')">
+                        <img src="/public/assets/icons/facebook.svg" alt="Facebook"> Sign up with Facebook
+                    </button>
+                </div>
+
+                <p class="auth-footer">
+                    Already have an account? <a href="/src/auth/login.html">Sign in</a>
+                </p>
+            </form>
+        </div>
+    </div>
+
+    <script src="/public/scripts/auth.js"></script>
+</body>
+</html>

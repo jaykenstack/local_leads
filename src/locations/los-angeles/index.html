@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Professionals in Los Angeles - UrgentServices</title>
+    <meta name="description" content="Find trusted service professionals in Los Angeles. 24/7 emergency services across LA County.">
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/locations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header"></div>
+
+    <main>
+        <!-- City Hero -->
+        <section class="city-hero la">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Service Professionals in Los Angeles</h1>
+                    <p>Connect with trusted providers across LA County</p>
+                    
+                    <div class="service-quick-links">
+                        <a href="#plumbing" class="quick-link">🚰 Plumbing</a>
+                        <a href="#electrical" class="quick-link">⚡ Electrical</a>
+                        <a href="#hvac" class="quick-link">❄️ HVAC</a>
+                        <a href="#locksmith" class="quick-link">🔑 Locksmith</a>
+                        <a href="#pest" class="quick-link">🐜 Pest Control</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Area Navigation -->
+        <section class="area-nav">
+            <div class="container">
+                <div class="area-tabs">
+                    <button class="area-tab active" onclick="filterArea('all')">All LA</button>
+                    <button class="area-tab" onclick="filterArea('downtown')">Downtown</button>
+                    <button class="area-tab" onclick="filterArea('westside')">Westside</button>
+                    <button class="area-tab" onclick="filterArea('valley')">San Fernando Valley</button>
+                    <button class="area-tab" onclick="filterArea('southbay')">South Bay</button>
+                    <button class="area-tab" onclick="filterArea('pasadena')">Pasadena</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Area Stats -->
+        <section class="area-stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="la-total-providers">0</span>
+                        <span class="stat-label">Total Providers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="la-emergency-providers">0</span>
+                        <span class="stat-label">24/7 Emergency</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="la-avg-rating">0.0</span>
+                        <span class="stat-label">Average Rating</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="la-response-time">20</span>
+                        <span class="stat-label">Avg Response (min)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services by Category -->
+        <section class="services-section">
+            <div class="container">
+                <h2 id="plumbing">🚰 Plumbing Services in LA</h2>
+                <div class="service-category" id="la-plumbing">
+                    <div class="loading-state">Loading plumbing providers...</div>
+                </div>
+
+                <h2 id="electrical">⚡ Electrical Services in LA</h2>
+                <div class="service-category" id="la-electrical">
+                    <div class="loading-state">Loading electrical providers...</div>
+                </div>
+
+                <h2 id="hvac">❄️ HVAC Services in LA</h2>
+                <div class="service-category" id="la-hvac">
+                    <div class="loading-state">Loading HVAC providers...</div>
+                </div>
+
+                <h2 id="locksmith">🔑 Locksmith Services in LA</h2>
+                <div class="service-category" id="la-locksmith">
+                    <div class="loading-state">Loading locksmith providers...</div>
+                </div>
+
+                <h2 id="pest">🐜 Pest Control Services in LA</h2>
+                <div class="service-category" id="la-pest">
+                    <div class="loading-state">Loading pest control providers...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-banner">
+            <div class="container">
+                <div class="emergency-content">
+                    <h2>Need Emergency Service in LA?</h2>
+                    <p>Available 24/7 across Los Angeles County</p>
+                    <a href="tel:+1234567890" class="btn btn-large btn-emergency">
+                        📞 Call LA Emergency Line
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Areas -->
+        <section class="areas-section">
+            <div class="container">
+                <h2>Service Areas in Los Angeles County</h2>
+                <div class="areas-grid" id="la-areas">
+                    <div class="area-card">
+                        <h3>Central LA</h3>
+                        <ul>
+                            <li>Downtown LA</li>
+                            <li>Koreatown</li>
+                            <li>Mid-City</li>
+                            <li>Hollywood</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>Westside</h3>
+                        <ul>
+                            <li>Santa Monica</li>
+                            <li>Venice</li>
+                            <li>Culver City</li>
+                            <li>Westwood</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>San Fernando Valley</h3>
+                        <ul>
+                            <li>Sherman Oaks</li>
+                            <li>Encino</li>
+                            <li>Van Nuys</li>
+                            <li>Burbank</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>South Bay</h3>
+                        <ul>
+                            <li>Torrance</li>
+                            <li>Redondo Beach</li>
+                            <li>Manhattan Beach</li>
+                            <li>Hermosa Beach</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Reviews -->
+        <section class="reviews-section">
+            <div class="container">
+                <h2>What LA Customers Say</h2>
+                <div class="reviews-grid" id="la-reviews">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- LA FAQs -->
+        <section class="faq-section">
+            <div class="container">
+                <h2>Frequently Asked Questions About LA Services</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Do you serve all of LA County?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, we have providers serving all major areas of Los Angeles County.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How does LA traffic affect response times?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our providers are strategically located throughout LA County to ensure quick response times despite traffic.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script>
+        // Similar JavaScript to NYC page with LA-specific data
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadLAStats();
+            loadLAProviders();
+            loadLAReviews();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadLAStats() {
+            try {
+                const response = await fetch('/api/locations/city-stats.php?city=los-angeles');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('la-total-providers').textContent = data.total_providers;
+                    document.getElementById('la-emergency-providers').textContent = data.emergency_providers;
+                    document.getElementById('la-avg-rating').textContent = data.avg_rating.toFixed(1);
+                }
+            } catch (error) {
+                console.error('Error loading LA stats:', error);
+            }
+        }
+
+        async function loadLAProviders() {
+            // Similar to NYC provider loading with LA-specific data
+        }
+
+        async function loadLAReviews() {
+            // Similar to NYC reviews loading with LA-specific data
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.textContent = '▼';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.textContent = '▲';
+            }
+        }
+    </script>
+</body>
+</html>

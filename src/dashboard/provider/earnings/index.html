@@ -1,0 +1,889 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Earnings Dashboard - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/earnings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item active">
+                        <span class="nav-icon">💰</span>
+                        Overview
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/transactions.html" class="nav-item">
+                        <span class="nav-icon">📜</span>
+                        Transactions
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/payouts.html" class="nav-item">
+                        <span class="nav-icon">🏦</span>
+                        Payouts
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/tax-info.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        Tax Info
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search earnings...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Earnings Overview</h1>
+                    <div class="header-actions">
+                        <select class="form-select" id="date-range">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">This Year</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportEarnings()">
+                            📥 Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Balance Cards -->
+                <div class="balance-cards">
+                    <div class="balance-card available">
+                        <div class="card-icon">💰</div>
+                        <div class="card-content">
+                            <span class="card-label">Available Balance</span>
+                            <span class="card-value" id="available-balance">$0.00</span>
+                            <span class="card-note">Ready to withdraw</span>
+                        </div>
+                        <button class="btn btn-primary" onclick="requestPayout()" id="payout-btn">
+                            Withdraw
+                        </button>
+                    </div>
+
+                    <div class="balance-card pending">
+                        <div class="card-icon">⏳</div>
+                        <div class="card-content">
+                            <span class="card-label">Pending Balance</span>
+                            <span class="card-value" id="pending-balance">$0.00</span>
+                            <span class="card-note">Will be available in 3-5 days</span>
+                        </div>
+                    </div>
+
+                    <div class="balance-card total">
+                        <div class="card-icon">📊</div>
+                        <div class="card-content">
+                            <span class="card-label">Lifetime Earnings</span>
+                            <span class="card-value" id="lifetime-earnings">$0.00</span>
+                            <span class="card-note">Total all time</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quick Stats -->
+                <div class="quick-stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Jobs Completed</span>
+                            <span class="stat-icon">✅</span>
+                        </div>
+                        <div class="stat-value" id="jobs-completed">0</div>
+                        <div class="stat-change" id="jobs-change">+0 vs last period</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Avg per Job</span>
+                            <span class="stat-icon">📈</span>
+                        </div>
+                        <div class="stat-value" id="avg-per-job">$0.00</div>
+                        <div class="stat-change" id="avg-change">+0% vs last period</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Platform Fees</span>
+                            <span class="stat-icon">💸</span>
+                        </div>
+                        <div class="stat-value" id="total-fees">$0.00</div>
+                        <div class="stat-change" id="fees-change">15% commission</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-header">
+                            <span class="stat-label">Payouts Received</span>
+                            <span class="stat-icon">🏦</span>
+                        </div>
+                        <div class="stat-value" id="total-payouts">$0.00</div>
+                        <div class="stat-change" id="payouts-count">0 payouts</div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Earnings Trend</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item">
+                                    <span class="legend-color" style="background: #3b82f6;"></span>
+                                    Daily Earnings
+                                </span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="earnings-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Income Breakdown</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item">
+                                    <span class="legend-color" style="background: #10b981;"></span>
+                                    By Service Type
+                                </span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="breakdown-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Recent Transactions -->
+                <div class="recent-transactions">
+                    <div class="section-header">
+                        <h3>Recent Transactions</h3>
+                        <a href="/src/dashboard/provider/earnings/transactions.html" class="view-all">
+                            View All →
+                        </a>
+                    </div>
+
+                    <div class="transactions-list" id="recent-transactions">
+                        <div class="loading-state">
+                            <div class="spinner"></div>
+                            <p>Loading transactions...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Performance Metrics -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <h4>Best Performing Service</h4>
+                        <div class="metric-value" id="best-service">-</div>
+                        <div class="metric-detail" id="best-service-earnings">$0 earned</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4>Busiest Month</h4>
+                        <div class="metric-value" id="busiest-month">-</div>
+                        <div class="metric-detail" id="busiest-month-earnings">$0 earned</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4>Average Rating</h4>
+                        <div class="metric-value" id="avg-rating">0.0</div>
+                        <div class="metric-detail" id="rating-count">0 reviews</div>
+                    </div>
+
+                    <div class="metric-card">
+                        <h4>Repeat Customers</h4>
+                        <div class="metric-value" id="repeat-rate">0%</div>
+                        <div class="metric-detail" id="repeat-count">0 returning customers</div>
+                    </div>
+                </div>
+
+                <!-- Next Payout Info -->
+                <div class="next-payout-card">
+                    <div class="payout-info">
+                        <h4>Next Scheduled Payout</h4>
+                        <div class="payout-amount" id="next-payout-amount">$0.00</div>
+                        <div class="payout-date" id="next-payout-date">-</div>
+                    </div>
+                    <div class="payout-progress">
+                        <div class="progress-label">
+                            <span>Payout Threshold</span>
+                            <span id="threshold-progress">$0 / $100</span>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress-fill" id="threshold-bar" style="width: 0%"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Request Payout Modal -->
+    <div class="modal" id="payout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Payout</h3>
+                <button class="close" onclick="closeModal('payout-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="available-info">
+                    <span>Available Balance:</span>
+                    <strong id="modal-available">$0.00</strong>
+                </div>
+
+                <form id="payout-form" onsubmit="submitPayoutRequest(event)">
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Amount ($)</label>
+                        <input type="number" id="payout-amount" class="form-input" 
+                               min="10" step="0.01" required
+                               placeholder="Enter amount">
+                        <small class="form-hint">Minimum withdrawal: $10.00</small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Method</label>
+                        <select id="payout-method" class="form-select" required>
+                            <option value="bank_account">Bank Account</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="card">Debit Card</option>
+                        </select>
+                    </div>
+
+                    <div class="bank-details" id="bank-details">
+                        <h4>Bank Account Details</h4>
+                        <div class="form-group">
+                            <label class="form-label">Account Holder Name</label>
+                            <input type="text" id="account-holder" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Routing Number</label>
+                            <input type="text" id="routing-number" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" id="account-number" class="form-input">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Account Number</label>
+                            <input type="text" id="confirm-account" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="paypal-details" id="paypal-details" style="display: none;">
+                        <h4>PayPal Details</h4>
+                        <div class="form-group">
+                            <label class="form-label">PayPal Email</label>
+                            <input type="email" id="paypal-email" class="form-input">
+                        </div>
+                    </div>
+
+                    <div class="card-details" id="card-details" style="display: none;">
+                        <h4>Debit Card Details</h4>
+                        <div class="form-group">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" id="card-number" class="form-input">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Expiry</label>
+                                <input type="text" id="card-expiry" class="form-input" placeholder="MM/YY">
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">CVV</label>
+                                <input type="text" id="card-cvv" class="form-input">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="payout-summary">
+                        <h4>Summary</h4>
+                        <div class="summary-row">
+                            <span>Withdrawal Amount:</span>
+                            <span id="summary-amount">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Processing Fee:</span>
+                            <span id="summary-fee">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>You'll Receive:</span>
+                            <span id="summary-total">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('payout-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Request Payout
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payout Requested!</h3>
+                <button class="close" onclick="closeModal('success-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">✓</div>
+                <p>Your payout request has been submitted successfully.</p>
+                <p>You'll receive the funds within 3-5 business days.</p>
+                <div class="success-actions">
+                    <button class="btn btn-primary" onclick="closeModal('success-modal')">
+                        Done
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let earningsChart = null;
+        let breakdownChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadEarningsData();
+            
+            document.getElementById('date-range').addEventListener('change', () => {
+                loadEarningsData();
+            });
+
+            document.getElementById('payout-method').addEventListener('change', (e) => {
+                const method = e.target.value;
+                document.getElementById('bank-details').style.display = method === 'bank_account' ? 'block' : 'none';
+                document.getElementById('paypal-details').style.display = method === 'paypal' ? 'block' : 'none';
+                document.getElementById('card-details').style.display = method === 'card' ? 'block' : 'none';
+            });
+
+            document.getElementById('payout-amount').addEventListener('input', calculatePayoutSummary);
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadEarningsData() {
+            const days = document.getElementById('date-range').value;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/provider/earnings/overview.php?days=${days}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    updateBalances(data.balances);
+                    updateQuickStats(data.stats);
+                    updateRecentTransactions(data.recent_transactions);
+                    updateMetrics(data.metrics);
+                    updateNextPayout(data.next_payout);
+                    updateCharts(data.charts);
+                }
+            } catch (error) {
+                console.error('Error loading earnings:', error);
+                showNotification('Failed to load earnings data', 'error');
+            }
+        }
+
+        function updateBalances(balances) {
+            document.getElementById('available-balance').textContent = formatCurrency(balances.available);
+            document.getElementById('pending-balance').textContent = formatCurrency(balances.pending);
+            document.getElementById('lifetime-earnings').textContent = formatCurrency(balances.lifetime);
+            
+            document.getElementById('modal-available').textContent = formatCurrency(balances.available);
+            
+            // Enable/disable payout button
+            const payoutBtn = document.getElementById('payout-btn');
+            if (balances.available < 10) {
+                payoutBtn.disabled = true;
+                payoutBtn.title = 'Minimum $10 required for withdrawal';
+            } else {
+                payoutBtn.disabled = false;
+                payoutBtn.title = '';
+            }
+        }
+
+        function updateQuickStats(stats) {
+            document.getElementById('jobs-completed').textContent = stats.jobs_completed;
+            document.getElementById('avg-per-job').textContent = formatCurrency(stats.avg_per_job);
+            document.getElementById('total-fees').textContent = formatCurrency(stats.total_fees);
+            document.getElementById('total-payouts').textContent = formatCurrency(stats.total_payouts);
+            document.getElementById('payouts-count').textContent = stats.payouts_count + ' payouts';
+
+            // Update change indicators
+            updateChangeIndicator('jobs-change', stats.jobs_change);
+            updateChangeIndicator('avg-change', stats.avg_change, true);
+        }
+
+        function updateChangeIndicator(elementId, change, isPercent = false) {
+            const element = document.getElementById(elementId);
+            if (change > 0) {
+                element.innerHTML = `↑ +${change}${isPercent ? '%' : ''} vs last period`;
+                element.className = 'stat-change positive';
+            } else if (change < 0) {
+                element.innerHTML = `↓ ${change}${isPercent ? '%' : ''} vs last period`;
+                element.className = 'stat-change negative';
+            } else {
+                element.innerHTML = `0 vs last period`;
+                element.className = 'stat-change';
+            }
+        }
+
+        function updateRecentTransactions(transactions) {
+            const container = document.getElementById('recent-transactions');
+
+            if (transactions.length === 0) {
+                container.innerHTML = '<p class="text-center">No recent transactions</p>';
+                return;
+            }
+
+            container.innerHTML = transactions.map(t => `
+                <div class="transaction-item">
+                    <div class="transaction-icon ${t.type}">
+                        ${t.type === 'payment' ? '💰' : t.type === 'payout' ? '🏦' : '💸'}
+                    </div>
+                    <div class="transaction-info">
+                        <div class="transaction-title">${t.description}</div>
+                        <div class="transaction-date">${new Date(t.date).toLocaleDateString()}</div>
+                    </div>
+                    <div class="transaction-amount ${t.type}">
+                        ${t.type === 'payment' ? '+' : '-'}${formatCurrency(t.amount)}
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updateMetrics(metrics) {
+            document.getElementById('best-service').textContent = metrics.best_service.name || '-';
+            document.getElementById('best-service-earnings').textContent = 
+                formatCurrency(metrics.best_service.earnings) + ' earned';
+            
+            document.getElementById('busiest-month').textContent = metrics.busiest_month.month || '-';
+            document.getElementById('busiest-month-earnings').textContent = 
+                formatCurrency(metrics.busiest_month.earnings) + ' earned';
+            
+            document.getElementById('avg-rating').textContent = metrics.avg_rating.toFixed(1);
+            document.getElementById('rating-count').textContent = metrics.rating_count + ' reviews';
+            
+            document.getElementById('repeat-rate').textContent = metrics.repeat_rate + '%';
+            document.getElementById('repeat-count').textContent = metrics.repeat_count + ' returning';
+        }
+
+        function updateNextPayout(nextPayout) {
+            document.getElementById('next-payout-amount').textContent = formatCurrency(nextPayout.amount);
+            document.getElementById('next-payout-date').textContent = nextPayout.date;
+            
+            const progress = (nextPayout.amount / 100) * 100;
+            document.getElementById('threshold-progress').innerHTML = 
+                `$${nextPayout.amount.toFixed(2)} / $100`;
+            document.getElementById('threshold-bar').style.width = Math.min(progress, 100) + '%';
+        }
+
+        function updateCharts(charts) {
+            // Earnings Trend Chart
+            const earningsCtx = document.getElementById('earnings-chart').getContext('2d');
+            
+            if (earningsChart) {
+                earningsChart.destroy();
+            }
+
+            earningsChart = new Chart(earningsCtx, {
+                type: 'line',
+                data: {
+                    labels: charts.earnings.labels,
+                    datasets: [{
+                        label: 'Daily Earnings',
+                        data: charts.earnings.data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `Earnings: ${formatCurrency(context.parsed.y)}`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            ticks: {
+                                callback: (value) => formatCurrency(value)
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Breakdown Chart
+            const breakdownCtx = document.getElementById('breakdown-chart').getContext('2d');
+            
+            if (breakdownChart) {
+                breakdownChart.destroy();
+            }
+
+            breakdownChart = new Chart(breakdownCtx, {
+                type: 'doughnut',
+                data: {
+                    labels: charts.breakdown.labels,
+                    datasets: [{
+                        data: charts.breakdown.data,
+                        backgroundColor: [
+                            '#3b82f6',
+                            '#10b981',
+                            '#f59e0b',
+                            '#ef4444',
+                            '#8b5cf6',
+                            '#ec4899'
+                        ],
+                        borderWidth: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                boxWidth: 12,
+                                padding: 15
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => {
+                                    const label = context.label || '';
+                                    const value = context.parsed;
+                                    const total = context.dataset.data.reduce((a, b) => a + b, 0);
+                                    const percentage = ((value / total) * 100).toFixed(1);
+                                    return `${label}: ${formatCurrency(value)} (${percentage}%)`;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+        }
+
+        function requestPayout() {
+            const available = parseFloat(document.getElementById('available-balance').textContent.replace('$', ''));
+            if (available < 10) {
+                showNotification('Minimum $10 required for withdrawal', 'error');
+                return;
+            }
+
+            document.getElementById('payout-amount').max = available;
+            document.getElementById('payout-amount').value = available.toFixed(2);
+            calculatePayoutSummary();
+            document.getElementById('payout-modal').classList.add('active');
+        }
+
+        function calculatePayoutSummary() {
+            const amount = parseFloat(document.getElementById('payout-amount').value) || 0;
+            const fee = amount * 0.01; // 1% processing fee
+            const total = amount - fee;
+
+            document.getElementById('summary-amount').textContent = formatCurrency(amount);
+            document.getElementById('summary-fee').textContent = formatCurrency(fee);
+            document.getElementById('summary-total').textContent = formatCurrency(total);
+        }
+
+        async function submitPayoutRequest(e) {
+            e.preventDefault();
+
+            const amount = parseFloat(document.getElementById('payout-amount').value);
+            const method = document.getElementById('payout-method').value;
+
+            // Validate amount
+            if (amount < 10) {
+                showNotification('Minimum withdrawal amount is $10', 'error');
+                return;
+            }
+
+            // Validate payment details based on method
+            if (method === 'bank_account') {
+                const accountHolder = document.getElementById('account-holder').value;
+                const routing = document.getElementById('routing-number').value;
+                const account = document.getElementById('account-number').value;
+                const confirm = document.getElementById('confirm-account').value;
+
+                if (!accountHolder || !routing || !account || !confirm) {
+                    showNotification('Please fill in all bank details', 'error');
+                    return;
+                }
+
+                if (account !== confirm) {
+                    showNotification('Account numbers do not match', 'error');
+                    return;
+                }
+            } else if (method === 'paypal') {
+                const email = document.getElementById('paypal-email').value;
+                if (!email) {
+                    showNotification('Please enter your PayPal email', 'error');
+                    return;
+                }
+            } else if (method === 'card') {
+                const cardNumber = document.getElementById('card-number').value;
+                const expiry = document.getElementById('card-expiry').value;
+                const cvv = document.getElementById('card-cvv').value;
+
+                if (!cardNumber || !expiry || !cvv) {
+                    showNotification('Please fill in all card details', 'error');
+                    return;
+                }
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/request-payout.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        method: method
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeModal('payout-modal');
+                    document.getElementById('success-modal').classList.add('active');
+                    loadEarningsData();
+                } else {
+                    showNotification(data.message || 'Failed to request payout', 'error');
+                }
+            } catch (error) {
+                console.error('Error requesting payout:', error);
+                showNotification('Failed to request payout', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function exportEarnings() {
+            const days = document.getElementById('date-range').value;
+            window.location.href = `/api/provider/earnings/export.php?days=${days}`;
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.requestPayout = requestPayout;
+        window.submitPayoutRequest = submitPayoutRequest;
+        window.exportEarnings = exportEarnings;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

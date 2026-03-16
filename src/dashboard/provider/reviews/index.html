@@ -1,0 +1,921 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Reviews - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/reviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item active">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                        <span class="badge badge-warning" id="pending-badge">0</span>
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/analytics.html" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Analytics
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search reviews..." id="search-reviews">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Customer Reviews</h1>
+                    <div class="header-actions">
+                        <select class="form-select" id="sort-reviews">
+                            <option value="newest">Newest First</option>
+                            <option value="highest">Highest Rated</option>
+                            <option value="lowest">Lowest Rated</option>
+                            <option value="response_needed">Needs Response</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportReviews()">
+                            📥 Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Review Stats Cards -->
+                <div class="review-stats-grid" id="review-stats">
+                    <div class="stat-card">
+                        <div class="stat-value" id="total-reviews">0</div>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-rating">0.0</div>
+                        <div class="stat-label">Average Rating</div>
+                        <div class="stat-stars" id="avg-stars"></div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="response-rate">0%</div>
+                        <div class="stat-label">Response Rate</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value" id="avg-response-time">0h</div>
+                        <div class="stat-label">Avg Response Time</div>
+                    </div>
+                </div>
+
+                <!-- Rating Distribution -->
+                <div class="rating-distribution-card">
+                    <h3>Rating Distribution</h3>
+                    <div class="distribution-bars" id="distribution-bars">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Reviews List -->
+                <div class="reviews-list" id="reviews-list">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading reviews...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Respond to Review Modal -->
+    <div class="modal" id="respond-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Respond to Review</h3>
+                <button class="close" onclick="closeModal('respond-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="review-preview" id="respond-review-preview">
+                    <!-- Loaded dynamically -->
+                </div>
+                
+                <form id="respond-form" onsubmit="submitResponse(event)">
+                    <input type="hidden" id="respond-review-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Response</label>
+                        <textarea id="response-text" class="form-textarea" rows="4" required
+                                  placeholder="Write a professional response to this review..."></textarea>
+                        <div class="response-guidelines">
+                            <p>💡 Tips for a good response:</p>
+                            <ul>
+                                <li>Thank the customer for their feedback</li>
+                                <li>Address any specific points they mentioned</li>
+                                <li>Keep it professional and constructive</li>
+                                <li>If there was an issue, explain how you'll improve</li>
+                            </ul>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('respond-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Post Response
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Response Modal -->
+    <div class="modal" id="edit-response-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Edit Response</h3>
+                <button class="close" onclick="closeModal('edit-response-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="edit-response-form" onsubmit="updateResponse(event)">
+                    <input type="hidden" id="edit-response-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Your Response</label>
+                        <textarea id="edit-response-text" class="form-textarea" rows="4" required></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('edit-response-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Update Response
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Report Review Modal -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Report Review</h3>
+                <button class="close" onclick="closeModal('report-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="report-form" onsubmit="submitReport(event)">
+                    <input type="hidden" id="report-review-id">
+                    
+                    <div class="form-group">
+                        <label class="form-label">Reason for reporting</label>
+                        <select id="report-reason" class="form-select" required>
+                            <option value="">Select a reason</option>
+                            <option value="inappropriate">Inappropriate content</option>
+                            <option value="fake">Fake review</option>
+                            <option value="conflict">Conflict of interest</option>
+                            <option value="harassment">Harassment</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Additional details</label>
+                        <textarea id="report-details" class="form-textarea" rows="3" 
+                                  placeholder="Please provide more information..."></textarea>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('report-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-danger">
+                            Submit Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Response Confirmation Modal -->
+    <div class="modal" id="delete-response-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Response</h3>
+                <button class="close" onclick="closeModal('delete-response-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete your response?</p>
+                <p class="warning-text">This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal('delete-response-modal')">
+                        Cancel
+                    </button>
+                    <button class="btn btn-danger" onclick="confirmDeleteResponse()">
+                        Delete Response
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentSort = 'newest';
+        let searchTerm = '';
+        let selectedReviewId = null;
+        let reviews = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadReviewStats();
+            loadReviews();
+            loadDistribution();
+
+            // Search input
+            document.getElementById('search-reviews').addEventListener('input', debounce(() => {
+                searchTerm = document.getElementById('search-reviews').value;
+                currentPage = 1;
+                loadReviews();
+            }, 500));
+
+            // Sort select
+            document.getElementById('sort-reviews').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                currentPage = 1;
+                loadReviews();
+            });
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadReviewStats() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/provider/stats.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-reviews').textContent = data.stats.total_reviews;
+                    document.getElementById('avg-rating').textContent = data.stats.average_rating.toFixed(1);
+                    document.getElementById('response-rate').textContent = data.stats.response_rate + '%';
+                    document.getElementById('avg-response-time').textContent = data.stats.average_response_time + 'h';
+                    
+                    // Generate star display
+                    document.getElementById('avg-stars').innerHTML = generateStarRating(data.stats.average_rating);
+                    
+                    // Update pending badge
+                    if (data.stats.pending_responses > 0) {
+                        document.getElementById('pending-badge').textContent = data.stats.pending_responses;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading review stats:', error);
+            }
+        }
+
+        async function loadDistribution() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/provider/distribution.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayDistribution(data.distribution);
+                }
+            } catch (error) {
+                console.error('Error loading distribution:', error);
+            }
+        }
+
+        function displayDistribution(distribution) {
+            const container = document.getElementById('distribution-bars');
+            const total = Object.values(distribution).reduce((a, b) => a + b, 0);
+
+            const stars = [5, 4, 3, 2, 1];
+            
+            container.innerHTML = stars.map(star => {
+                const count = distribution[star] || 0;
+                const percentage = total > 0 ? (count / total) * 100 : 0;
+                
+                return `
+                    <div class="distribution-row">
+                        <span class="star-label">${star} ★</span>
+                        <div class="progress-bar-container">
+                            <div class="progress-bar">
+                                <div class="progress-fill" style="width: ${percentage}%"></div>
+                            </div>
+                        </div>
+                        <span class="star-count">${count}</span>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function loadReviews() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = `/api/reviews/provider/received.php?page=${currentPage}&sort=${currentSort}&search=${encodeURIComponent(searchTerm)}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    reviews = data.reviews;
+                    displayReviews(data.reviews);
+                    displayPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviews-list').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load reviews. Please try again.</p>
+                        <button class="btn btn-primary" onclick="loadReviews()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviews-list');
+
+            if (reviews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/public/assets/icons/reviews-icon.svg" alt="No reviews">
+                        <h3>No Reviews Yet</h3>
+                        <p>You haven't received any reviews yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = reviews.map(review => {
+                const needsResponse = !review.response_from_provider;
+                const responseClass = needsResponse ? 'needs-response' : '';
+                
+                return `
+                    <div class="review-card ${responseClass}" id="review-${review.id}">
+                        <div class="review-header">
+                            <div class="customer-info">
+                                <img src="${review.customer_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                     alt="${review.customer_name}" class="customer-avatar">
+                                <div>
+                                    <h4>${review.customer_name}</h4>
+                                    <div class="review-meta">
+                                        <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
+                                        <span class="service-name">${review.service_name}</span>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="review-rating">
+                                ${generateStarRating(review.overall_rating)}
+                            </div>
+                        </div>
+
+                        <div class="review-content">
+                            <p>${review.comment}</p>
+                        </div>
+
+                        ${review.photos && review.photos.length > 0 ? `
+                            <div class="review-photos">
+                                ${review.photos.map(photo => `
+                                    <img src="${photo}" alt="Review photo" onclick="viewImage('${photo}')">
+                                `).join('')}
+                            </div>
+                        ` : ''}
+
+                        <div class="review-footer">
+                            <div class="detailed-ratings">
+                                <span class="rating-badge">Quality: ${review.quality_rating}★</span>
+                                <span class="rating-badge">Punctuality: ${review.punctuality_rating}★</span>
+                                <span class="rating-badge">Professionalism: ${review.professionalism_rating}★</span>
+                                <span class="rating-badge">Value: ${review.value_rating}★</span>
+                                <span class="rating-badge">Communication: ${review.communication_rating}★</span>
+                            </div>
+
+                            <div class="review-actions">
+                                ${review.response_from_provider ? `
+                                    <div class="response-info">
+                                        <span class="responded-badge">✓ Responded</span>
+                                        <button class="btn-icon" onclick="editResponse(${review.id}, '${escapeJs(review.response_from_provider)}')" title="Edit response">✏️</button>
+                                        <button class="btn-icon" onclick="showDeleteResponseModal(${review.id})" title="Delete response">🗑️</button>
+                                    </div>
+                                ` : `
+                                    <button class="btn btn-primary btn-small" onclick="showRespondModal(${review.id})">
+                                        Respond
+                                    </button>
+                                `}
+                                <button class="btn-icon" onclick="showReportModal(${review.id})" title="Report review">🚩</button>
+                            </div>
+                        </div>
+
+                        ${review.response_from_provider ? `
+                            <div class="provider-response">
+                                <div class="response-header">
+                                    <strong>Your Response:</strong>
+                                    <span class="response-date">${new Date(review.response_date).toLocaleDateString()}</span>
+                                </div>
+                                <p>${review.response_from_provider}</p>
+                            </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            if (pagination.total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination-controls">';
+            
+            // Previous button
+            html += `
+                <button class="page-btn" ${pagination.page === 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    ←
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (
+                    i === 1 ||
+                    i === pagination.total_pages ||
+                    (i >= pagination.page - 2 && i <= pagination.page + 2)
+                ) {
+                    html += `
+                        <button class="page-btn ${i === pagination.page ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === pagination.page - 3 || i === pagination.page + 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" ${pagination.page === pagination.total_pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    →
+                </button>
+            `;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadReviews();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function showRespondModal(reviewId) {
+            const review = reviews.find(r => r.id === reviewId);
+            if (!review) return;
+
+            const preview = document.getElementById('respond-review-preview');
+            preview.innerHTML = `
+                <div class="preview-review">
+                    <div class="preview-header">
+                        <strong>${review.customer_name}</strong> wrote:
+                    </div>
+                    <div class="preview-rating">${generateStarRating(review.overall_rating)}</div>
+                    <p class="preview-comment">"${review.comment.substring(0, 200)}${review.comment.length > 200 ? '...' : ''}"</p>
+                </div>
+            `;
+
+            document.getElementById('respond-review-id').value = reviewId;
+            document.getElementById('response-text').value = '';
+            document.getElementById('respond-modal').classList.add('active');
+        }
+
+        async function submitResponse(e) {
+            e.preventDefault();
+
+            const reviewId = document.getElementById('respond-review-id').value;
+            const response = document.getElementById('response-text').value.trim();
+
+            if (!response) {
+                showNotification('Please enter a response', 'error');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch('/api/reviews/respond.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        review_id: reviewId,
+                        response: response
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showNotification('Response posted successfully', 'success');
+                    closeModal('respond-modal');
+                    loadReviews();
+                    loadReviewStats();
+                } else {
+                    showNotification(data.message || 'Failed to post response', 'error');
+                }
+            } catch (error) {
+                console.error('Error posting response:', error);
+                showNotification('Failed to post response', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function editResponse(reviewId, currentResponse) {
+            document.getElementById('edit-response-id').value = reviewId;
+            document.getElementById('edit-response-text').value = currentResponse;
+            document.getElementById('edit-response-modal').classList.add('active');
+        }
+
+        async function updateResponse(e) {
+            e.preventDefault();
+
+            const reviewId = document.getElementById('edit-response-id').value;
+            const response = document.getElementById('edit-response-text').value.trim();
+
+            if (!response) {
+                showNotification('Please enter a response', 'error');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Updating...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const res = await fetch('/api/reviews/update-response.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        review_id: reviewId,
+                        response: response
+                    })
+                });
+
+                const data = await res.json();
+
+                if (data.success) {
+                    showNotification('Response updated successfully', 'success');
+                    closeModal('edit-response-modal');
+                    loadReviews();
+                } else {
+                    showNotification(data.message || 'Failed to update response', 'error');
+                }
+            } catch (error) {
+                console.error('Error updating response:', error);
+                showNotification('Failed to update response', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function showDeleteResponseModal(reviewId) {
+            selectedReviewId = reviewId;
+            document.getElementById('delete-response-modal').classList.add('active');
+        }
+
+        async function confirmDeleteResponse() {
+            if (!selectedReviewId) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/delete-response.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ review_id: selectedReviewId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Response deleted', 'success');
+                    closeModal('delete-response-modal');
+                    loadReviews();
+                } else {
+                    showNotification(data.message || 'Failed to delete response', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting response:', error);
+                showNotification('Failed to delete response', 'error');
+            }
+        }
+
+        function showReportModal(reviewId) {
+            document.getElementById('report-review-id').value = reviewId;
+            document.getElementById('report-reason').value = '';
+            document.getElementById('report-details').value = '';
+            document.getElementById('report-modal').classList.add('active');
+        }
+
+        async function submitReport(e) {
+            e.preventDefault();
+
+            const reviewId = document.getElementById('report-review-id').value;
+            const reason = document.getElementById('report-reason').value;
+            const details = document.getElementById('report-details').value;
+
+            if (!reason) {
+                showNotification('Please select a reason', 'error');
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/report.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        review_id: reviewId,
+                        reason: reason,
+                        description: details
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Review reported successfully', 'success');
+                    closeModal('report-modal');
+                } else {
+                    showNotification(data.message || 'Failed to report review', 'error');
+                }
+            } catch (error) {
+                console.error('Error reporting review:', error);
+                showNotification('Failed to report review', 'error');
+            }
+        }
+
+        function viewImage(url) {
+            const modal = document.createElement('div');
+            modal.className = 'modal image-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="close" onclick="this.closest('.modal').remove()">&times;</button>
+                    <img src="${url}" alt="Review photo" style="max-width: 100%; max-height: 80vh;">
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function exportReviews() {
+            window.location.href = '/api/reviews/provider/export.php?' + new URLSearchParams({
+                sort: currentSort,
+                search: searchTerm
+            });
+        }
+
+        function escapeJs(str) {
+            return str.replace(/'/g, "\\'").replace(/"/g, '&quot;');
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+            selectedReviewId = null;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.showRespondModal = showRespondModal;
+        window.editResponse = editResponse;
+        window.showDeleteResponseModal = showDeleteResponseModal;
+        window.confirmDeleteResponse = confirmDeleteResponse;
+        window.showReportModal = showReportModal;
+        window.submitReport = submitReport;
+        window.viewImage = viewImage;
+        window.exportReviews = exportReviews;
+        window.changePage = changePage;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

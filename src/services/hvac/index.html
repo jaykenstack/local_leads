@@ -1,0 +1,374 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HVAC Services - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/services.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div id="header"></div>
+
+    <main>
+        <!-- Category Hero -->
+        <section class="category-hero hvac">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Professional HVAC Services</h1>
+                    <p>Heating, ventilation, and air conditioning experts</p>
+                    
+                    <div class="hero-actions">
+                        <a href="#emergency" class="btn btn-emergency btn-large">
+                            🚨 Emergency HVAC
+                        </a>
+                        <a href="#request" class="btn btn-primary btn-large">
+                            Request HVAC Tech
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Sub-services Grid -->
+        <section class="subservices-section">
+            <div class="container">
+                <h2>Our HVAC Services</h2>
+                <div class="subservices-grid">
+                    <a href="/src/services/hvac/emergency.html" class="subservice-card emergency">
+                        <div class="card-icon">🚨</div>
+                        <h3>Emergency HVAC</h3>
+                        <p>24/7 heating & cooling repair</p>
+                        <span class="badge emergency-badge">24/7 Available</span>
+                    </a>
+
+                    <a href="/src/services/hvac/ac-repair.html" class="subservice-card">
+                        <div class="card-icon">❄️</div>
+                        <h3>AC Repair</h3>
+                        <p>Air conditioning repair service</p>
+                    </a>
+
+                    <a href="/src/services/hvac/heating-repair.html" class="subservice-card">
+                        <div class="card-icon">🔥</div>
+                        <h3>Heating Repair</h3>
+                        <p>Furnace and heater repair</p>
+                    </a>
+
+                    <a href="/src/services/hvac/installation.html" class="subservice-card">
+                        <div class="card-icon">🔧</div>
+                        <h3>Installation</h3>
+                        <p>New AC and heating units</p>
+                    </a>
+
+                    <a href="/src/services/hvac/maintenance.html" class="subservice-card">
+                        <div class="card-icon">🛠️</div>
+                        <h3>Maintenance</h3>
+                        <p>Regular HVAC maintenance</p>
+                    </a>
+
+                    <a href="/src/services/hvac/duct-cleaning.html" class="subservice-card">
+                        <div class="card-icon">🌀</div>
+                        <h3>Duct Cleaning</h3>
+                        <p>Air duct cleaning service</p>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-banner" id="emergency">
+            <div class="container">
+                <div class="emergency-content">
+                    <h2>HVAC Emergency?</h2>
+                    <p>No heat or AC? We're here 24/7</p>
+                    <a href="tel:+1234567890" class="btn btn-large btn-emergency">
+                        📞 Call Emergency HVAC
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Request Form -->
+        <section class="request-section" id="request">
+            <div class="container">
+                <div class="request-wrapper">
+                    <div class="request-info">
+                        <h2>Request HVAC Service</h2>
+                        <p>Connect with certified HVAC technicians</p>
+                        <ul class="benefits-list">
+                            <li>✓ Certified technicians</li>
+                            <li>✓ Free estimates</li>
+                            <li>✓ Same-day service</li>
+                            <li>✓ Warranty included</li>
+                        </ul>
+                    </div>
+
+                    <div class="request-form">
+                        <form onsubmit="submitHVACRequest(event)">
+                            <div class="form-group">
+                                <label class="form-label">Service Needed *</label>
+                                <select class="form-select" required>
+                                    <option value="">Select service</option>
+                                    <option value="emergency">Emergency HVAC</option>
+                                    <option value="ac-repair">AC Repair</option>
+                                    <option value="heating-repair">Heating Repair</option>
+                                    <option value="installation">Installation</option>
+                                    <option value="maintenance">Maintenance</option>
+                                    <option value="duct-cleaning">Duct Cleaning</option>
+                                </select>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">Name *</label>
+                                    <input type="text" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">Phone *</label>
+                                    <input type="tel" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Email</label>
+                                <input type="email" class="form-input">
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Address *</label>
+                                <input type="text" class="form-input" required>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">City *</label>
+                                    <input type="text" class="form-input" required>
+                                </div>
+                                <div class="form-group">
+                                    <label class="form-label">ZIP *</label>
+                                    <input type="text" class="form-input" required>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label class="form-label">Describe the issue *</label>
+                                <textarea class="form-textarea" rows="3" required></textarea>
+                            </div>
+
+                            <div class="form-row">
+                                <div class="form-group">
+                                    <label class="form-label">When do you need service?</label>
+                                    <select class="form-select">
+                                        <option value="emergency">Immediately</option>
+                                        <option value="today">Today</option>
+                                        <option value="tomorrow">Tomorrow</option>
+                                        <option value="flexible">Flexible</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary btn-large">
+                                Request Quotes
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Providers List -->
+        <section class="providers-section">
+            <div class="container">
+                <h2>Top HVAC Professionals</h2>
+                <div class="providers-list" id="hvac-providers">
+                    <!-- Loaded dynamically -->
+                </div>
+                <div class="view-all">
+                    <a href="/src/search/?category=hvac" class="btn btn-secondary">
+                        View All HVAC Techs →
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- FAQ Section -->
+        <section class="faq-section">
+            <div class="container">
+                <h2>Frequently Asked Questions</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How often should I service my HVAC?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>It's recommended to service your HVAC system twice a year - once before cooling season and once before heating season.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How long does an HVAC installation take?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Most residential installations take 4-8 hours, depending on the complexity and type of system.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Do you offer emergency service?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, we have technicians available 24/7 for emergencies. Call our emergency line for immediate assistance.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>What brands do you work with?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our technicians work with all major brands including Carrier, Trane, Lennox, Goodman, and more.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadHVACProviders();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadHVACProviders() {
+            try {
+                const response = await fetch('/api/providers/by-category.php?category=hvac&limit=3');
+                const data = await response.json();
+
+                const container = document.getElementById('hvac-providers');
+                
+                if (data.success && data.providers.length > 0) {
+                    container.innerHTML = data.providers.map(provider => `
+                        <div class="provider-card">
+                            <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${provider.business_name}" class="provider-avatar">
+                            <div class="provider-info">
+                                <h3>${provider.business_name}</h3>
+                                <div class="provider-rating">
+                                    ${generateStarRating(provider.rating)}
+                                    <span>${provider.review_count} reviews</span>
+                                </div>
+                                <p class="provider-description">${provider.description}</p>
+                                <div class="provider-badges">
+                                    ${provider.verified ? '<span class="badge verified">✓ Certified</span>' : ''}
+                                    ${provider.emergency ? '<span class="badge emergency">24/7</span>' : ''}
+                                </div>
+                            </div>
+                            <div class="provider-actions">
+                                <button class="btn btn-primary" onclick="requestHVAC(${provider.id})">
+                                    Request Quote
+                                </button>
+                                <button class="btn btn-secondary" onclick="viewProvider(${provider.id})">
+                                    View Profile
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center">No providers available at the moment</p>';
+                }
+            } catch (error) {
+                console.error('Error loading providers:', error);
+            }
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function requestHVAC(providerId) {
+            sessionStorage.setItem('selected_provider', providerId);
+            window.location.href = '/src/dashboard/customer/request.html?provider=' + providerId;
+        }
+
+        function viewProvider(id) {
+            window.location.href = `/src/public/reviews/?provider=${id}`;
+        }
+
+        function submitHVACRequest(e) {
+            e.preventDefault();
+            
+            const token = localStorage.getItem('auth_token');
+            
+            if (!token) {
+                window.location.href = '/src/auth/login.html?redirect=' + encodeURIComponent(window.location.href);
+                return;
+            }
+
+            showNotification('Request submitted! HVAC techs will contact you soon.', 'success');
+            
+            setTimeout(() => {
+                window.location.href = '/src/dashboard/customer/my-requests.html';
+            }, 2000);
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.textContent = '▼';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.textContent = '▲';
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

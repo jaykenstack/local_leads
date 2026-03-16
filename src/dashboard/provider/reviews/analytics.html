@@ -1,0 +1,711 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Review Analytics - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/reviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Charts.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/analytics.html" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Analytics
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search analytics...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Review Analytics</h1>
+                    <div class="header-actions">
+                        <select class="form-select" id="date-range">
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="180">Last 6 Months</option>
+                            <option value="365">Last Year</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportAnalytics()">
+                            📥 Export Report
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Key Metrics Cards -->
+                <div class="metrics-grid">
+                    <div class="metric-card">
+                        <div class="metric-icon">⭐</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="avg-rating">0.0</div>
+                            <div class="metric-label">Average Rating</div>
+                            <div class="metric-trend" id="rating-trend">
+                                <span class="trend-icon">→</span>
+                                <span class="trend-value">0% vs last period</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">📝</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="total-reviews">0</div>
+                            <div class="metric-label">Total Reviews</div>
+                            <div class="metric-trend" id="reviews-trend">
+                                <span class="trend-icon">→</span>
+                                <span class="trend-value">0% vs last period</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">⏱️</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="response-rate">0%</div>
+                            <div class="metric-label">Response Rate</div>
+                            <div class="metric-trend" id="response-trend">
+                                <span class="trend-icon">→</span>
+                                <span class="trend-value">0% vs last period</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="metric-card">
+                        <div class="metric-icon">💬</div>
+                        <div class="metric-content">
+                            <div class="metric-value" id="avg-response-time">0h</div>
+                            <div class="metric-label">Avg Response Time</div>
+                            <div class="metric-trend" id="time-trend">
+                                <span class="trend-icon">→</span>
+                                <span class="trend-value">0% vs last period</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Rating Trend</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item">
+                                    <span class="legend-color" style="background: #3b82f6;"></span>
+                                    Average Rating
+                                </span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="rating-trend-chart"></canvas>
+                        </div>
+                    </div>
+
+                    <div class="chart-card">
+                        <div class="chart-header">
+                            <h3>Review Volume</h3>
+                            <div class="chart-legend">
+                                <span class="legend-item">
+                                    <span class="legend-color" style="background: #10b981;"></span>
+                                    Number of Reviews
+                                </span>
+                            </div>
+                        </div>
+                        <div class="chart-container">
+                            <canvas id="volume-chart"></canvas>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Category Ratings -->
+                <div class="category-ratings-card">
+                    <h3>Category Breakdown</h3>
+                    <div class="category-grid" id="category-ratings">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Sentiment Analysis -->
+                <div class="sentiment-card">
+                    <h3>Sentiment Analysis</h3>
+                    <div class="sentiment-grid">
+                        <div class="sentiment-item">
+                            <div class="sentiment-label">Positive</div>
+                            <div class="sentiment-bar-container">
+                                <div class="sentiment-bar positive" id="positive-sentiment" style="width: 0%"></div>
+                            </div>
+                            <div class="sentiment-value" id="positive-percent">0%</div>
+                        </div>
+                        <div class="sentiment-item">
+                            <div class="sentiment-label">Neutral</div>
+                            <div class="sentiment-bar-container">
+                                <div class="sentiment-bar neutral" id="neutral-sentiment" style="width: 0%"></div>
+                            </div>
+                            <div class="sentiment-value" id="neutral-percent">0%</div>
+                        </div>
+                        <div class="sentiment-item">
+                            <div class="sentiment-label">Negative</div>
+                            <div class="sentiment-bar-container">
+                                <div class="sentiment-bar negative" id="negative-sentiment" style="width: 0%"></div>
+                            </div>
+                            <div class="sentiment-value" id="negative-percent">0%</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Word Cloud / Common Phrases -->
+                <div class="insights-card">
+                    <h3>Common Phrases in Reviews</h3>
+                    <div class="word-cloud" id="word-cloud">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Response Impact Analysis -->
+                <div class="impact-card">
+                    <h3>Response Impact</h3>
+                    <div class="impact-grid">
+                        <div class="impact-stat">
+                            <div class="impact-value" id="responded-rating">0.0</div>
+                            <div class="impact-label">Avg Rating (Responded)</div>
+                            <div class="impact-compare" id="responded-compare">vs 0.0 without response</div>
+                        </div>
+                        <div class="impact-stat">
+                            <div class="impact-value" id="unresponded-rating">0.0</div>
+                            <div class="impact-label">Avg Rating (No Response)</div>
+                        </div>
+                        <div class="impact-stat">
+                            <div class="impact-value" id="response-lift">0%</div>
+                            <div class="impact-label">Rating Lift</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Top Customers -->
+                <div class="top-customers-card">
+                    <h3>Most Active Reviewers</h3>
+                    <div class="customers-list" id="top-customers">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Export Section -->
+                <div class="export-section">
+                    <h3>Export Data</h3>
+                    <p>Download your review analytics for further analysis</p>
+                    <div class="export-buttons">
+                        <button class="btn btn-secondary" onclick="exportData('csv')">
+                            📊 Export as CSV
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData('pdf')">
+                            📄 Export as PDF
+                        </button>
+                        <button class="btn btn-secondary" onclick="exportData('excel')">
+                            📑 Export as Excel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let analyticsData = null;
+        let ratingChart = null;
+        let volumeChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadAnalytics();
+            
+            document.getElementById('date-range').addEventListener('change', () => {
+                loadAnalytics();
+            });
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadAnalytics() {
+            const days = document.getElementById('date-range').value;
+            
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/reviews/provider/analytics.php?days=${days}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    analyticsData = data;
+                    updateMetrics(data.metrics);
+                    updateCategoryRatings(data.categories);
+                    updateSentiment(data.sentiment);
+                    updateWordCloud(data.phrases);
+                    updateResponseImpact(data.impact);
+                    updateTopCustomers(data.top_customers);
+                    updateCharts(data.charts);
+                }
+            } catch (error) {
+                console.error('Error loading analytics:', error);
+                showNotification('Failed to load analytics', 'error');
+            }
+        }
+
+        function updateMetrics(metrics) {
+            // Update main metrics
+            document.getElementById('avg-rating').textContent = metrics.avg_rating.toFixed(1);
+            document.getElementById('total-reviews').textContent = metrics.total_reviews;
+            document.getElementById('response-rate').textContent = metrics.response_rate + '%';
+            document.getElementById('avg-response-time').textContent = metrics.avg_response_time + 'h';
+
+            // Update trends
+            updateTrend('rating-trend', metrics.rating_trend);
+            updateTrend('reviews-trend', metrics.reviews_trend);
+            updateTrend('response-trend', metrics.response_trend);
+            updateTrend('time-trend', metrics.time_trend);
+        }
+
+        function updateTrend(elementId, trend) {
+            const element = document.getElementById(elementId);
+            const icon = element.querySelector('.trend-icon');
+            const value = element.querySelector('.trend-value');
+
+            if (trend.percentage > 0) {
+                icon.innerHTML = '↑';
+                icon.style.color = '#10b981';
+                value.textContent = `+${trend.percentage}% vs last period`;
+            } else if (trend.percentage < 0) {
+                icon.innerHTML = '↓';
+                icon.style.color = '#ef4444';
+                value.textContent = `${trend.percentage}% vs last period`;
+            } else {
+                icon.innerHTML = '→';
+                icon.style.color = '#6b7280';
+                value.textContent = '0% vs last period';
+            }
+        }
+
+        function updateCategoryRatings(categories) {
+            const container = document.getElementById('category-ratings');
+            
+            container.innerHTML = categories.map(cat => `
+                <div class="category-item">
+                    <div class="category-info">
+                        <span class="category-name">${cat.name}</span>
+                        <span class="category-rating">${cat.rating.toFixed(1)} ★</span>
+                    </div>
+                    <div class="category-bar-container">
+                        <div class="category-bar" style="width: ${(cat.rating / 5) * 100}%"></div>
+                    </div>
+                    <div class="category-count">${cat.count} reviews</div>
+                </div>
+            `).join('');
+        }
+
+        function updateSentiment(sentiment) {
+            const total = sentiment.positive + sentiment.neutral + sentiment.negative;
+            
+            const positivePercent = (sentiment.positive / total) * 100;
+            const neutralPercent = (sentiment.neutral / total) * 100;
+            const negativePercent = (sentiment.negative / total) * 100;
+
+            document.getElementById('positive-sentiment').style.width = positivePercent + '%';
+            document.getElementById('neutral-sentiment').style.width = neutralPercent + '%';
+            document.getElementById('negative-sentiment').style.width = negativePercent + '%';
+
+            document.getElementById('positive-percent').textContent = Math.round(positivePercent) + '%';
+            document.getElementById('neutral-percent').textContent = Math.round(neutralPercent) + '%';
+            document.getElementById('negative-percent').textContent = Math.round(negativePercent) + '%';
+        }
+
+        function updateWordCloud(phrases) {
+            const container = document.getElementById('word-cloud');
+            
+            // Calculate font sizes based on frequency
+            const maxFreq = Math.max(...phrases.map(p => p.count));
+            
+            container.innerHTML = phrases.map(phrase => {
+                const fontSize = 12 + (phrase.count / maxFreq) * 28; // 12px to 40px
+                const opacity = 0.4 + (phrase.count / maxFreq) * 0.6; // 0.4 to 1.0
+                
+                return `
+                    <span class="cloud-word" style="font-size: ${fontSize}px; opacity: ${opacity}">
+                        ${phrase.text}
+                    </span>
+                `;
+            }).join('');
+        }
+
+        function updateResponseImpact(impact) {
+            document.getElementById('responded-rating').textContent = impact.responded_rating.toFixed(1);
+            document.getElementById('unresponded-rating').textContent = impact.unresponded_rating.toFixed(1);
+            
+            const lift = ((impact.responded_rating - impact.unresponded_rating) / impact.unresponded_rating) * 100;
+            document.getElementById('response-lift').textContent = '+' + Math.round(lift) + '%';
+            document.getElementById('responded-compare').textContent = 
+                `vs ${impact.unresponded_rating.toFixed(1)} without response`;
+        }
+
+        function updateTopCustomers(customers) {
+            const container = document.getElementById('top-customers');
+            
+            container.innerHTML = customers.map((customer, index) => `
+                <div class="customer-item">
+                    <span class="customer-rank">#${index + 1}</span>
+                    <img src="${customer.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                         alt="${customer.name}" class="customer-avatar">
+                    <span class="customer-name">${customer.name}</span>
+                    <span class="customer-reviews">${customer.review_count} reviews</span>
+                    <span class="customer-avg-rating">${customer.avg_rating.toFixed(1)} ★</span>
+                </div>
+            `).join('');
+        }
+
+        function updateCharts(charts) {
+            // Rating Trend Chart
+            const ratingCtx = document.getElementById('rating-trend-chart').getContext('2d');
+            
+            if (ratingChart) {
+                ratingChart.destroy();
+            }
+
+            ratingChart = new Chart(ratingCtx, {
+                type: 'line',
+                data: {
+                    labels: charts.rating_trend.labels,
+                    datasets: [{
+                        label: 'Average Rating',
+                        data: charts.rating_trend.data,
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        borderWidth: 2,
+                        pointBackgroundColor: '#3b82f6',
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        pointRadius: 4,
+                        pointHoverRadius: 6,
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `Rating: ${context.parsed.y.toFixed(2)} ★`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            max: 5,
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            ticks: {
+                                stepSize: 1,
+                                callback: (value) => value + ' ★'
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+
+            // Volume Chart
+            const volumeCtx = document.getElementById('volume-chart').getContext('2d');
+            
+            if (volumeChart) {
+                volumeChart.destroy();
+            }
+
+            volumeChart = new Chart(volumeCtx, {
+                type: 'bar',
+                data: {
+                    labels: charts.volume.labels,
+                    datasets: [{
+                        label: 'Number of Reviews',
+                        data: charts.volume.data,
+                        backgroundColor: '#10b981',
+                        borderRadius: 4,
+                        barPercentage: 0.7,
+                        categoryPercentage: 0.8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: (context) => `${context.parsed.y} reviews`
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            beginAtZero: true,
+                            grid: {
+                                color: '#e5e7eb'
+                            },
+                            ticks: {
+                                stepSize: 1
+                            }
+                        },
+                        x: {
+                            grid: {
+                                display: false
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function exportAnalytics() {
+            if (!analyticsData) return;
+
+            // Create export data
+            const exportData = {
+                metrics: analyticsData.metrics,
+                categories: analyticsData.categories,
+                sentiment: analyticsData.sentiment,
+                impact: analyticsData.impact,
+                top_customers: analyticsData.top_customers,
+                export_date: new Date().toISOString(),
+                date_range: document.getElementById('date-range').value
+            };
+
+            // Convert to CSV
+            const csv = convertToCSV(exportData);
+            
+            // Download
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `review-analytics-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function convertToCSV(data) {
+            const rows = [];
+            
+            // Headers
+            rows.push(['Metric', 'Value'].join(','));
+            
+            // Metrics
+            rows.push(['Average Rating', data.metrics.avg_rating].join(','));
+            rows.push(['Total Reviews', data.metrics.total_reviews].join(','));
+            rows.push(['Response Rate', data.metrics.response_rate + '%'].join(','));
+            rows.push(['Avg Response Time', data.metrics.avg_response_time + 'h'].join(','));
+            
+            rows.push([]); // Empty row
+            
+            // Category ratings
+            rows.push(['Category', 'Rating', 'Count'].join(','));
+            data.categories.forEach(cat => {
+                rows.push([cat.name, cat.rating, cat.count].join(','));
+            });
+            
+            return rows.join('\n');
+        }
+
+        function exportData(format) {
+            if (format === 'csv') {
+                exportAnalytics();
+            } else if (format === 'pdf') {
+                window.open(`/api/reviews/provider/export-analytics.php?format=pdf&days=${document.getElementById('date-range').value}`, '_blank');
+            } else if (format === 'excel') {
+                window.location.href = `/api/reviews/provider/export-analytics.php?format=excel&days=${document.getElementById('date-range').value}`;
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.exportAnalytics = exportAnalytics;
+        window.exportData = exportData;
+    </script>
+</body>
+</html>

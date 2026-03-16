@@ -1,0 +1,703 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Write a Review - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/reviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item active">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Write a Review</h1>
+                    <p>Share your experience to help others make informed decisions</p>
+                </div>
+
+                <!-- Review Form Container -->
+                <div class="review-form-container">
+                    <div id="service-info-loading" class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading service details...</p>
+                    </div>
+
+                    <div id="review-form-wrapper" style="display: none;">
+                        <!-- Service Info Card -->
+                        <div class="service-info-card" id="service-info-card">
+                            <!-- Loaded dynamically -->
+                        </div>
+
+                        <form id="review-form" class="review-form" onsubmit="submitReview(event)">
+                            <input type="hidden" name="request_id" id="request-id">
+                            <input type="hidden" name="provider_id" id="provider-id">
+
+                            <!-- Ratings Section -->
+                            <div class="ratings-section">
+                                <h3>Rate Your Experience</h3>
+                                <p class="section-subtitle">Your honest feedback helps improve service quality</p>
+
+                                <div class="ratings-grid">
+                                    <!-- Overall Rating -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Overall Experience <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="overall">
+                                            <input type="hidden" name="rating_overall" id="rating_overall" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('overall', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('overall', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('overall', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('overall', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('overall', 5)">☆</span>
+                                            </div>
+                                            <div class="rating-hint" id="hint-overall"></div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Quality of Work -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Quality of Work <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="quality">
+                                            <input type="hidden" name="rating_quality" id="rating_quality" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('quality', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('quality', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('quality', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('quality', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('quality', 5)">☆</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Punctuality -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Punctuality <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="punctuality">
+                                            <input type="hidden" name="rating_punctuality" id="rating_punctuality" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('punctuality', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('punctuality', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('punctuality', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('punctuality', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('punctuality', 5)">☆</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Professionalism -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Professionalism <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="professionalism">
+                                            <input type="hidden" name="rating_professionalism" id="rating_professionalism" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('professionalism', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('professionalism', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('professionalism', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('professionalism', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('professionalism', 5)">☆</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Value for Money -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Value for Money <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="value">
+                                            <input type="hidden" name="rating_value" id="rating_value" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('value', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('value', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('value', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('value', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('value', 5)">☆</span>
+                                            </div>
+                                        </div>
+                                    </div>
+
+                                    <!-- Communication -->
+                                    <div class="rating-category">
+                                        <label class="rating-label">
+                                            Communication <span class="required">*</span>
+                                        </label>
+                                        <div class="star-rating-input" data-category="communication">
+                                            <input type="hidden" name="rating_communication" id="rating_communication" required>
+                                            <div class="stars-container">
+                                                <span class="star" data-value="1" onclick="setRating('communication', 1)">☆</span>
+                                                <span class="star" data-value="2" onclick="setRating('communication', 2)">☆</span>
+                                                <span class="star" data-value="3" onclick="setRating('communication', 3)">☆</span>
+                                                <span class="star" data-value="4" onclick="setRating('communication', 4)">☆</span>
+                                                <span class="star" data-value="5" onclick="setRating('communication', 5)">☆</span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Review Details -->
+                            <div class="review-details-section">
+                                <h3>Review Details</h3>
+
+                                <div class="form-group">
+                                    <label class="form-label">Review Title (Optional)</label>
+                                    <input type="text" name="title" class="form-input" 
+                                           placeholder="Summarize your experience">
+                                </div>
+
+                                <div class="form-group">
+                                    <label class="form-label">
+                                        Your Review <span class="required">*</span>
+                                    </label>
+                                    <textarea name="comment" class="form-textarea" rows="5" required
+                                              placeholder="Tell others about your experience with this provider..."></textarea>
+                                    <div class="char-counter">
+                                        <span id="comment-count">0</span>/2000
+                                    </div>
+                                </div>
+
+                                <div class="form-row">
+                                    <div class="form-group">
+                                        <label class="form-label">What went well? (Optional)</label>
+                                        <textarea name="pros" class="form-textarea" rows="3"
+                                                  placeholder="e.g., Quick response, fair pricing, excellent work"></textarea>
+                                    </div>
+
+                                    <div class="form-group">
+                                        <label class="form-label">What could be improved? (Optional)</label>
+                                        <textarea name="cons" class="form-textarea" rows="3"
+                                                  placeholder="e.g., Communication, timing, etc."></textarea>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Photo Upload -->
+                            <div class="photo-upload-section">
+                                <h3>Add Photos (Optional)</h3>
+                                <p class="section-subtitle">Share photos of the completed work</p>
+
+                                <div class="photo-upload-area" id="photo-upload-area">
+                                    <input type="file" id="review-photos" multiple accept="image/*" style="display: none;">
+                                    <div class="upload-placeholder" onclick="document.getElementById('review-photos').click()">
+                                        <span class="upload-icon">📷</span>
+                                        <span class="upload-text">Click to upload photos</span>
+                                        <span class="upload-hint">Maximum 5 photos, 5MB each</span>
+                                    </div>
+                                </div>
+
+                                <div class="photo-previews" id="photo-previews"></div>
+                            </div>
+
+                            <!-- Additional Options -->
+                            <div class="review-options">
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="anonymous" value="1">
+                                    <span>Post this review anonymously</span>
+                                    <span class="checkbox-hint">Your name won't be displayed publicly</span>
+                                </label>
+
+                                <label class="checkbox-label">
+                                    <input type="checkbox" name="allow_contact" checked>
+                                    <span>Allow provider to contact me about this review</span>
+                                </label>
+                            </div>
+
+                            <!-- Review Guidelines -->
+                            <div class="review-guidelines">
+                                <h4>Review Guidelines</h4>
+                                <ul>
+                                    <li>Be honest and constructive</li>
+                                    <li>Focus on the service, not personal attacks</li>
+                                    <li>Don't include personal contact information</li>
+                                    <li>Photos should be relevant to the service</li>
+                                </ul>
+                            </div>
+
+                            <!-- Form Actions -->
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="window.history.back()">
+                                    Cancel
+                                </button>
+                                <button type="submit" class="btn btn-primary" id="submit-review">
+                                    Submit Review
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Success State -->
+                    <div id="review-success" class="success-state" style="display: none;">
+                        <div class="success-icon">✓</div>
+                        <h2>Thank You for Your Review!</h2>
+                        <p>Your feedback helps other customers make informed decisions.</p>
+                        <div class="success-actions">
+                            <a href="/src/dashboard/customer/reviews/my-reviews.html" class="btn btn-primary">
+                                View My Reviews
+                            </a>
+                            <a href="/src/dashboard/customer/" class="btn btn-secondary">
+                                Go to Dashboard
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        let uploadedPhotos = [];
+        let requestData = null;
+
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Get request ID from URL
+            const urlParams = new URLSearchParams(window.location.search);
+            const requestId = urlParams.get('request');
+
+            if (!requestId) {
+                showError('No service request specified');
+                return;
+            }
+
+            await loadRequestDetails(requestId);
+            initCharCounter();
+            initPhotoUpload();
+        });
+
+        async function loadRequestDetails(requestId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/reviews/prepare.php?request_id=${requestId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    requestData = data.request;
+                    displayServiceInfo(data.request);
+                    document.getElementById('request-id').value = requestId;
+                    document.getElementById('provider-id').value = data.request.provider_id;
+                    
+                    document.getElementById('service-info-loading').style.display = 'none';
+                    document.getElementById('review-form-wrapper').style.display = 'block';
+                } else {
+                    showError(data.message || 'Unable to load service details');
+                }
+            } catch (error) {
+                console.error('Error loading request:', error);
+                showError('Failed to load service details');
+            }
+        }
+
+        function displayServiceInfo(request) {
+            const container = document.getElementById('service-info-card');
+            
+            container.innerHTML = `
+                <div class="provider-info">
+                    <img src="${request.provider_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                         alt="${request.provider_name}" class="provider-avatar">
+                    <div>
+                        <h2>${request.provider_name}</h2>
+                        <p class="service-type">${request.service_name}</p>
+                        <p class="service-date">Service completed on ${new Date(request.completion_date).toLocaleDateString()}</p>
+                    </div>
+                </div>
+                <div class="service-details">
+                    <h4>Service Details:</h4>
+                    <p>${request.description}</p>
+                </div>
+            `;
+        }
+
+        function setRating(category, value) {
+            const input = document.getElementById(`rating_${category}`);
+            input.value = value;
+
+            // Update star display
+            const container = input.closest('.star-rating-input');
+            const stars = container.querySelectorAll('.star');
+            
+            stars.forEach((star, index) => {
+                if (index < value) {
+                    star.textContent = '★';
+                    star.classList.add('active');
+                } else {
+                    star.textContent = '☆';
+                    star.classList.remove('active');
+                }
+            });
+
+            // Show hint based on rating
+            const hints = {
+                1: 'Poor',
+                2: 'Fair',
+                3: 'Good',
+                4: 'Very Good',
+                5: 'Excellent'
+            };
+
+            const hintElement = document.getElementById(`hint-${category}`);
+            if (hintElement) {
+                hintElement.textContent = hints[value];
+            }
+
+            // Check if all ratings are filled
+            validateRatings();
+        }
+
+        function validateRatings() {
+            const required = ['overall', 'quality', 'punctuality', 'professionalism', 'value', 'communication'];
+            let allFilled = true;
+
+            required.forEach(category => {
+                const value = document.getElementById(`rating_${category}`).value;
+                if (!value) allFilled = false;
+            });
+
+            const submitBtn = document.getElementById('submit-review');
+            submitBtn.disabled = !allFilled;
+        }
+
+        function initCharCounter() {
+            const textarea = document.querySelector('textarea[name="comment"]');
+            const counter = document.getElementById('comment-count');
+
+            textarea.addEventListener('input', () => {
+                counter.textContent = textarea.value.length;
+            });
+        }
+
+        function initPhotoUpload() {
+            const input = document.getElementById('review-photos');
+            
+            input.addEventListener('change', async (e) => {
+                const files = Array.from(e.target.files);
+                
+                // Validate file count
+                if (uploadedPhotos.length + files.length > 5) {
+                    showNotification('Maximum 5 photos allowed', 'error');
+                    return;
+                }
+
+                // Validate each file
+                for (const file of files) {
+                    if (file.size > 5 * 1024 * 1024) {
+                        showNotification(`${file.name} exceeds 5MB limit`, 'error');
+                        return;
+                    }
+
+                    if (!file.type.startsWith('image/')) {
+                        showNotification(`${file.name} is not an image`, 'error');
+                        return;
+                    }
+                }
+
+                // Upload files
+                for (const file of files) {
+                    await uploadPhoto(file);
+                }
+            });
+        }
+
+        async function uploadPhoto(file) {
+            const formData = new FormData();
+            formData.append('photos[]', file);
+
+            // Show loading preview
+            const previewId = 'preview-' + Date.now();
+            addPhotoPreview(previewId, null, true);
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/upload-photos.php', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: formData
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Add to uploaded photos
+                    uploadedPhotos.push(...data.urls);
+                    
+                    // Update preview with actual image
+                    data.urls.forEach((url, index) => {
+                        updatePhotoPreview(previewId + (index > 0 ? '-' + index : ''), url);
+                    });
+                } else {
+                    showNotification(data.message || 'Failed to upload photo', 'error');
+                    removePhotoPreview(previewId);
+                }
+            } catch (error) {
+                console.error('Error uploading photo:', error);
+                showNotification('Failed to upload photo', 'error');
+                removePhotoPreview(previewId);
+            }
+        }
+
+        function addPhotoPreview(id, url, isLoading = false) {
+            const container = document.getElementById('photo-previews');
+            
+            const preview = document.createElement('div');
+            preview.className = 'photo-preview';
+            preview.id = id;
+            
+            if (isLoading) {
+                preview.innerHTML = `
+                    <div class="preview-loading">
+                        <div class="spinner-small"></div>
+                    </div>
+                    <button type="button" class="remove-photo" onclick="removePhoto('${id}')">×</button>
+                `;
+            } else {
+                preview.innerHTML = `
+                    <img src="${url}" alt="Review photo">
+                    <button type="button" class="remove-photo" onclick="removePhoto('${id}')">×</button>
+                `;
+            }
+            
+            container.appendChild(preview);
+        }
+
+        function updatePhotoPreview(id, url) {
+            const preview = document.getElementById(id);
+            if (preview) {
+                preview.innerHTML = `
+                    <img src="${url}" alt="Review photo">
+                    <button type="button" class="remove-photo" onclick="removePhoto('${id}')">×</button>
+                `;
+            }
+        }
+
+        function removePhoto(id) {
+            const preview = document.getElementById(id);
+            if (preview) {
+                // Remove from uploadedPhotos array (if needed)
+                preview.remove();
+            }
+        }
+
+        async function submitReview(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const formData = new FormData(form);
+
+            // Validate all ratings
+            const required = ['overall', 'quality', 'punctuality', 'professionalism', 'value', 'communication'];
+            const ratings = {};
+
+            for (const category of required) {
+                const value = formData.get(`rating_${category}`);
+                if (!value) {
+                    showNotification(`Please rate ${category}`, 'error');
+                    return;
+                }
+                ratings[category] = parseInt(value);
+            }
+
+            // Validate comment
+            const comment = formData.get('comment');
+            if (comment.length < 10) {
+                showNotification('Please write at least 10 characters in your review', 'error');
+                return;
+            }
+
+            // Prepare review data
+            const reviewData = {
+                request_id: formData.get('request_id'),
+                ratings: ratings,
+                title: formData.get('title'),
+                pros: formData.get('pros'),
+                cons: formData.get('cons'),
+                comment: comment,
+                anonymous: formData.get('anonymous') === '1',
+                photos: uploadedPhotos
+            };
+
+            // Disable submit button
+            const submitBtn = document.getElementById('submit-review');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Submitting...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/create.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(reviewData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Show success message
+                    document.getElementById('review-form-wrapper').style.display = 'none';
+                    document.getElementById('review-success').style.display = 'block';
+
+                    // Track conversion
+                    if (typeof gtag !== 'undefined') {
+                        gtag('event', 'write_review', {
+                            'provider_id': requestData.provider_id,
+                            'rating': ratings.overall
+                        });
+                    }
+                } else {
+                    showNotification(data.message || 'Failed to submit review', 'error');
+                    submitBtn.disabled = false;
+                    submitBtn.innerHTML = originalText;
+                }
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                showNotification('Failed to submit review', 'error');
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function showError(message) {
+            document.getElementById('service-info-loading').innerHTML = `
+                <div class="error-state">
+                    <span class="error-icon">❌</span>
+                    <p>${message}</p>
+                    <button class="btn btn-primary" onclick="window.history.back()">Go Back</button>
+                </div>
+            `;
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        // Sidebar toggle
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

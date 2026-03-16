@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Login - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        /* ===== RESET & BASE ===== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        html, body {
+            height: 100%;
+            width: 100%;
+            overflow: hidden; /* NO SCROLLING */
+            font-family: 'Inter', sans-serif;
+        }
+        
+        /* ===== MAIN CONTAINER ===== */
+        .auth-page {
+            height: 100vh;
+            width: 100vw;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+        
+        /* ===== CARD CONTAINER ===== */
+        .auth-container {
+            width: 100%;
+            max-width: 440px;
+            padding: 20px;
+        }
+        
+        .auth-card {
+            background: white;
+            border-radius: 24px;
+            padding: 32px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            width: 100%;
+            max-height: 95vh;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ===== CONTENT AREA (FIXED HEIGHT, NO SCROLL) ===== */
+        .auth-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            gap: 16px;
+            overflow: visible;
+        }
+        
+        /* ===== LOGO ===== */
+        .auth-logo {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 800;
+            color: #1e293b;
+            text-decoration: none;
+        }
+        
+        .logo-text span {
+            color: #3b82f6;
+        }
+        
+        /* ===== HEADER ===== */
+        .auth-header {
+            text-align: center;
+            margin-bottom: 8px;
+        }
+        
+        .auth-header h1 {
+            font-size: 28px;
+            font-weight: 700;
+            color: #1e293b;
+            margin-bottom: 4px;
+        }
+        
+        .auth-header p {
+            color: #64748b;
+            font-size: 14px;
+        }
+        
+        /* ===== TABS ===== */
+        .auth-tabs {
+            display: flex;
+            gap: 8px;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 12px;
+            margin: 8px 0;
+        }
+        
+        .auth-tab {
+            flex: 1;
+            padding: 10px;
+            border: none;
+            background: transparent;
+            border-radius: 8px;
+            font-weight: 600;
+            font-size: 14px;
+            color: #64748b;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .auth-tab.active {
+            background: white;
+            color: #3b82f6;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        
+        /* ===== FORM ===== */
+        .auth-form {
+            display: block;
+            margin-top: 8px;
+        }
+        
+        .form-group {
+            margin-bottom: 16px;
+        }
+        
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #334155;
+        }
+        
+        .form-input {
+            width: 100%;
+            padding: 12px 14px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 14px;
+            transition: all 0.2s;
+        }
+        
+        .form-input:focus {
+            outline: none;
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59,130,246,0.1);
+        }
+        
+        /* ===== PASSWORD INPUT ===== */
+        .password-input {
+            position: relative;
+        }
+        
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            top: 50%;
+            transform: translateY(-50%);
+            background: none;
+            border: none;
+            cursor: pointer;
+            color: #94a3b8;
+            font-size: 18px;
+        }
+        
+        /* ===== FORM ROW ===== */
+        .form-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+        
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 13px;
+            color: #475569;
+            cursor: pointer;
+        }
+        
+        .checkbox-label input {
+            width: 16px;
+            height: 16px;
+        }
+        
+        .forgot-link {
+            color: #3b82f6;
+            text-decoration: none;
+            font-size: 13px;
+            font-weight: 600;
+        }
+        
+        /* ===== BUTTON ===== */
+        .btn-primary {
+            width: 100%;
+            padding: 14px;
+            background: #3b82f6;
+            color: white;
+            border: none;
+            border-radius: 12px;
+            font-weight: 700;
+            font-size: 15px;
+            cursor: pointer;
+            transition: all 0.2s;
+            margin-bottom: 16px;
+        }
+        
+        .btn-primary:hover {
+            background: #2563eb;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 12px rgba(59,130,246,0.3);
+        }
+        
+        /* ===== DIVIDER ===== */
+        .auth-divider {
+            text-align: center;
+            margin: 12px 0;
+            position: relative;
+        }
+        
+        .auth-divider::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 1px;
+            background: #e2e8f0;
+        }
+        
+        .auth-divider span {
+            background: white;
+            padding: 0 12px;
+            color: #94a3b8;
+            font-size: 12px;
+            position: relative;
+        }
+        
+        /* ===== SOCIAL LOGIN ===== */
+        .social-login {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-bottom: 16px;
+        }
+        
+        .social-btn {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px;
+            background: white;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 13px;
+            color: #334155;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .social-btn:hover {
+            border-color: #3b82f6;
+            background: #f8fafc;
+        }
+        
+        .social-btn img {
+            width: 18px;
+            height: 18px;
+        }
+        
+        /* ===== FOOTER ===== */
+        .auth-footer {
+            text-align: center;
+            font-size: 13px;
+            color: #64748b;
+        }
+        
+        .auth-footer a {
+            color: #3b82f6;
+            text-decoration: none;
+            font-weight: 700;
+            margin-left: 4px;
+        }
+        
+        /* ===== PROVIDER NOTICE ===== */
+        .provider-notice {
+            margin-top: 12px;
+            padding: 10px;
+            background: #f0f9ff;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 13px;
+            border: 1px solid #bae6fd;
+        }
+        
+        .provider-notice a {
+            color: #0369a1;
+            font-weight: 700;
+            text-decoration: none;
+        }
+        
+        /* ===== NOTIFICATION ===== */
+        .notification {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background: white;
+            border-radius: 10px;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+            border-left: 4px solid;
+            z-index: 9999;
+            animation: slideIn 0.3s ease;
+        }
+        
+        .notification-success { border-left-color: #10b981; }
+        .notification-error { border-left-color: #ef4444; }
+        
+        @keyframes slideIn {
+            from { transform: translateX(100%); opacity: 0; }
+            to { transform: translateX(0); opacity: 1; }
+        }
+        
+        /* ===== RESPONSIVE ===== */
+        @media (max-width: 480px) {
+            .auth-card {
+                padding: 24px 20px;
+            }
+            
+            .social-login {
+                grid-template-columns: 1fr;
+            }
+            
+            .auth-header h1 {
+                font-size: 24px;
+            }
+        }
+        
+        /* NO SCROLLING - EVER */
+        .auth-content::-webkit-scrollbar {
+            display: none;
+        }
+    </style>
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-content">
+                <!-- Logo -->
+                <div class="auth-logo">
+                    <a href="/" class="logo-text">
+                        Urgent<span>Services</span>
+                    </a>
+                </div>
+
+                <!-- Header -->
+                <div class="auth-header">
+                    <h1>Welcome Back</h1>
+                    <p>Sign in to continue</p>
+                </div>
+
+                <!-- Tabs -->
+                <div class="auth-tabs">
+                    <button class="auth-tab active" onclick="switchType('customer')">Customer</button>
+                    <button class="auth-tab" onclick="switchType('provider')">Provider</button>
+                </div>
+
+                <!-- Form -->
+                <form onsubmit="handleLogin(event)">
+                    <div class="form-group">
+                        <label class="form-label">Email</label>
+                        <input type="email" id="email" class="form-input" value="admin@example.com" required>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Password</label>
+                        <div class="password-input">
+                            <input type="password" id="password" class="form-input" value="admin123" required>
+                            <button type="button" class="password-toggle" onclick="togglePassword()">👁️</button>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <label class="checkbox-label">
+                            <input type="checkbox" checked> Remember me
+                        </label>
+                        <a href="#" class="forgot-link">Forgot?</a>
+                    </div>
+
+                    <button type="submit" class="btn-primary" id="loginBtn">Sign In</button>
+
+                    <div class="auth-divider">
+                        <span>OR</span>
+                    </div>
+
+                    <!-- Social -->
+                    <div class="social-login">
+                        <button type="button" class="social-btn" onclick="socialLogin('google')">
+                            <span>G</span> Google
+                        </button>
+                        <button type="button" class="social-btn" onclick="socialLogin('facebook')">
+                            <span>F</span> Facebook
+                        </button>
+                    </div>
+
+                    <!-- Footer -->
+                    <div class="auth-footer">
+                        No account? <a href="/src/auth/signup.html">Sign up</a>
+                    </div>
+
+                    <!-- Provider Notice -->
+                    <div class="provider-notice" id="providerNotice" style="display:none">
+                        Join as a <a href="/src/auth/provider-signup.html">Service Provider</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function switchType(type) {
+            document.querySelectorAll('.auth-tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            
+            // Show/hide provider notice
+            document.getElementById('providerNotice').style.display = 
+                type === 'provider' ? 'block' : 'none';
+        }
+
+        function togglePassword() {
+            const input = document.getElementById('password');
+            input.type = input.type === 'password' ? 'text' : 'password';
+        }
+
+        async function handleLogin(e) {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const isProvider = document.querySelector('.auth-tab.active').innerText.includes('Provider');
+            
+            const btn = document.getElementById('loginBtn');
+            btn.innerHTML = '⏳ Signing in...';
+            btn.disabled = true;
+
+            // Demo login - remove when API is ready
+            setTimeout(() => {
+                if (email === 'admin@example.com' && password === 'admin123') {
+                    window.location.href = '/src/dashboard/admin/';
+                } else if (email.includes('provider') || isProvider) {
+                    window.location.href = '/src/dashboard/provider/';
+                } else {
+                    window.location.href = '/src/dashboard/customer/';
+                }
+            }, 1000);
+        }
+
+        function socialLogin(provider) {
+            alert(`${provider} login coming soon!`);
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,257 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Areas - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/locations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <!-- Header Component -->
+    <div id="header"></div>
+
+    <main>
+        <!-- Hero Section -->
+        <section class="locations-hero">
+            <div class="container">
+                <h1>Find Local Service Professionals</h1>
+                <p>Connect with trusted providers in your area</p>
+                
+                <div class="location-search">
+                    <input type="text" placeholder="Enter your city or ZIP code" id="location-search">
+                    <button class="btn btn-primary btn-large" onclick="searchLocation()">
+                        Find Services Near Me
+                    </button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Popular Cities -->
+        <section class="popular-cities">
+            <div class="container">
+                <h2>Popular Service Cities</h2>
+                <div class="cities-grid" id="popular-cities">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- State List -->
+        <section class="state-list">
+            <div class="container">
+                <h2>Browse by State</h2>
+                <div class="states-grid" id="states-grid">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Coverage Map -->
+        <section class="coverage-section">
+            <div class="container">
+                <h2>Our Coverage Area</h2>
+                <div class="coverage-map">
+                    <img src="/public/assets/images/coverage-map.jpg" alt="Coverage Map" class="map-image">
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Stats -->
+        <section class="stats-section">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="total-cities">0</span>
+                        <span class="stat-label">Cities Served</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="total-providers">0</span>
+                        <span class="stat-label">Active Providers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="total-services">0</span>
+                        <span class="stat-label">Services Available</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="avg-response">15</span>
+                        <span class="stat-label">Avg Response (min)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Nearby Cities -->
+        <section class="nearby-section">
+            <div class="container">
+                <h2>Find Services Near You</h2>
+                <div class="nearby-grid" id="nearby-cities">
+                    <!-- Loaded dynamically based on user location -->
+                </div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-content">
+                    <h2>Need Service in Your Area?</h2>
+                    <p>We're constantly expanding to serve more communities</p>
+                    <button class="btn btn-primary btn-large" onclick="notifyMe()">
+                        Notify Me When Available
+                    </button>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer"></div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadPopularCities();
+            loadStates();
+            loadStats();
+            loadNearbyCities();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadPopularCities() {
+            try {
+                const response = await fetch('/api/locations/popular.php?limit=8');
+                const data = await response.json();
+
+                const container = document.getElementById('popular-cities');
+                
+                if (data.success) {
+                    container.innerHTML = data.cities.map(city => `
+                        <a href="/src/locations/${city.slug}/" class="city-card">
+                            <span class="city-name">${city.name}</span>
+                            <span class="city-state">${city.state}</span>
+                            <span class="provider-count">${city.provider_count} providers</span>
+                        </a>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading popular cities:', error);
+            }
+        }
+
+        async function loadStates() {
+            try {
+                const response = await fetch('/api/locations/states.php');
+                const data = await response.json();
+
+                const container = document.getElementById('states-grid');
+                
+                if (data.success) {
+                    container.innerHTML = data.states.map(state => `
+                        <a href="/src/locations/state/${state.code.toLowerCase()}/" class="state-card">
+                            <span class="state-name">${state.name}</span>
+                            <span class="state-code">${state.code}</span>
+                            <span class="city-count">${state.city_count} cities</span>
+                        </a>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading states:', error);
+            }
+        }
+
+        async function loadStats() {
+            try {
+                const response = await fetch('/api/locations/stats.php');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-cities').textContent = data.total_cities;
+                    document.getElementById('total-providers').textContent = data.total_providers;
+                    document.getElementById('total-services').textContent = data.total_services;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function loadNearbyCities() {
+            // Get user location if available
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(async (position) => {
+                    try {
+                        const response = await fetch(`/api/locations/nearby.php?lat=${position.coords.latitude}&lng=${position.coords.longitude}&limit=6`);
+                        const data = await response.json();
+
+                        const container = document.getElementById('nearby-cities');
+                        
+                        if (data.success && data.cities.length > 0) {
+                            container.innerHTML = data.cities.map(city => `
+                                <a href="/src/locations/${city.slug}/" class="nearby-card">
+                                    <span class="distance">${city.distance} miles</span>
+                                    <span class="city-name">${city.name}</span>
+                                    <span class="city-state">${city.state}</span>
+                                </a>
+                            `).join('');
+                        } else {
+                            container.innerHTML = '<p class="text-center">Enable location services to see nearby cities</p>';
+                        }
+                    } catch (error) {
+                        console.error('Error loading nearby cities:', error);
+                    }
+                }, () => {
+                    document.getElementById('nearby-cities').innerHTML = '<p class="text-center">Enable location services to see nearby cities</p>';
+                });
+            } else {
+                document.getElementById('nearby-cities').innerHTML = '<p class="text-center">Geolocation is not supported by your browser</p>';
+            }
+        }
+
+        function searchLocation() {
+            const query = document.getElementById('location-search').value.trim();
+            
+            if (query) {
+                window.location.href = `/src/locations/search?q=${encodeURIComponent(query)}`;
+            } else {
+                showNotification('Please enter a city or ZIP code', 'error');
+            }
+        }
+
+        function notifyMe() {
+            const email = prompt('Enter your email to be notified:');
+            if (email) {
+                // Submit to API
+                showNotification('Thanks! We\'ll notify you when service is available in your area.', 'success');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+    </script>
+</body>
+</html>

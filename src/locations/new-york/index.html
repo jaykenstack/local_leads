@@ -1,0 +1,435 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Service Professionals in New York City - UrgentServices</title>
+    <meta name="description" content="Find trusted service professionals in New York City. 24/7 emergency plumbing, electrical, HVAC, locksmith, and pest control services.">
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/locations.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Schema Markup for Local Business -->
+    <script type="application/ld+json">
+    {
+        "@context": "https://schema.org",
+        "@type": "LocalBusiness",
+        "name": "UrgentServices NYC",
+        "areaServed": {
+            "@type": "City",
+            "name": "New York City",
+            "containedInPlace": {
+                "@type": "State",
+                "name": "New York"
+            }
+        },
+        "address": {
+            "@type": "PostalAddress",
+            "addressLocality": "New York",
+            "addressRegion": "NY"
+        }
+    }
+    </script>
+</head>
+<body>
+    <div id="header"></div>
+
+    <main>
+        <!-- City Hero -->
+        <section class="city-hero">
+            <div class="container">
+                <div class="hero-content">
+                    <h1>Service Professionals in New York City</h1>
+                    <p>Find trusted, verified professionals across all 5 boroughs</p>
+                    
+                    <div class="service-quick-links">
+                        <a href="#plumbing" class="quick-link">🚰 Plumbing</a>
+                        <a href="#electrical" class="quick-link">⚡ Electrical</a>
+                        <a href="#hvac" class="quick-link">❄️ HVAC</a>
+                        <a href="#locksmith" class="quick-link">🔑 Locksmith</a>
+                        <a href="#pest" class="quick-link">🐜 Pest Control</a>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Borough Navigation -->
+        <section class="borough-nav">
+            <div class="container">
+                <div class="borough-tabs">
+                    <button class="borough-tab active" onclick="filterBorough('all')">All Boroughs</button>
+                    <button class="borough-tab" onclick="filterBorough('manhattan')">Manhattan</button>
+                    <button class="borough-tab" onclick="filterBorough('brooklyn')">Brooklyn</button>
+                    <button class="borough-tab" onclick="filterBorough('queens')">Queens</button>
+                    <button class="borough-tab" onclick="filterBorough('bronx')">The Bronx</button>
+                    <button class="borough-tab" onclick="filterBorough('staten-island')">Staten Island</button>
+                </div>
+            </div>
+        </section>
+
+        <!-- Borough Stats -->
+        <section class="borough-stats">
+            <div class="container">
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <span class="stat-number" id="nyc-total-providers">0</span>
+                        <span class="stat-label">Total Providers</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="nyc-emergency-providers">0</span>
+                        <span class="stat-label">24/7 Emergency</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="nyc-avg-rating">0.0</span>
+                        <span class="stat-label">Average Rating</span>
+                    </div>
+                    <div class="stat-card">
+                        <span class="stat-number" id="nyc-response-time">15</span>
+                        <span class="stat-label">Avg Response (min)</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services by Category -->
+        <section class="services-section">
+            <div class="container">
+                <h2 id="plumbing">🚰 Plumbing Services in NYC</h2>
+                <div class="service-category" id="nyc-plumbing">
+                    <div class="loading-state">Loading plumbing providers...</div>
+                </div>
+
+                <h2 id="electrical">⚡ Electrical Services in NYC</h2>
+                <div class="service-category" id="nyc-electrical">
+                    <div class="loading-state">Loading electrical providers...</div>
+                </div>
+
+                <h2 id="hvac">❄️ HVAC Services in NYC</h2>
+                <div class="service-category" id="nyc-hvac">
+                    <div class="loading-state">Loading HVAC providers...</div>
+                </div>
+
+                <h2 id="locksmith">🔑 Locksmith Services in NYC</h2>
+                <div class="service-category" id="nyc-locksmith">
+                    <div class="loading-state">Loading locksmith providers...</div>
+                </div>
+
+                <h2 id="pest">🐜 Pest Control Services in NYC</h2>
+                <div class="service-category" id="nyc-pest">
+                    <div class="loading-state">Loading pest control providers...</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-banner">
+            <div class="container">
+                <div class="emergency-content">
+                    <h2>Need Emergency Service in NYC?</h2>
+                    <p>Available 24/7 across all boroughs</p>
+                    <a href="tel:+1234567890" class="btn btn-large btn-emergency">
+                        📞 Call NYC Emergency Line
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Top Rated Providers -->
+        <section class="top-rated-section">
+            <div class="container">
+                <h2>Top-Rated Providers in NYC</h2>
+                <div class="providers-grid" id="nyc-top-providers">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- Service Areas Map -->
+        <section class="areas-section">
+            <div class="container">
+                <h2>Service Areas in New York City</h2>
+                <div class="areas-grid" id="nyc-areas">
+                    <div class="area-card">
+                        <h3>Manhattan</h3>
+                        <ul>
+                            <li>Upper East Side</li>
+                            <li>Upper West Side</li>
+                            <li>Midtown</li>
+                            <li>Downtown</li>
+                            <li>Harlem</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>Brooklyn</h3>
+                        <ul>
+                            <li>Williamsburg</li>
+                            <li>Park Slope</li>
+                            <li>Brooklyn Heights</li>
+                            <li>Bensonhurst</li>
+                            <li>Coney Island</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>Queens</h3>
+                        <ul>
+                            <li>Astoria</li>
+                            <li>Long Island City</li>
+                            <li>Flushing</li>
+                            <li>Forest Hills</li>
+                            <li>Jamaica</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>The Bronx</h3>
+                        <ul>
+                            <li>Riverdale</li>
+                            <li>Fordham</li>
+                            <li>Pelham Bay</li>
+                            <li>Mott Haven</li>
+                        </ul>
+                    </div>
+                    <div class="area-card">
+                        <h3>Staten Island</h3>
+                        <ul>
+                            <li>St. George</li>
+                            <li>New Dorp</li>
+                            <li>Tottenville</li>
+                            <li>Great Kills</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Customer Reviews -->
+        <section class="reviews-section">
+            <div class="container">
+                <h2>What NYC Customers Say</h2>
+                <div class="reviews-grid" id="nyc-reviews">
+                    <!-- Loaded dynamically -->
+                </div>
+            </div>
+        </section>
+
+        <!-- NYC FAQs -->
+        <section class="faq-section">
+            <div class="container">
+                <h2>Frequently Asked Questions About NYC Services</h2>
+                <div class="faq-grid">
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Do you serve all 5 boroughs?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Yes, we have verified professionals serving Manhattan, Brooklyn, Queens, The Bronx, and Staten Island.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>How quickly can you respond in NYC?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Our emergency services aim to respond within 15-30 minutes in most NYC neighborhoods.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Are providers licensed in NYC?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>All providers are verified and licensed according to NYC requirements.</p>
+                        </div>
+                    </div>
+
+                    <div class="faq-item">
+                        <div class="faq-question" onclick="toggleFAQ(this)">
+                            <span>Do you charge extra for travel?</span>
+                            <span class="faq-icon">▼</span>
+                        </div>
+                        <div class="faq-answer">
+                            <p>Travel fees vary by provider. Many offer free service within their primary service areas.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <div id="footer"></div>
+
+    <script>
+        let currentBorough = 'all';
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadHeaderFooter();
+            loadNYCStats();
+            loadNYCProviders();
+            loadNYCReviews();
+        });
+
+        async function loadHeaderFooter() {
+            try {
+                const headerResponse = await fetch('/src/components/header.html');
+                const headerHtml = await headerResponse.text();
+                document.getElementById('header').innerHTML = headerHtml;
+
+                const footerResponse = await fetch('/src/components/footer.html');
+                const footerHtml = await footerResponse.text();
+                document.getElementById('footer').innerHTML = footerHtml;
+            } catch (error) {
+                console.error('Error loading components:', error);
+            }
+        }
+
+        async function loadNYCStats() {
+            try {
+                const response = await fetch('/api/locations/city-stats.php?city=new-york');
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('nyc-total-providers').textContent = data.total_providers;
+                    document.getElementById('nyc-emergency-providers').textContent = data.emergency_providers;
+                    document.getElementById('nyc-avg-rating').textContent = data.avg_rating.toFixed(1);
+                }
+            } catch (error) {
+                console.error('Error loading NYC stats:', error);
+            }
+        }
+
+        async function loadNYCProviders() {
+            try {
+                const categories = ['plumbing', 'electrical', 'hvac', 'locksmith', 'pest-control'];
+                
+                for (const category of categories) {
+                    const response = await fetch(`/api/providers/by-city.php?city=new-york&category=${category}&limit=4`);
+                    const data = await response.json();
+
+                    const container = document.getElementById(`nyc-${category === 'pest-control' ? 'pest' : category}`);
+                    
+                    if (data.success && data.providers.length > 0) {
+                        container.innerHTML = data.providers.map(provider => `
+                            <div class="provider-card">
+                                <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                     alt="${provider.business_name}" class="provider-avatar">
+                                <div class="provider-info">
+                                    <h4>${provider.business_name}</h4>
+                                    <div class="provider-rating">
+                                        ${generateStarRating(provider.rating)}
+                                        <span>(${provider.review_count})</span>
+                                    </div>
+                                    <div class="provider-badges">
+                                        ${provider.emergency ? '<span class="badge emergency">24/7</span>' : ''}
+                                        ${provider.verified ? '<span class="badge verified">✓ Verified</span>' : ''}
+                                    </div>
+                                    <button class="btn btn-secondary btn-small" onclick="viewProvider(${provider.id})">
+                                        View Profile
+                                    </button>
+                                </div>
+                            </div>
+                        `).join('');
+                    } else {
+                        container.innerHTML = '<p>No providers available at the moment</p>';
+                    }
+                }
+
+                // Load top-rated providers
+                const topResponse = await fetch('/api/providers/top-rated.php?city=new-york&limit=4');
+                const topData = await topResponse.json();
+
+                const topContainer = document.getElementById('nyc-top-providers');
+                if (topData.success) {
+                    topContainer.innerHTML = topData.providers.map(provider => `
+                        <div class="provider-card large">
+                            <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${provider.business_name}" class="provider-avatar">
+                            <h3>${provider.business_name}</h3>
+                            <div class="provider-rating">
+                                ${generateStarRating(provider.rating)}
+                                <span>${provider.review_count} reviews</span>
+                            </div>
+                            <p class="provider-services">${provider.services.join(', ')}</p>
+                            <button class="btn btn-primary" onclick="viewProvider(${provider.id})">
+                                View Profile
+                            </button>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading NYC providers:', error);
+            }
+        }
+
+        async function loadNYCReviews() {
+            try {
+                const response = await fetch('/api/reviews/city.php?city=new-york&limit=3');
+                const data = await response.json();
+
+                const container = document.getElementById('nyc-reviews');
+                
+                if (data.success) {
+                    container.innerHTML = data.reviews.map(review => `
+                        <div class="review-card">
+                            <div class="review-rating">${generateStarRating(review.rating)}</div>
+                            <p class="review-content">"${review.comment}"</p>
+                            <div class="review-author">
+                                <strong>${review.customer_name}</strong>
+                                <span>${review.neighborhood}, NYC</span>
+                            </div>
+                        </div>
+                    `).join('');
+                }
+            } catch (error) {
+                console.error('Error loading NYC reviews:', error);
+            }
+        }
+
+        function filterBorough(borough) {
+            currentBorough = borough;
+            
+            // Update active tab
+            document.querySelectorAll('.borough-tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+
+            // Reload providers with borough filter
+            loadNYCProviders();
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function viewProvider(id) {
+            window.location.href = `/src/public/reviews/?provider=${id}`;
+        }
+
+        function toggleFAQ(element) {
+            const answer = element.nextElementSibling;
+            const icon = element.querySelector('.faq-icon');
+            
+            if (answer.style.maxHeight) {
+                answer.style.maxHeight = null;
+                icon.textContent = '▼';
+            } else {
+                answer.style.maxHeight = answer.scrollHeight + 'px';
+                icon.textContent = '▲';
+            }
+        }
+    </script>
+</body>
+</html>

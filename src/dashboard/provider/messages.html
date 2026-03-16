@@ -1,0 +1,1394 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messages - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/messages.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item active">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                        <span class="badge badge-error" id="sidebar-message-badge">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💵</span>
+                        Earnings
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search messages..." id="search-messages">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content messages-page">
+                <!-- Messages Container -->
+                <div class="messages-container">
+                    <!-- Conversations Sidebar -->
+                    <div class="conversations-sidebar" id="conversations-view">
+                        <div class="conversations-header">
+                            <h2>Messages</h2>
+                            <div class="header-actions">
+                                <button class="btn-icon" onclick="markAllAsRead()" title="Mark all as read">
+                                    <span class="icon">✓✓</span>
+                                </button>
+                                <button class="btn-icon" onclick="showFilters()" title="Filter">
+                                    <span class="icon">⚙️</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Filter Bar -->
+                        <div class="filter-bar" id="filter-bar" style="display: none;">
+                            <select class="form-select" id="filter-type" onchange="filterConversations()">
+                                <option value="all">All Messages</option>
+                                <option value="unread">Unread</option>
+                                <option value="leads">Leads</option>
+                                <option value="bookings">Bookings</option>
+                            </select>
+                            
+                            <select class="form-select" id="filter-date" onchange="filterConversations()">
+                                <option value="all">Any Time</option>
+                                <option value="today">Today</option>
+                                <option value="week">This Week</option>
+                                <option value="month">This Month</option>
+                            </select>
+                        </div>
+
+                        <!-- Conversations List -->
+                        <div class="conversations-list" id="conversations-list">
+                            <div class="loading-state">
+                                <div class="spinner"></div>
+                                <p>Loading conversations...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Message View -->
+                    <div class="message-view" id="messages-view" style="display: none;">
+                        <!-- Message Header -->
+                        <div class="message-header" id="message-header">
+                            <button class="btn-icon back-button" onclick="backToConversations()">
+                                <span class="icon">←</span>
+                            </button>
+                            
+                            <div class="user-info" id="message-user-info">
+                                <!-- Loaded dynamically -->
+                            </div>
+
+                            <div class="message-actions">
+                                <button class="btn-icon" onclick="showConversationDetails()" title="Details">
+                                    <span class="icon">ℹ️</span>
+                                </button>
+                                <button class="btn-icon" onclick="archiveConversation()" title="Archive">
+                                    <span class="icon">📦</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Messages Container -->
+                        <div class="messages-container" id="messages-container">
+                            <!-- Messages will be loaded here -->
+                        </div>
+
+                        <!-- Message Input -->
+                        <div class="message-input-container">
+                            <div class="message-status-bar" id="message-status-bar"></div>
+                            <div class="message-input-wrapper">
+                                <button class="btn-icon" id="attach-file" onclick="attachFile()" title="Attach file">
+                                    <span class="icon">📎</span>
+                                </button>
+                                <textarea class="message-input" id="message-input" 
+                                          placeholder="Type a message..." rows="1"></textarea>
+                                <button class="btn btn-primary" id="send-message" onclick="sendMessage()">
+                                    Send
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Empty State (when no conversation selected) -->
+                    <div class="empty-message-state" id="empty-state" style="display: none;">
+                        <img src="/public/assets/icons/message-icon.svg" alt="Messages">
+                        <h3>Your Messages</h3>
+                        <p>Select a conversation to start chatting</p>
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Conversation Details Modal -->
+    <div class="modal" id="conversation-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Conversation Details</h3>
+                <button class="close" onclick="closeModal('conversation-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="conversation-details">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-danger" onclick="blockUser()">Block User</button>
+                <button class="btn btn-secondary" onclick="archiveConversation()">Archive</button>
+                <button class="btn btn-secondary" onclick="closeModal('conversation-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Attachments Preview Modal -->
+    <div class="modal" id="attachment-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Attachments</h3>
+                <button class="close" onclick="closeModal('attachment-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="attachment-content">
+                <!-- Attachments will be displayed here -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Preview Modal -->
+    <div class="modal image-modal" id="image-modal">
+        <div class="modal-content">
+            <button class="close" onclick="closeModal('image-modal')">&times;</button>
+            <img src="" alt="Preview" id="image-preview">
+        </div>
+    </div>
+
+    <!-- Templates -->
+    <template id="message-template">
+        <div class="message">
+            <div class="message-content"></div>
+            <div class="message-time"></div>
+            <div class="message-status"></div>
+        </div>
+    </template>
+
+    <template id="conversation-item-template">
+        <div class="conversation-item">
+            <div class="conversation-avatar">
+                <img src="" alt="">
+            </div>
+            <div class="conversation-info">
+                <div class="conversation-header">
+                    <span class="conversation-name"></span>
+                    <span class="conversation-time"></span>
+                </div>
+                <div class="conversation-preview"></div>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        // WebSocket connection for real-time messaging
+        let ws = null;
+        let currentConversationId = null;
+        let conversations = [];
+        let messages = [];
+        let typingTimeout = null;
+        let reconnectAttempts = 0;
+        const maxReconnectAttempts = 5;
+
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadConversations();
+            initWebSocket();
+            setupEventListeners();
+            checkUrlParams();
+        });
+
+        // ============================================================================
+        // USER PROFILE
+        // ============================================================================
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        // ============================================================================
+        // WEBSOCKET CONNECTION
+        // ============================================================================
+
+        function initWebSocket() {
+            const token = localStorage.getItem('auth_token');
+            if (!token) return;
+
+            // Use secure WebSocket if page is HTTPS
+            const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+            const wsUrl = `${protocol}//${window.location.host}/ws?token=${token}`;
+
+            ws = new WebSocket(wsUrl);
+
+            ws.onopen = () => {
+                console.log('WebSocket connected');
+                reconnectAttempts = 0;
+                updateConnectionStatus(true);
+                
+                // Send any pending messages
+                sendPendingMessages();
+            };
+
+            ws.onmessage = (event) => {
+                const data = JSON.parse(event.data);
+                handleWebSocketMessage(data);
+            };
+
+            ws.onclose = () => {
+                console.log('WebSocket disconnected');
+                updateConnectionStatus(false);
+                attemptReconnect();
+            };
+
+            ws.onerror = (error) => {
+                console.error('WebSocket error:', error);
+                updateConnectionStatus(false);
+            };
+        }
+
+        function attemptReconnect() {
+            if (reconnectAttempts < maxReconnectAttempts) {
+                reconnectAttempts++;
+                const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 30000);
+                setTimeout(initWebSocket, delay);
+            }
+        }
+
+        function updateConnectionStatus(connected) {
+            const statusBar = document.getElementById('message-status-bar');
+            if (statusBar) {
+                statusBar.innerHTML = connected 
+                    ? '<span class="status-connected">● Connected</span>'
+                    : '<span class="status-disconnected">○ Reconnecting...</span>';
+            }
+        }
+
+        function handleWebSocketMessage(data) {
+            switch(data.type) {
+                case 'message':
+                    handleIncomingMessage(data.message);
+                    break;
+                case 'typing':
+                    handleTypingIndicator(data);
+                    break;
+                case 'read':
+                    handleReadReceipt(data);
+                    break;
+                case 'delivered':
+                    handleDeliveryReceipt(data);
+                    break;
+                case 'presence':
+                    handlePresenceUpdate(data);
+                    break;
+            }
+        }
+
+        // ============================================================================
+        // CONVERSATIONS
+        // ============================================================================
+
+        async function loadConversations() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/messages/conversations.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    conversations = data.conversations;
+                    displayConversations(data.conversations);
+                    updateMessageBadge(data.unread_count);
+                }
+            } catch (error) {
+                console.error('Error loading conversations:', error);
+                document.getElementById('conversations-list').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load conversations</p>
+                        <button class="btn btn-primary" onclick="loadConversations()">Retry</button>
+                    </div>
+                `;
+            }
+        }
+
+        function displayConversations(conversations) {
+            const container = document.getElementById('conversations-list');
+
+            if (conversations.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <p>No conversations yet</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = conversations.map(conv => {
+                const isActive = currentConversationId === conv.id;
+                const unreadClass = conv.unread_count > 0 ? 'unread' : '';
+                const timeAgo = formatTimeAgo(conv.last_message_time);
+
+                return `
+                    <div class="conversation-item ${unreadClass} ${isActive ? 'active' : ''}" 
+                         onclick="openConversation(${conv.id})">
+                        <div class="conversation-avatar">
+                            <img src="${conv.other_user_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${conv.other_user_name}">
+                            ${conv.is_online ? '<span class="online-indicator"></span>' : ''}
+                        </div>
+                        <div class="conversation-info">
+                            <div class="conversation-header">
+                                <span class="conversation-name">${conv.other_user_name}</span>
+                                <span class="conversation-time">${timeAgo}</span>
+                            </div>
+                            <div class="conversation-preview">
+                                <span class="preview-text">${escapeHtml(conv.last_message_preview)}</span>
+                                ${conv.unread_count > 0 ? 
+                                    `<span class="unread-badge">${conv.unread_count}</span>` : ''}
+                            </div>
+                            ${conv.typing ? '<span class="typing-indicator">typing...</span>' : ''}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        async function openConversation(conversationId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/messages/conversation.php?id=${conversationId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    currentConversationId = conversationId;
+                    messages = data.messages;
+                    
+                    // Update UI
+                    document.getElementById('conversations-view').style.display = 'none';
+                    document.getElementById('messages-view').style.display = 'flex';
+                    document.getElementById('empty-state').style.display = 'none';
+                    
+                    displayMessages(data.messages, data.other_user);
+                    markConversationAsRead(conversationId);
+                    
+                    // Update conversation list
+                    loadConversations();
+                }
+            } catch (error) {
+                console.error('Error opening conversation:', error);
+                showNotification('Failed to load conversation', 'error');
+            }
+        }
+
+        function backToConversations() {
+            currentConversationId = null;
+            document.getElementById('conversations-view').style.display = 'block';
+            document.getElementById('messages-view').style.display = 'none';
+            document.getElementById('empty-state').style.display = 'flex';
+        }
+
+        // ============================================================================
+        // MESSAGES DISPLAY
+        // ============================================================================
+
+        function displayMessages(messages, otherUser) {
+            const container = document.getElementById('messages-container');
+            const userInfo = document.getElementById('message-user-info');
+
+            // Update header with user info
+            userInfo.innerHTML = `
+                <div class="user-avatar">
+                    <img src="${otherUser.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                         alt="${otherUser.name}">
+                    ${otherUser.online ? '<span class="online-indicator"></span>' : ''}
+                </div>
+                <div class="user-details">
+                    <div class="user-name">${otherUser.name}</div>
+                    <div class="user-status" id="user-status">
+                        ${otherUser.online ? 'Online' : 'Last seen ' + (otherUser.last_seen_formatted || 'recently')}
+                    </div>
+                </div>
+            `;
+
+            // Group messages by date
+            const groupedMessages = groupMessagesByDate(messages);
+            
+            container.innerHTML = groupedMessages.map(group => `
+                <div class="message-group">
+                    <div class="date-separator">
+                        <span>${group.date}</span>
+                    </div>
+                    ${group.messages.map(msg => createMessageHTML(msg)).join('')}
+                </div>
+            `).join('');
+
+            // Scroll to bottom
+            scrollToBottom();
+
+            // Mark messages as read
+            markMessagesAsRead(messages);
+        }
+
+        function groupMessagesByDate(messages) {
+            const groups = [];
+            let currentDate = null;
+            let currentGroup = null;
+
+            messages.forEach(msg => {
+                const date = new Date(msg.created_at).toLocaleDateString();
+                
+                if (date !== currentDate) {
+                    currentDate = date;
+                    currentGroup = {
+                        date: formatMessageDate(msg.created_at),
+                        messages: []
+                    };
+                    groups.push(currentGroup);
+                }
+                
+                currentGroup.messages.push(msg);
+            });
+
+            return groups;
+        }
+
+        function createMessageHTML(message) {
+            const isMe = message.is_me;
+            const messageClass = isMe ? 'message-sent' : 'message-received';
+            
+            let content = '';
+            if (message.type === 'text') {
+                content = `<div class="message-text">${escapeHtml(message.content)}</div>`;
+            } else if (message.type === 'image') {
+                content = `
+                    <div class="message-image" onclick="viewImage('${message.content.url}')">
+                        <img src="${message.content.thumbnail || message.content.url}" alt="Image">
+                    </div>
+                `;
+            } else if (message.type === 'file') {
+                content = `
+                    <div class="message-file">
+                        <div class="file-icon">📎</div>
+                        <div class="file-info">
+                            <div class="file-name">${message.content.name}</div>
+                            <div class="file-size">${formatFileSize(message.content.size)}</div>
+                        </div>
+                        <a href="${message.content.url}" download class="btn-icon" title="Download">
+                            ⬇️
+                        </a>
+                    </div>
+                `;
+            }
+
+            const statusIcon = isMe ? getMessageStatusIcon(message) : '';
+
+            return `
+                <div class="message ${messageClass}" id="message-${message.id}">
+                    ${!isMe ? `
+                        <div class="message-avatar">
+                            <img src="${message.sender_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" alt="">
+                        </div>
+                    ` : ''}
+                    <div class="message-bubble">
+                        ${content}
+                        <div class="message-footer">
+                            <span class="message-time">${formatTime(message.created_at)}</span>
+                            ${statusIcon}
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function getMessageStatusIcon(message) {
+            if (message.is_read) {
+                return '<span class="message-status read" title="Read">✓✓</span>';
+            } else if (message.is_delivered) {
+                return '<span class="message-status delivered" title="Delivered">✓✓</span>';
+            } else {
+                return '<span class="message-status sent" title="Sent">✓</span>';
+            }
+        }
+
+        // ============================================================================
+        // SEND MESSAGE
+        // ============================================================================
+
+        function setupEventListeners() {
+            const input = document.getElementById('message-input');
+            
+            input.addEventListener('keydown', (e) => {
+                if (e.key === 'Enter' && !e.shiftKey) {
+                    e.preventDefault();
+                    sendMessage();
+                }
+            });
+
+            input.addEventListener('input', handleTyping);
+        }
+
+        function handleTyping() {
+            if (!currentConversationId) return;
+
+            // Clear existing timeout
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+            }
+
+            // Send typing indicator
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({
+                    type: 'typing',
+                    conversation_id: currentConversationId,
+                    typing: true
+                }));
+            }
+
+            // Set timeout to stop typing
+            typingTimeout = setTimeout(() => {
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: 'typing',
+                        conversation_id: currentConversationId,
+                        typing: false
+                    }));
+                }
+            }, 2000);
+        }
+
+        async function sendMessage() {
+            const input = document.getElementById('message-input');
+            const content = input.value.trim();
+
+            if (!content || !currentConversationId) return;
+
+            // Clear input
+            input.value = '';
+
+            // Stop typing indicator
+            if (typingTimeout) {
+                clearTimeout(typingTimeout);
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: 'typing',
+                        conversation_id: currentConversationId,
+                        typing: false
+                    }));
+                }
+            }
+
+            // Create temporary message
+            const tempMessage = {
+                id: 'temp-' + Date.now(),
+                type: 'text',
+                content: content,
+                is_me: true,
+                created_at: new Date().toISOString(),
+                is_sending: true
+            };
+
+            // Add to UI optimistically
+            addMessageToUI(tempMessage);
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/messages/send.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        conversation_id: currentConversationId,
+                        content: content
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Replace temp message with real one
+                    replaceTempMessage(tempMessage.id, data.message);
+                    
+                    // Send via WebSocket for real-time delivery
+                    if (ws && ws.readyState === WebSocket.OPEN) {
+                        ws.send(JSON.stringify({
+                            type: 'message',
+                            message: data.message,
+                            conversation_id: currentConversationId
+                        }));
+                    }
+                } else {
+                    // Show error and restore message
+                    showMessageError(tempMessage.id);
+                    input.value = content;
+                    showNotification('Failed to send message', 'error');
+                }
+            } catch (error) {
+                console.error('Error sending message:', error);
+                showMessageError(tempMessage.id);
+                input.value = content;
+                showNotification('Network error', 'error');
+            }
+        }
+
+        function addMessageToUI(message) {
+            const container = document.getElementById('messages-container');
+            
+            // Check if we need to add a date separator
+            const lastMessage = messages[messages.length - 1];
+            if (!lastMessage || !isSameDay(lastMessage.created_at, message.created_at)) {
+                const dateSeparator = document.createElement('div');
+                dateSeparator.className = 'date-separator';
+                dateSeparator.innerHTML = `<span>${formatMessageDate(message.created_at)}</span>`;
+                container.appendChild(dateSeparator);
+            }
+
+            // Add message
+            const messageElement = document.createElement('div');
+            messageElement.innerHTML = createMessageHTML(message);
+            container.appendChild(messageElement.firstChild);
+
+            // Add to messages array
+            messages.push(message);
+
+            // Scroll to bottom
+            scrollToBottom();
+        }
+
+        function replaceTempMessage(tempId, realMessage) {
+            const tempElement = document.getElementById(`message-${tempId}`);
+            if (tempElement) {
+                const newElement = document.createElement('div');
+                newElement.innerHTML = createMessageHTML(realMessage);
+                tempElement.replaceWith(newElement.firstChild);
+
+                // Update messages array
+                const index = messages.findIndex(m => m.id === tempId);
+                if (index !== -1) {
+                    messages[index] = realMessage;
+                }
+            }
+        }
+
+        function showMessageError(messageId) {
+            const messageElement = document.getElementById(`message-${messageId}`);
+            if (messageElement) {
+                messageElement.classList.add('message-error');
+                const statusEl = messageElement.querySelector('.message-status');
+                if (statusEl) {
+                    statusEl.innerHTML += ' ⚠️';
+                }
+            }
+        }
+
+        // ============================================================================
+        // FILE ATTACHMENTS
+        // ============================================================================
+
+        function attachFile() {
+            const input = document.createElement('input');
+            input.type = 'file';
+            input.multiple = true;
+            input.accept = 'image/*,.pdf,.doc,.docx,.txt,.xlsx';
+
+            input.onchange = async (e) => {
+                const files = Array.from(e.target.files);
+                
+                for (const file of files) {
+                    await uploadAndSendFile(file);
+                }
+            };
+
+            input.click();
+        }
+
+        async function uploadAndSendFile(file) {
+            // Validate file size (10MB max)
+            if (file.size > 10 * 1024 * 1024) {
+                showNotification('File too large. Max 10MB', 'error');
+                return;
+            }
+
+            const formData = new FormData();
+            formData.append('file', file);
+            formData.append('conversation_id', currentConversationId);
+
+            // Show uploading indicator
+            const tempId = 'upload-' + Date.now();
+            const isImage = file.type.startsWith('image/');
+            
+            const tempMessage = {
+                id: tempId,
+                type: isImage ? 'image' : 'file',
+                content: {
+                    name: file.name,
+                    size: file.size,
+                    url: '',
+                    uploading: true
+                },
+                is_me: true,
+                created_at: new Date().toISOString(),
+                upload_progress: 0
+            };
+
+            addMessageToUI(tempMessage);
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const xhr = new XMLHttpRequest();
+
+                xhr.upload.addEventListener('progress', (e) => {
+                    if (e.lengthComputable) {
+                        const progress = Math.round((e.loaded / e.total) * 100);
+                        updateUploadProgress(tempId, progress);
+                    }
+                });
+
+                xhr.onload = function() {
+                    if (xhr.status === 200) {
+                        const data = JSON.parse(xhr.responseText);
+                        if (data.success) {
+                            replaceTempMessage(tempId, data.message);
+                            
+                            // Send via WebSocket
+                            if (ws && ws.readyState === WebSocket.OPEN) {
+                                ws.send(JSON.stringify({
+                                    type: 'message',
+                                    message: data.message,
+                                    conversation_id: currentConversationId
+                                }));
+                            }
+                        } else {
+                            showMessageError(tempId);
+                            showNotification('Upload failed', 'error');
+                        }
+                    } else {
+                        showMessageError(tempId);
+                        showNotification('Upload failed', 'error');
+                    }
+                };
+
+                xhr.onerror = () => {
+                    showMessageError(tempId);
+                    showNotification('Upload failed', 'error');
+                };
+
+                xhr.open('POST', '/api/messages/upload.php');
+                xhr.setRequestHeader('Authorization', `Bearer ${token}`);
+                xhr.send(formData);
+
+            } catch (error) {
+                console.error('Error uploading file:', error);
+                showMessageError(tempId);
+                showNotification('Upload failed', 'error');
+            }
+        }
+
+        function updateUploadProgress(messageId, progress) {
+            const messageElement = document.getElementById(`message-${messageId}`);
+            if (messageElement) {
+                const progressBar = messageElement.querySelector('.upload-progress');
+                if (!progressBar) {
+                    const bubble = messageElement.querySelector('.message-bubble');
+                    bubble.innerHTML += `
+                        <div class="upload-progress-container">
+                            <div class="upload-progress" style="width: ${progress}%"></div>
+                        </div>
+                    `;
+                } else {
+                    progressBar.style.width = progress + '%';
+                }
+            }
+        }
+
+        // ============================================================================
+        // MESSAGE STATUS
+        // ============================================================================
+
+        async function markConversationAsRead(conversationId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/messages/mark-read.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ conversation_id: conversationId })
+                });
+
+                // Update unread count
+                updateMessageBadge(0);
+            } catch (error) {
+                console.error('Error marking as read:', error);
+            }
+        }
+
+        function markMessagesAsRead(messages) {
+            const unreadMessages = messages.filter(m => !m.is_me && !m.is_read);
+            
+            if (unreadMessages.length > 0) {
+                const messageIds = unreadMessages.map(m => m.id);
+                
+                fetch('/api/messages/mark-read.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${localStorage.getItem('auth_token')}`
+                    },
+                    body: JSON.stringify({ message_ids: messageIds })
+                });
+
+                // Send read receipts via WebSocket
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({
+                        type: 'read',
+                        conversation_id: currentConversationId,
+                        message_ids: messageIds
+                    }));
+                }
+            }
+        }
+
+        function handleIncomingMessage(message) {
+            if (message.conversation_id === currentConversationId) {
+                // Add to current conversation
+                addMessageToUI(message);
+                markMessagesAsRead([message]);
+            } else {
+                // Update conversation list with new message
+                loadConversations();
+                
+                // Show notification
+                showMessageNotification(message);
+            }
+        }
+
+        function handleTypingIndicator(data) {
+            if (data.conversation_id === currentConversationId) {
+                const statusBar = document.getElementById('message-status-bar');
+                if (data.typing) {
+                    statusBar.innerHTML = '<span class="typing-indicator">Typing...</span>';
+                } else {
+                    statusBar.innerHTML = '';
+                }
+            }
+
+            // Update conversation list typing indicator
+            const convItem = document.querySelector(`.conversation-item[onclick*="${data.conversation_id}"]`);
+            if (convItem) {
+                const existingIndicator = convItem.querySelector('.typing-indicator');
+                if (data.typing) {
+                    if (!existingIndicator) {
+                        const indicator = document.createElement('span');
+                        indicator.className = 'typing-indicator';
+                        indicator.textContent = 'typing...';
+                        convItem.querySelector('.conversation-info').appendChild(indicator);
+                    }
+                } else {
+                    if (existingIndicator) {
+                        existingIndicator.remove();
+                    }
+                }
+            }
+        }
+
+        function handleReadReceipt(data) {
+            if (data.conversation_id === currentConversationId) {
+                data.message_ids.forEach(id => {
+                    const messageEl = document.getElementById(`message-${id}`);
+                    if (messageEl) {
+                        const statusEl = messageEl.querySelector('.message-status');
+                        if (statusEl) {
+                            statusEl.className = 'message-status read';
+                            statusEl.innerHTML = '✓✓';
+                        }
+                    }
+                });
+            }
+        }
+
+        function handleDeliveryReceipt(data) {
+            if (data.conversation_id === currentConversationId) {
+                data.message_ids.forEach(id => {
+                    const messageEl = document.getElementById(`message-${id}`);
+                    if (messageEl) {
+                        const statusEl = messageEl.querySelector('.message-status');
+                        if (statusEl && !statusEl.classList.contains('read')) {
+                            statusEl.className = 'message-status delivered';
+                            statusEl.innerHTML = '✓✓';
+                        }
+                    }
+                });
+            }
+        }
+
+        function handlePresenceUpdate(data) {
+            // Update conversation list
+            const conversation = conversations.find(c => c.other_user_id === data.user_id);
+            if (conversation) {
+                conversation.is_online = data.online;
+                displayConversations(conversations);
+            }
+
+            // Update current conversation header
+            if (currentConversationId) {
+                const statusEl = document.getElementById('user-status');
+                if (statusEl) {
+                    statusEl.textContent = data.online ? 'Online' : 'Offline';
+                }
+            }
+        }
+
+        function showMessageNotification(message) {
+            if (!("Notification" in window)) return;
+
+            if (Notification.permission === "granted") {
+                new Notification("New Message", {
+                    body: `${message.sender_name}: ${message.content.substring(0, 50)}`,
+                    icon: message.sender_avatar || '/public/assets/images/logo.png'
+                });
+            } else if (Notification.permission !== "denied") {
+                Notification.requestPermission();
+            }
+        }
+
+        // ============================================================================
+        // CONVERSATION MANAGEMENT
+        // ============================================================================
+
+        function showFilters() {
+            const filterBar = document.getElementById('filter-bar');
+            filterBar.style.display = filterBar.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function filterConversations() {
+            const type = document.getElementById('filter-type').value;
+            const date = document.getElementById('filter-date').value;
+
+            let filtered = [...conversations];
+
+            // Filter by type
+            if (type !== 'all') {
+                filtered = filtered.filter(c => {
+                    if (type === 'unread') return c.unread_count > 0;
+                    return c.category === type;
+                });
+            }
+
+            // Filter by date
+            if (date !== 'all') {
+                const now = new Date();
+                filtered = filtered.filter(c => {
+                    const lastMsg = new Date(c.last_message_time);
+                    const daysDiff = Math.floor((now - lastMsg) / (1000 * 60 * 60 * 24));
+                    
+                    if (date === 'today') return daysDiff === 0;
+                    if (date === 'week') return daysDiff <= 7;
+                    if (date === 'month') return daysDiff <= 30;
+                    return true;
+                });
+            }
+
+            displayConversations(filtered);
+        }
+
+        function markAllAsRead() {
+            conversations.forEach(c => {
+                if (c.unread_count > 0) {
+                    markConversationAsRead(c.id);
+                }
+            });
+        }
+
+        async function archiveConversation() {
+            if (!currentConversationId) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/messages/archive-conversation.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ conversation_id: currentConversationId })
+                });
+
+                showNotification('Conversation archived', 'success');
+                backToConversations();
+                loadConversations();
+            } catch (error) {
+                console.error('Error archiving conversation:', error);
+                showNotification('Failed to archive', 'error');
+            }
+        }
+
+        function showConversationDetails() {
+            const conversation = conversations.find(c => c.id === currentConversationId);
+            if (!conversation) return;
+
+            const details = document.getElementById('conversation-details');
+            details.innerHTML = `
+                <div class="detail-item">
+                    <strong>With:</strong> ${conversation.other_user_name}
+                </div>
+                <div class="detail-item">
+                    <strong>Started:</strong> ${new Date(conversation.conversation_created).toLocaleDateString()}
+                </div>
+                <div class="detail-item">
+                    <strong>Total Messages:</strong> ${conversation.message_count || 'N/A'}
+                </div>
+                <div class="detail-item">
+                    <strong>Last Activity:</strong> ${formatTimeAgo(conversation.last_message_time)}
+                </div>
+            `;
+
+            document.getElementById('conversation-modal').classList.add('active');
+        }
+
+        async function blockUser() {
+            const conversation = conversations.find(c => c.id === currentConversationId);
+            if (!conversation) return;
+
+            if (!confirm(`Block ${conversation.other_user_name}? They won't be able to message you.`)) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                await fetch('/api/messages/block-user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ user_id: conversation.other_user_id })
+                });
+
+                showNotification('User blocked', 'success');
+                closeModal('conversation-modal');
+                backToConversations();
+                loadConversations();
+            } catch (error) {
+                console.error('Error blocking user:', error);
+                showNotification('Failed to block user', 'error');
+            }
+        }
+
+        // ============================================================================
+        // SEARCH
+        // ============================================================================
+
+        document.getElementById('search-messages').addEventListener('input', debounce(async (e) => {
+            const query = e.target.value.trim();
+
+            if (query.length < 2) {
+                displayConversations(conversations);
+                return;
+            }
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/messages/search.php?q=${encodeURIComponent(query)}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayConversations(data.conversations);
+                }
+            } catch (error) {
+                console.error('Error searching messages:', error);
+            }
+        }, 500));
+
+        // ============================================================================
+        // UTILITY FUNCTIONS
+        // ============================================================================
+
+        function scrollToBottom() {
+            const container = document.getElementById('messages-container');
+            container.scrollTop = container.scrollHeight;
+        }
+
+        function updateMessageBadge(count) {
+            const badges = document.querySelectorAll('#sidebar-message-badge, #notification-badge');
+            badges.forEach(badge => {
+                if (count > 0) {
+                    badge.textContent = count > 9 ? '9+' : count;
+                    badge.style.display = 'inline';
+                } else {
+                    badge.style.display = 'none';
+                }
+            });
+        }
+
+        function viewImage(url) {
+            document.getElementById('image-preview').src = url;
+            document.getElementById('image-modal').classList.add('active');
+        }
+
+        function formatTime(timestamp) {
+            const date = new Date(timestamp);
+            return date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+        }
+
+        function formatTimeAgo(timestamp) {
+            if (!timestamp) return '';
+            
+            const date = new Date(timestamp);
+            const now = new Date();
+            const diff = Math.floor((now - date) / 1000);
+
+            if (diff < 60) return 'just now';
+            if (diff < 3600) return `${Math.floor(diff / 60)}m ago`;
+            if (diff < 86400) return `${Math.floor(diff / 3600)}h ago`;
+            if (diff < 604800) return `${Math.floor(diff / 86400)}d ago`;
+            
+            return date.toLocaleDateString();
+        }
+
+        function formatMessageDate(timestamp) {
+            const date = new Date(timestamp);
+            const today = new Date();
+            const yesterday = new Date(today);
+            yesterday.setDate(yesterday.getDate() - 1);
+
+            if (date.toDateString() === today.toDateString()) {
+                return 'Today';
+            } else if (date.toDateString() === yesterday.toDateString()) {
+                return 'Yesterday';
+            } else {
+                return date.toLocaleDateString('en-US', { 
+                    weekday: 'long',
+                    month: 'long', 
+                    day: 'numeric',
+                    year: date.getFullYear() !== today.getFullYear() ? 'numeric' : undefined
+                });
+            }
+        }
+
+        function isSameDay(date1, date2) {
+            const d1 = new Date(date1);
+            const d2 = new Date(date2);
+            return d1.toDateString() === d2.toDateString();
+        }
+
+        function formatFileSize(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB', 'GB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        function escapeHtml(unsafe) {
+            return unsafe
+                .replace(/&/g, "&amp;")
+                .replace(/</g, "&lt;")
+                .replace(/>/g, "&gt;")
+                .replace(/"/g, "&quot;")
+                .replace(/'/g, "&#039;");
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function checkUrlParams() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const conversationId = urlParams.get('id');
+            if (conversationId) {
+                openConversation(parseInt(conversationId));
+            }
+        }
+
+        function sendPendingMessages() {
+            // Implement offline message queue
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                if (ws) {
+                    ws.close();
+                }
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Request notification permission on load
+        if ("Notification" in window && Notification.permission === "default") {
+            Notification.requestPermission();
+        }
+
+        // Make functions global
+        window.openConversation = openConversation;
+        window.backToConversations = backToConversations;
+        window.sendMessage = sendMessage;
+        window.attachFile = attachFile;
+        window.viewImage = viewImage;
+        window.showConversationDetails = showConversationDetails;
+        window.archiveConversation = archiveConversation;
+        window.blockUser = blockUser;
+        window.markAllAsRead = markAllAsRead;
+        window.showFilters = showFilters;
+        window.filterConversations = filterConversations;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

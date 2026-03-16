@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Reviews - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/reviews.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item active">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search reviews..." id="search-reviews">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>My Reviews</h1>
+                    <div class="header-actions">
+                        <select class="form-select" id="sort-reviews">
+                            <option value="recent">Most Recent</option>
+                            <option value="highest">Highest Rated</option>
+                            <option value="lowest">Lowest Rated</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Reviews Stats -->
+                <div class="reviews-stats" id="reviews-stats">
+                    <!-- Loaded dynamically -->
+                </div>
+
+                <!-- Reviews List -->
+                <div class="reviews-list" id="reviews-list">
+                    <div class="loading-state">
+                        <div class="spinner"></div>
+                        <p>Loading your reviews...</p>
+                    </div>
+                </div>
+
+                <!-- Pagination -->
+                <div class="pagination" id="pagination"></div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Edit Review Modal -->
+    <div class="modal" id="edit-review-modal">
+        <div class="modal-content modal-lg">
+            <div class="modal-header">
+                <h3>Edit Review</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="edit-review-form">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal" id="delete-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Delete Review</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to delete this review? This action cannot be undone.</p>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+                    <button class="btn btn-danger" onclick="confirmDelete()">Delete Review</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let currentPage = 1;
+        let currentSort = 'recent';
+        let searchTerm = '';
+        let selectedReviewId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadReviewsStats();
+            loadReviews();
+
+            // Search input
+            const searchInput = document.getElementById('search-reviews');
+            searchInput.addEventListener('input', debounce(() => {
+                searchTerm = searchInput.value;
+                currentPage = 1;
+                loadReviews();
+            }, 500));
+
+            // Sort select
+            document.getElementById('sort-reviews').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                currentPage = 1;
+                loadReviews();
+            });
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadReviewsStats() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/customer/stats.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayReviewsStats(data.stats);
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        function displayReviewsStats(stats) {
+            const container = document.getElementById('reviews-stats');
+            
+            container.innerHTML = `
+                <div class="stats-grid">
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.total_reviews}</div>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.average_rating.toFixed(1)}</div>
+                        <div class="stat-label">Average Rating Given</div>
+                        <div class="stat-stars">${generateStarRating(stats.average_rating)}</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.helpful_votes}</div>
+                        <div class="stat-label">Helpful Votes Received</div>
+                    </div>
+                    <div class="stat-card">
+                        <div class="stat-value">${stats.responses_received}</div>
+                        <div class="stat-label">Provider Responses</div>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function loadReviews() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = `/api/reviews/customer/list.php?page=${currentPage}&sort=${currentSort}&search=${encodeURIComponent(searchTerm)}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayReviews(data.reviews);
+                    displayPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading reviews:', error);
+                document.getElementById('reviews-list').innerHTML = `
+                    <div class="error-state">
+                        <p>Failed to load reviews. Please try again.</p>
+                    </div>
+                `;
+            }
+        }
+
+        function displayReviews(reviews) {
+            const container = document.getElementById('reviews-list');
+
+            if (reviews.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <img src="/public/assets/icons/review-icon.svg" alt="No reviews">
+                        <h3>No Reviews Yet</h3>
+                        <p>You haven't written any reviews yet.</p>
+                        <a href="/src/services/" class="btn btn-primary">Browse Services</a>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = reviews.map(review => `
+                <div class="review-card" id="review-${review.id}">
+                    <div class="review-header">
+                        <div class="provider-info">
+                            <img src="${review.provider_avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                 alt="${review.provider_name}" class="provider-avatar">
+                            <div>
+                                <h3>${review.provider_name}</h3>
+                                <p class="service-name">${review.service_name}</p>
+                            </div>
+                        </div>
+                        <div class="review-meta">
+                            <span class="review-date">${new Date(review.created_at).toLocaleDateString()}</span>
+                            <div class="review-actions">
+                                ${review.can_edit ? `
+                                    <button class="btn-icon" onclick="editReview(${review.id})" title="Edit review">✏️</button>
+                                ` : ''}
+                                <button class="btn-icon" onclick="showDeleteModal(${review.id})" title="Delete review">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="review-rating">
+                        ${generateStarRating(review.overall_rating)}
+                    </div>
+
+                    ${review.title ? `<h4 class="review-title">${review.title}</h4>` : ''}
+                    
+                    <p class="review-content">${review.comment}</p>
+
+                    ${review.photos && review.photos.length > 0 ? `
+                        <div class="review-photos">
+                            ${review.photos.map(photo => `
+                                <img src="${photo}" alt="Review photo" onclick="viewImage('${photo}')">
+                            `).join('')}
+                        </div>
+                    ` : ''}
+
+                    ${review.response_from_provider ? `
+                        <div class="provider-response">
+                            <div class="response-header">
+                                <strong>Provider Response:</strong>
+                                <span class="response-date">${new Date(review.response_date).toLocaleDateString()}</span>
+                            </div>
+                            <p>${review.response_from_provider}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="review-footer">
+                        <div class="helpful-count">
+                            <span>👍 ${review.helpful_count || 0} found this helpful</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            if (pagination.total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination-controls">';
+            
+            // Previous button
+            html += `
+                <button class="page-btn" ${pagination.page === 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    ←
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (
+                    i === 1 ||
+                    i === pagination.total_pages ||
+                    (i >= pagination.page - 2 && i <= pagination.page + 2)
+                ) {
+                    html += `
+                        <button class="page-btn ${i === pagination.page ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === pagination.page - 3 || i === pagination.page + 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" ${pagination.page === pagination.total_pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    →
+                </button>
+            `;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadReviews();
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function editReview(reviewId) {
+            window.location.href = `/src/dashboard/customer/reviews/edit-review.html?id=${reviewId}`;
+        }
+
+        function showDeleteModal(reviewId) {
+            selectedReviewId = reviewId;
+            document.getElementById('delete-modal').classList.add('active');
+        }
+
+        async function confirmDelete() {
+            if (!selectedReviewId) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/reviews/delete.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ review_id: selectedReviewId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Review deleted successfully', 'success');
+                    closeModal();
+                    loadReviews();
+                    loadReviewsStats();
+                } else {
+                    showNotification(data.message || 'Failed to delete review', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting review:', error);
+                showNotification('Failed to delete review', 'error');
+            }
+        }
+
+        function viewImage(url) {
+            const modal = document.createElement('div');
+            modal.className = 'modal image-modal';
+            modal.innerHTML = `
+                <div class="modal-content">
+                    <button class="close" onclick="this.closest('.modal').remove()">&times;</button>
+                    <img src="${url}" alt="Review photo" style="max-width: 100%; max-height: 80vh;">
+                </div>
+            `;
+            document.body.appendChild(modal);
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            selectedReviewId = null;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

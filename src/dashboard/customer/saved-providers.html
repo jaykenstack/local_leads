@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Saved Providers - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same structure) -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <!-- ... sidebar content ... -->
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search saved providers...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <div class="page-header">
+                    <h1>Saved Providers</h1>
+                    <button class="btn btn-secondary" onclick="window.location.href='/src/services/'">
+                        Find More Providers
+                    </button>
+                </div>
+
+                <!-- Providers Grid -->
+                <div class="providers-grid" id="saved-providers-grid">
+                    <div class="text-center">Loading saved providers...</div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', loadSavedProviders);
+
+        async function loadSavedProviders() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/saved-providers.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('saved-providers-grid');
+
+                if (!data.success || data.providers.length === 0) {
+                    container.innerHTML = `
+                        <div class="empty-state">
+                            <p>You haven't saved any providers yet.</p>
+                            <button class="btn btn-primary" onclick="window.location.href='/src/services/'">
+                                Browse Providers
+                            </button>
+                        </div>
+                    `;
+                    return;
+                }
+
+                container.innerHTML = data.providers.map(provider => `
+                    <div class="provider-card">
+                        <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                             alt="${provider.business_name}" class="provider-avatar">
+                        <h3>${provider.business_name}</h3>
+                        <div class="provider-rating">
+                            ${generateStarRating(provider.rating)}
+                            <span>(${provider.review_count} reviews)</span>
+                        </div>
+                        <p class="provider-services">${provider.services.join(', ')}</p>
+                        <div class="provider-actions">
+                            <button class="btn btn-primary" onclick="messageProvider(${provider.id})">
+                                Message
+                            </button>
+                            <button class="btn btn-danger" onclick="removeSavedProvider(${provider.id})">
+                                Remove
+                            </button>
+                        </div>
+                    </div>
+                `).join('');
+            } catch (error) {
+                console.error('Error loading saved providers:', error);
+            }
+        }
+
+        function generateStarRating(rating) {
+            const fullStars = Math.floor(rating);
+            const hasHalf = rating % 1 >= 0.5;
+            let stars = '';
+            
+            for (let i = 0; i < fullStars; i++) stars += '★';
+            if (hasHalf) stars += '½';
+            for (let i = 0; i < 5 - fullStars - (hasHalf ? 1 : 0); i++) stars += '☆';
+            
+            return `<span class="stars">${stars}</span>`;
+        }
+
+        function messageProvider(providerId) {
+            window.location.href = `/src/dashboard/customer/messages.html?provider=${providerId}`;
+        }
+
+        async function removeSavedProvider(providerId) {
+            if (!confirm('Remove this provider from your saved list?')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/remove-saved-provider.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ provider_id: providerId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Provider removed', 'success');
+                    loadSavedProviders();
+                } else {
+                    showNotification(data.message || 'Failed to remove provider', 'error');
+                }
+            } catch (error) {
+                console.error('Error removing provider:', error);
+                showNotification('Failed to remove provider', 'error');
+            }
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+    </script>
+</body>
+</html>

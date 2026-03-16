@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - UrgentServices</title>
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/auth.css">
+</head>
+<body class="auth-page">
+    <div class="auth-container">
+        <div class="auth-card">
+            <div class="auth-header">
+                <img src="/public/assets/images/logo.svg" alt="UrgentServices" class="auth-logo">
+                <h1>Create Account</h1>
+                <p>Join thousands of users and service providers</p>
+            </div>
+
+            <div class="auth-type-selector">
+                <h3>I want to:</h3>
+                <div class="type-cards">
+                    <a href="/src/auth/customer-signup.html" class="type-card">
+                        <img src="/public/assets/icons/customer-icon.svg" alt="Customer">
+                        <h4>Find Services</h4>
+                        <p>Get help with urgent home services</p>
+                        <span class="btn btn-secondary">Sign up as Customer →</span>
+                    </a>
+                    
+                    <a href="/src/auth/provider-signup.html" class="type-card">
+                        <img src="/public/assets/icons/provider-icon.svg" alt="Provider">
+                        <h4>Offer Services</h4>
+                        <p>Grow your business with quality leads</p>
+                        <span class="btn btn-primary">Sign up as Provider →</span>
+                    </a>
+                </div>
+            </div>
+
+            <div class="auth-divider">
+                <span>Already have an account?</span>
+            </div>
+
+            <p class="auth-footer" style="text-align: center;">
+                <a href="/src/auth/login.html" class="btn btn-secondary">Sign In Instead</a>
+            </p>
+        </div>
+    </div>
+
+    <script src="/public/scripts/auth.js"></script>
+</body>
+</html>

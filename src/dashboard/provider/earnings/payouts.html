@@ -1,0 +1,1093 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payout History - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/earnings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- DataTables -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Overview
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/transactions.html" class="nav-item">
+                        <span class="nav-icon">📜</span>
+                        Transactions
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/payouts.html" class="nav-item active">
+                        <span class="nav-icon">🏦</span>
+                        Payouts
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/tax-info.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        Tax Info
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search payouts...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Payout History</h1>
+                    <div class="header-actions">
+                        <div class="balance-info">
+                            <span>Available Balance:</span>
+                            <strong id="available-balance">$0.00</strong>
+                        </div>
+                        <button class="btn btn-primary" onclick="requestPayout()" id="payout-btn">
+                            Request New Payout
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Payout Summary Cards -->
+                <div class="payout-summary-grid">
+                    <div class="summary-card">
+                        <div class="card-icon blue">💰</div>
+                        <div class="card-content">
+                            <span class="card-label">Total Payouts</span>
+                            <span class="card-value" id="total-payouts">$0.00</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon green">📊</div>
+                        <div class="card-content">
+                            <span class="card-label">Successful Payouts</span>
+                            <span class="card-value" id="successful-payouts">0</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon orange">⏳</div>
+                        <div class="card-content">
+                            <span class="card-label">Pending Payouts</span>
+                            <span class="card-value" id="pending-payouts">0</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon purple">📅</div>
+                        <div class="card-content">
+                            <span class="card-label">Last Payout</span>
+                            <span class="card-value" id="last-payout">-</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payout Methods Section -->
+                <div class="payout-methods-section">
+                    <h3>Payout Methods</h3>
+                    <div class="methods-grid" id="methods-grid">
+                        <!-- Loaded dynamically -->
+                    </div>
+                    <button class="btn btn-secondary" onclick="addPayoutMethod()">
+                        + Add Payout Method
+                    </button>
+                </div>
+
+                <!-- Payout Schedule -->
+                <div class="schedule-card">
+                    <h4>Payout Schedule</h4>
+                    <div class="schedule-info">
+                        <div class="schedule-item">
+                            <span class="schedule-label">Processing Time:</span>
+                            <span class="schedule-value">3-5 business days</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-label">Minimum Payout:</span>
+                            <span class="schedule-value">$10.00</span>
+                        </div>
+                        <div class="schedule-item">
+                            <span class="schedule-label">Next Auto-Payout:</span>
+                            <span class="schedule-value" id="next-auto-payout">Every Friday</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Payouts Timeline -->
+                <div class="timeline-section">
+                    <h3>Payout Timeline</h3>
+                    <div class="timeline" id="payout-timeline">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Payouts Table -->
+                <div class="table-wrapper">
+                    <h3>Payout History</h3>
+                    <table id="payouts-table" class="display responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Date Requested</th>
+                                <th>Amount</th>
+                                <th>Method</th>
+                                <th>Destination</th>
+                                <th>Status</th>
+                                <th>Processed Date</th>
+                                <th>Reference</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="payouts-body">
+                            <tr>
+                                <td colspan="8" class="text-center">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <p>Loading payouts...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Request Payout Modal -->
+    <div class="modal" id="payout-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Payout</h3>
+                <button class="close" onclick="closeModal('payout-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="available-info">
+                    <span>Available Balance:</span>
+                    <strong id="modal-available">$0.00</strong>
+                </div>
+
+                <form id="payout-form" onsubmit="submitPayoutRequest(event)">
+                    <div class="form-group">
+                        <label class="form-label">Withdrawal Amount ($)</label>
+                        <input type="number" id="payout-amount" class="form-input" 
+                               min="10" step="0.01" required
+                               placeholder="Enter amount">
+                        <div class="amount-hint">
+                            <span>Quick select:</span>
+                            <button type="button" class="btn-small" onclick="setAmount(25)">$25</button>
+                            <button type="button" class="btn-small" onclick="setAmount(50)">$50</button>
+                            <button type="button" class="btn-small" onclick="setAmount(100)">$100</button>
+                            <button type="button" class="btn-small" onclick="setAmount('all')">All</button>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Payout Method</label>
+                        <select id="payout-method-select" class="form-select" required>
+                            <!-- Loaded dynamically -->
+                        </select>
+                    </div>
+
+                    <div class="payout-summary">
+                        <div class="summary-row">
+                            <span>Withdrawal Amount:</span>
+                            <span id="summary-amount">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Processing Fee:</span>
+                            <span id="summary-fee">$0.00</span>
+                        </div>
+                        <div class="summary-row total">
+                            <span>You'll Receive:</span>
+                            <span id="summary-total">$0.00</span>
+                        </div>
+                        <div class="summary-row">
+                            <span>Estimated Arrival:</span>
+                            <span id="summary-arrival">3-5 business days</span>
+                        </div>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('payout-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Request Payout
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Payout Method Modal -->
+    <div class="modal" id="method-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add Payout Method</h3>
+                <button class="close" onclick="closeModal('method-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="method-tabs">
+                    <button class="method-tab active" data-method="bank">Bank Account</button>
+                    <button class="method-tab" data-method="paypal">PayPal</button>
+                    <button class="method-tab" data-method="card">Debit Card</button>
+                </div>
+
+                <form id="method-form" onsubmit="savePayoutMethod(event)">
+                    <!-- Bank Account Form -->
+                    <div class="method-form active" id="bank-form">
+                        <div class="form-group">
+                            <label class="form-label">Account Holder Name</label>
+                            <input type="text" id="bank-holder" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Bank Name</label>
+                            <input type="text" id="bank-name" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Type</label>
+                            <select id="bank-type" class="form-select">
+                                <option value="checking">Checking</option>
+                                <option value="savings">Savings</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Routing Number</label>
+                            <input type="text" id="routing-number" class="form-input" required pattern="\d{9}">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Account Number</label>
+                            <input type="text" id="account-number" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm Account Number</label>
+                            <input type="text" id="confirm-account" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <!-- PayPal Form -->
+                    <div class="method-form" id="paypal-form" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">PayPal Email</label>
+                            <input type="email" id="paypal-email" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Confirm PayPal Email</label>
+                            <input type="email" id="confirm-paypal" class="form-input" required>
+                        </div>
+                        <div class="paypal-note">
+                            <p>ℹ️ You'll be redirected to PayPal to verify your account.</p>
+                        </div>
+                    </div>
+
+                    <!-- Debit Card Form -->
+                    <div class="method-form" id="card-form" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Cardholder Name</label>
+                            <input type="text" id="card-holder" class="form-input" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label">Card Number</label>
+                            <input type="text" id="card-number" class="form-input" required pattern="\d{16}">
+                        </div>
+                        <div class="form-row">
+                            <div class="form-group">
+                                <label class="form-label">Expiry</label>
+                                <input type="text" id="card-expiry" class="form-input" placeholder="MM/YY" required>
+                            </div>
+                            <div class="form-group">
+                                <label class="form-label">CVV</label>
+                                <input type="text" id="card-cvv" class="form-input" required pattern="\d{3,4}">
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="set-default" checked>
+                            Set as default payout method
+                        </label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('method-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Save Method
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- Payout Details Modal -->
+    <div class="modal" id="details-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Payout Details</h3>
+                <button class="close" onclick="closeModal('details-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="payout-details">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="downloadPayoutReceipt()">Download Receipt</button>
+                <button class="btn btn-primary" onclick="closeModal('details-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Success Modal -->
+    <div class="modal" id="success-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Success!</h3>
+                <button class="close" onclick="closeModal('success-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <div class="success-icon">✓</div>
+                <p id="success-message">Your payout request has been submitted successfully.</p>
+                <p>You'll receive the funds within 3-5 business days.</p>
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-primary" onclick="closeModal('success-modal')">Done</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let payoutsTable = null;
+        let payoutMethods = [];
+        let allPayouts = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadPayoutMethods();
+            loadPayouts();
+            loadPayoutSummary();
+            loadPayoutTimeline();
+            initializeDataTable();
+            setupEventListeners();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('payout-amount').addEventListener('input', calculatePayoutSummary);
+
+            // Method tabs
+            document.querySelectorAll('.method-tab').forEach(tab => {
+                tab.addEventListener('click', (e) => {
+                    document.querySelectorAll('.method-tab').forEach(t => t.classList.remove('active'));
+                    document.querySelectorAll('.method-form').forEach(f => f.style.display = 'none');
+                    
+                    tab.classList.add('active');
+                    const method = tab.dataset.method;
+                    document.getElementById(`${method}-form`).style.display = 'block';
+                });
+            });
+        }
+
+        async function loadPayoutMethods() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/payout-methods.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    payoutMethods = data.methods;
+                    displayPayoutMethods(data.methods);
+                    updatePayoutMethodSelect(data.methods);
+                }
+            } catch (error) {
+                console.error('Error loading payout methods:', error);
+            }
+        }
+
+        function displayPayoutMethods(methods) {
+            const container = document.getElementById('methods-grid');
+
+            if (methods.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-methods">
+                        <p>No payout methods added yet.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            container.innerHTML = methods.map(method => `
+                <div class="method-card ${method.is_default ? 'default' : ''}">
+                    <div class="method-icon">
+                        ${method.type === 'bank' ? '🏦' : method.type === 'paypal' ? '📧' : '💳'}
+                    </div>
+                    <div class="method-info">
+                        <div class="method-name">
+                            ${method.name}
+                            ${method.is_default ? '<span class="default-badge">Default</span>' : ''}
+                        </div>
+                        <div class="method-details">${method.details}</div>
+                    </div>
+                    <div class="method-actions">
+                        ${!method.is_default ? `
+                            <button class="btn-icon" onclick="setDefaultMethod(${method.id})" title="Set as default">⭐</button>
+                        ` : ''}
+                        <button class="btn-icon" onclick="deleteMethod(${method.id})" title="Remove">🗑️</button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function updatePayoutMethodSelect(methods) {
+            const select = document.getElementById('payout-method-select');
+            select.innerHTML = methods.map(m => `
+                <option value="${m.id}" ${m.is_default ? 'selected' : ''}>
+                    ${m.name} - ${m.details}
+                </option>
+            `).join('');
+        }
+
+        async function loadPayouts() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/payouts.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    allPayouts = data.payouts;
+                    populatePayoutsTable(data.payouts);
+                }
+            } catch (error) {
+                console.error('Error loading payouts:', error);
+            }
+        }
+
+        async function loadPayoutSummary() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/payout-summary.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('available-balance').textContent = formatCurrency(data.available);
+                    document.getElementById('modal-available').textContent = formatCurrency(data.available);
+                    document.getElementById('total-payouts').textContent = formatCurrency(data.total_payouts);
+                    document.getElementById('successful-payouts').textContent = data.successful_count;
+                    document.getElementById('pending-payouts').textContent = data.pending_count;
+                    document.getElementById('last-payout').textContent = data.last_payout_date || '-';
+                    
+                    // Enable/disable payout button
+                    const payoutBtn = document.getElementById('payout-btn');
+                    if (data.available < 10) {
+                        payoutBtn.disabled = true;
+                        payoutBtn.title = 'Minimum $10 required for withdrawal';
+                    } else {
+                        payoutBtn.disabled = false;
+                        payoutBtn.title = '';
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading payout summary:', error);
+            }
+        }
+
+        async function loadPayoutTimeline() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/payout-timeline.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayPayoutTimeline(data.timeline);
+                }
+            } catch (error) {
+                console.error('Error loading payout timeline:', error);
+            }
+        }
+
+        function displayPayoutTimeline(timeline) {
+            const container = document.getElementById('payout-timeline');
+            
+            if (timeline.length === 0) {
+                container.innerHTML = '<p class="text-center">No payout history yet</p>';
+                return;
+            }
+
+            container.innerHTML = timeline.map((item, index) => `
+                <div class="timeline-item ${item.status}">
+                    <div class="timeline-marker"></div>
+                    <div class="timeline-content">
+                        <div class="timeline-date">${new Date(item.date).toLocaleDateString()}</div>
+                        <div class="timeline-title">${item.description}</div>
+                        <div class="timeline-amount">${formatCurrency(item.amount)}</div>
+                        <div class="timeline-status">
+                            <span class="status-badge status-${item.status.toLowerCase()}">
+                                ${item.status}
+                            </span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function populatePayoutsTable(payouts) {
+            const tbody = document.getElementById('payouts-body');
+
+            if (payouts.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            <div class="empty-state">
+                                <p>No payouts yet</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = payouts.map(p => `
+                <tr>
+                    <td>${new Date(p.requested_date).toLocaleDateString()}</td>
+                    <td class="amount">${formatCurrency(p.amount)}</td>
+                    <td>${p.method_type}</td>
+                    <td>${p.destination}</td>
+                    <td>
+                        <span class="status-badge status-${p.status.toLowerCase()}">
+                            ${p.status}
+                        </span>
+                    </td>
+                    <td>${p.processed_date ? new Date(p.processed_date).toLocaleDateString() : '—'}</td>
+                    <td>
+                        <span class="reference-id">${p.reference || '—'}</span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="viewPayoutDetails('${p.id}')" title="View Details">
+                                👁️
+                            </button>
+                            <button class="btn-icon" onclick="downloadPayoutReceipt('${p.id}')" title="Download Receipt">
+                                📥
+                            </button>
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function initializeDataTable() {
+            if ($.fn.DataTable.isDataTable('#payouts-table')) {
+                $('#payouts-table').DataTable().destroy();
+            }
+
+            payoutsTable = $('#payouts-table').DataTable({
+                pageLength: 25,
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { targets: [1], className: 'dt-body-right' },
+                    { targets: [7], orderable: false }
+                ],
+                language: {
+                    emptyTable: "No payouts available",
+                    search: "Search payouts:"
+                }
+            });
+        }
+
+        function requestPayout() {
+            const available = parseFloat(document.getElementById('available-balance').textContent.replace('$', ''));
+            if (available < 10) {
+                showNotification('Minimum $10 required for withdrawal', 'error');
+                return;
+            }
+
+            document.getElementById('payout-amount').max = available;
+            document.getElementById('payout-amount').value = '';
+            calculatePayoutSummary();
+            document.getElementById('payout-modal').classList.add('active');
+        }
+
+        function setAmount(amount) {
+            const available = parseFloat(document.getElementById('available-balance').textContent.replace('$', ''));
+            
+            if (amount === 'all') {
+                document.getElementById('payout-amount').value = available.toFixed(2);
+            } else {
+                document.getElementById('payout-amount').value = Math.min(amount, available).toFixed(2);
+            }
+            
+            calculatePayoutSummary();
+        }
+
+        function calculatePayoutSummary() {
+            const amount = parseFloat(document.getElementById('payout-amount').value) || 0;
+            const fee = amount * 0.01; // 1% processing fee
+            const total = amount - fee;
+
+            document.getElementById('summary-amount').textContent = formatCurrency(amount);
+            document.getElementById('summary-fee').textContent = formatCurrency(fee);
+            document.getElementById('summary-total').textContent = formatCurrency(total);
+        }
+
+        async function submitPayoutRequest(e) {
+            e.preventDefault();
+
+            const amount = parseFloat(document.getElementById('payout-amount').value);
+            const methodId = document.getElementById('payout-method-select').value;
+
+            if (amount < 10) {
+                showNotification('Minimum withdrawal amount is $10', 'error');
+                return;
+            }
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<span class="spinner"></span> Processing...';
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/request-payout.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        amount: amount,
+                        method_id: methodId
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    closeModal('payout-modal');
+                    document.getElementById('success-message').textContent = 
+                        `Your payout request for ${formatCurrency(amount)} has been submitted.`;
+                    document.getElementById('success-modal').classList.add('active');
+                    
+                    // Refresh data
+                    loadPayouts();
+                    loadPayoutSummary();
+                    loadPayoutTimeline();
+                } else {
+                    showNotification(data.message || 'Failed to request payout', 'error');
+                }
+            } catch (error) {
+                console.error('Error requesting payout:', error);
+                showNotification('Failed to request payout', 'error');
+            } finally {
+                submitBtn.disabled = false;
+                submitBtn.innerHTML = originalText;
+            }
+        }
+
+        function addPayoutMethod() {
+            document.getElementById('method-modal').classList.add('active');
+        }
+
+        async function savePayoutMethod(e) {
+            e.preventDefault();
+
+            const activeTab = document.querySelector('.method-tab.active');
+            const methodType = activeTab.dataset.method;
+            const setDefault = document.getElementById('set-default').checked;
+
+            let methodData = { type: methodType, set_default: setDefault };
+
+            if (methodType === 'bank') {
+                const accountHolder = document.getElementById('bank-holder').value;
+                const bankName = document.getElementById('bank-name').value;
+                const accountType = document.getElementById('bank-type').value;
+                const routing = document.getElementById('routing-number').value;
+                const account = document.getElementById('account-number').value;
+                const confirm = document.getElementById('confirm-account').value;
+
+                if (!accountHolder || !bankName || !routing || !account || !confirm) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+
+                if (account !== confirm) {
+                    showNotification('Account numbers do not match', 'error');
+                    return;
+                }
+
+                methodData = {
+                    ...methodData,
+                    account_holder: accountHolder,
+                    bank_name: bankName,
+                    account_type: accountType,
+                    routing_number: routing,
+                    account_number: account
+                };
+
+            } else if (methodType === 'paypal') {
+                const email = document.getElementById('paypal-email').value;
+                const confirmEmail = document.getElementById('confirm-paypal').value;
+
+                if (!email || !confirmEmail) {
+                    showNotification('Please enter PayPal email', 'error');
+                    return;
+                }
+
+                if (email !== confirmEmail) {
+                    showNotification('Email addresses do not match', 'error');
+                    return;
+                }
+
+                methodData = { ...methodData, email: email };
+
+            } else if (methodType === 'card') {
+                const cardHolder = document.getElementById('card-holder').value;
+                const cardNumber = document.getElementById('card-number').value;
+                const expiry = document.getElementById('card-expiry').value;
+                const cvv = document.getElementById('card-cvv').value;
+
+                if (!cardHolder || !cardNumber || !expiry || !cvv) {
+                    showNotification('Please fill in all fields', 'error');
+                    return;
+                }
+
+                methodData = {
+                    ...methodData,
+                    card_holder: cardHolder,
+                    card_number: cardNumber,
+                    expiry: expiry,
+                    cvv: cvv
+                };
+            }
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/add-payout-method.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(methodData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Payout method added successfully', 'success');
+                    closeModal('method-modal');
+                    loadPayoutMethods();
+                } else {
+                    showNotification(data.message || 'Failed to add payout method', 'error');
+                }
+            } catch (error) {
+                console.error('Error adding payout method:', error);
+                showNotification('Failed to add payout method', 'error');
+            }
+        }
+
+        async function setDefaultMethod(methodId) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/set-default-method.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ method_id: methodId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Default method updated', 'success');
+                    loadPayoutMethods();
+                } else {
+                    showNotification(data.message || 'Failed to update default method', 'error');
+                }
+            } catch (error) {
+                console.error('Error setting default method:', error);
+                showNotification('Failed to update default method', 'error');
+            }
+        }
+
+        async function deleteMethod(methodId) {
+            if (!confirm('Are you sure you want to remove this payout method?')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/delete-payout-method.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ method_id: methodId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Payout method removed', 'success');
+                    loadPayoutMethods();
+                } else {
+                    showNotification(data.message || 'Failed to remove method', 'error');
+                }
+            } catch (error) {
+                console.error('Error deleting method:', error);
+                showNotification('Failed to remove method', 'error');
+            }
+        }
+
+        function viewPayoutDetails(payoutId) {
+            const payout = allPayouts.find(p => p.id === payoutId);
+            if (!payout) return;
+
+            const details = document.getElementById('payout-details');
+            details.innerHTML = `
+                <div class="detail-row">
+                    <strong>Payout ID:</strong>
+                    <span>${payout.id}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Requested Date:</strong>
+                    <span>${new Date(payout.requested_date).toLocaleString()}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Processed Date:</strong>
+                    <span>${payout.processed_date ? new Date(payout.processed_date).toLocaleString() : 'Pending'}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Amount:</strong>
+                    <span>${formatCurrency(payout.amount)}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Fee:</strong>
+                    <span>${formatCurrency(payout.fee || 0)}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Net Amount:</strong>
+                    <span>${formatCurrency(payout.net_amount || payout.amount)}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Method:</strong>
+                    <span>${payout.method_type} - ${payout.destination}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Status:</strong>
+                    <span class="status-badge status-${payout.status.toLowerCase()}">${payout.status}</span>
+                </div>
+                <div class="detail-row">
+                    <strong>Reference:</strong>
+                    <span>${payout.reference || 'N/A'}</span>
+                </div>
+            `;
+
+            document.getElementById('details-modal').classList.add('active');
+        }
+
+        function downloadPayoutReceipt(payoutId) {
+            window.location.href = `/api/provider/earnings/payout-receipt.php?id=${payoutId}`;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.requestPayout = requestPayout;
+        window.setAmount = setAmount;
+        window.submitPayoutRequest = submitPayoutRequest;
+        window.addPayoutMethod = addPayoutMethod;
+        window.savePayoutMethod = savePayoutMethod;
+        window.setDefaultMethod = setDefaultMethod;
+        window.deleteMethod = deleteMethod;
+        window.viewPayoutDetails = viewPayoutDetails;
+        window.downloadPayoutReceipt = downloadPayoutReceipt;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

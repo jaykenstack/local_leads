@@ -1,0 +1,842 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transaction History - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/earnings.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- DataTables for advanced table features -->
+    <link rel="stylesheet" href="https://cdn.datatables.net/1.13.4/css/jquery.dataTables.min.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script src="https://cdn.datatables.net/1.13.4/js/jquery.dataTables.min.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Provider</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/provider/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/provider/leads.html" class="nav-item">
+                        <span class="nav-icon">🎯</span>
+                        Leads
+                    </a>
+                    <a href="/src/dashboard/provider/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Business</div>
+                    <a href="/src/dashboard/provider/services.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/provider/availability.html" class="nav-item">
+                        <span class="nav-icon">📅</span>
+                        Availability
+                    </a>
+                    <a href="/src/dashboard/provider/verification.html" class="nav-item">
+                        <span class="nav-icon">✓</span>
+                        Verification
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/provider/reviews/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        All Reviews
+                    </a>
+                    <a href="/src/dashboard/provider/reviews/pending.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Responses
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Earnings</div>
+                    <a href="/src/dashboard/provider/earnings/" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Overview
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/transactions.html" class="nav-item active">
+                        <span class="nav-icon">📜</span>
+                        Transactions
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/payouts.html" class="nav-item">
+                        <span class="nav-icon">🏦</span>
+                        Payouts
+                    </a>
+                    <a href="/src/dashboard/provider/earnings/tax-info.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        Tax Info
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Subscriptions</div>
+                    <a href="/src/dashboard/provider/subscriptions/" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        My Plan
+                    </a>
+                    <a href="/src/dashboard/provider/subscriptions/credits.html" class="nav-item">
+                        <span class="nav-icon">💰</span>
+                        Credits
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/provider/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search transactions...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">0</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>Transaction History</h1>
+                    <div class="header-actions">
+                        <select class="form-select" id="transaction-type">
+                            <option value="all">All Transactions</option>
+                            <option value="payment">Payments Only</option>
+                            <option value="payout">Payouts Only</option>
+                            <option value="refund">Refunds Only</option>
+                            <option value="fee">Fees Only</option>
+                        </select>
+                        <select class="form-select" id="date-filter">
+                            <option value="7">Last 7 Days</option>
+                            <option value="30" selected>Last 30 Days</option>
+                            <option value="90">Last 90 Days</option>
+                            <option value="365">This Year</option>
+                            <option value="all">All Time</option>
+                        </select>
+                        <button class="btn btn-secondary" onclick="exportTransactions()">
+                            📥 Export
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Summary Cards -->
+                <div class="summary-cards">
+                    <div class="summary-card">
+                        <div class="card-icon">💰</div>
+                        <div class="card-content">
+                            <span class="card-label">Total Payments</span>
+                            <span class="card-value" id="total-payments">$0.00</span>
+                            <span class="card-sub">From completed jobs</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon">💸</div>
+                        <div class="card-content">
+                            <span class="card-label">Total Fees</span>
+                            <span class="card-value" id="total-fees">$0.00</span>
+                            <span class="card-sub">Platform commission</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon">🏦</div>
+                        <div class="card-content">
+                            <span class="card-label">Total Payouts</span>
+                            <span class="card-value" id="total-payouts">$0.00</span>
+                            <span class="card-sub">Withdrawn amount</span>
+                        </div>
+                    </div>
+
+                    <div class="summary-card">
+                        <div class="card-icon">📊</div>
+                        <div class="card-content">
+                            <span class="card-label">Net Earnings</span>
+                            <span class="card-value" id="net-earnings">$0.00</span>
+                            <span class="card-sub">After fees</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Advanced Filters -->
+                <div class="filters-panel">
+                    <div class="filter-group">
+                        <label>Date Range:</label>
+                        <div class="date-range">
+                            <input type="date" id="start-date" class="form-input" placeholder="Start Date">
+                            <span>to</span>
+                            <input type="date" id="end-date" class="form-input" placeholder="End Date">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Amount Range:</label>
+                        <div class="amount-range">
+                            <input type="number" id="min-amount" class="form-input" placeholder="Min $">
+                            <span>-</span>
+                            <input type="number" id="max-amount" class="form-input" placeholder="Max $">
+                        </div>
+                    </div>
+
+                    <div class="filter-group">
+                        <label>Status:</label>
+                        <select id="status-filter" class="form-select">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="failed">Failed</option>
+                        </select>
+                    </div>
+
+                    <div class="filter-actions">
+                        <button class="btn btn-primary" onclick="applyFilters()">Apply Filters</button>
+                        <button class="btn btn-secondary" onclick="resetFilters()">Reset</button>
+                    </div>
+                </div>
+
+                <!-- Transactions Table -->
+                <div class="table-wrapper">
+                    <table id="transactions-table" class="display responsive nowrap" style="width:100%">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Transaction ID</th>
+                                <th>Description</th>
+                                <th>Service</th>
+                                <th>Customer</th>
+                                <th>Gross Amount</th>
+                                <th>Fee</th>
+                                <th>Net Amount</th>
+                                <th>Status</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="transactions-body">
+                            <tr>
+                                <td colspan="10" class="text-center">
+                                    <div class="loading-state">
+                                        <div class="spinner"></div>
+                                        <p>Loading transactions...</p>
+                                    </div>
+                                </td>
+                            </tr>
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <th colspan="5" style="text-align:right">Totals:</th>
+                                <th id="total-gross">$0.00</th>
+                                <th id="total-fee">$0.00</th>
+                                <th id="total-net">$0.00</th>
+                                <th colspan="2"></th>
+                            </tr>
+                        </tfoot>
+                    </table>
+                </div>
+
+                <!-- Bulk Actions -->
+                <div class="bulk-actions">
+                    <button class="btn btn-secondary" onclick="exportSelected()" id="export-selected" disabled>
+                        Export Selected (0)
+                    </button>
+                    <button class="btn btn-secondary" onclick="generateReport()">
+                        Generate Report
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Transaction Details Modal -->
+    <div class="modal" id="transaction-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Transaction Details</h3>
+                <button class="close" onclick="closeModal('transaction-modal')">&times;</button>
+            </div>
+            <div class="modal-body" id="transaction-details">
+                <!-- Loaded dynamically -->
+            </div>
+            <div class="modal-footer">
+                <button class="btn btn-secondary" onclick="downloadReceipt()">Download Receipt</button>
+                <button class="btn btn-primary" onclick="closeModal('transaction-modal')">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Generate Report Modal -->
+    <div class="modal" id="report-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Generate Report</h3>
+                <button class="close" onclick="closeModal('report-modal')">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="report-form" onsubmit="generateCustomReport(event)">
+                    <div class="form-group">
+                        <label class="form-label">Report Type</label>
+                        <select id="report-type" class="form-select" required>
+                            <option value="summary">Summary Report</option>
+                            <option value="detailed">Detailed Transaction Report</option>
+                            <option value="tax">Tax Summary</option>
+                            <option value="payout">Payout History</option>
+                        </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Date Range</label>
+                        <div class="date-range">
+                            <input type="date" id="report-start" class="form-input" required>
+                            <span>to</span>
+                            <input type="date" id="report-end" class="form-input" required>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Format</label>
+                        <select id="report-format" class="form-select" required>
+                            <option value="pdf">PDF</option>
+                            <option value="csv">CSV</option>
+                            <option value="excel">Excel</option>
+                        </select>
+                    </div>
+
+                    <div class="checkbox-group">
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="include-fees" checked>
+                            Include fee breakdown
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="include-customer" checked>
+                            Include customer details
+                        </label>
+                        <label class="checkbox-label">
+                            <input type="checkbox" id="group-by-month">
+                            Group by month
+                        </label>
+                    </div>
+
+                    <div class="modal-actions">
+                        <button type="button" class="btn btn-secondary" onclick="closeModal('report-modal')">
+                            Cancel
+                        </button>
+                        <button type="submit" class="btn btn-primary">
+                            Generate Report
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let transactionsTable = null;
+        let selectedTransactions = new Set();
+        let allTransactions = [];
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadTransactions();
+            initializeDataTable();
+            setupEventListeners();
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = data.user.business_name || `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        function setupEventListeners() {
+            document.getElementById('transaction-type').addEventListener('change', applyFilters);
+            document.getElementById('date-filter').addEventListener('change', applyDateFilter);
+            document.getElementById('status-filter').addEventListener('change', applyFilters);
+        }
+
+        async function loadTransactions() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/transactions.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    allTransactions = data.transactions;
+                    updateSummaryCards(data.summary);
+                    populateTable(data.transactions);
+                }
+            } catch (error) {
+                console.error('Error loading transactions:', error);
+                showNotification('Failed to load transactions', 'error');
+            }
+        }
+
+        function updateSummaryCards(summary) {
+            document.getElementById('total-payments').textContent = formatCurrency(summary.total_payments);
+            document.getElementById('total-fees').textContent = formatCurrency(summary.total_fees);
+            document.getElementById('total-payouts').textContent = formatCurrency(summary.total_payouts);
+            document.getElementById('net-earnings').textContent = formatCurrency(summary.net_earnings);
+        }
+
+        function populateTable(transactions) {
+            const tbody = document.getElementById('transactions-body');
+            
+            if (transactions.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="10" class="text-center">
+                            <div class="empty-state">
+                                <p>No transactions found</p>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = transactions.map(t => `
+                <tr data-id="${t.id}" class="transaction-row ${t.type}">
+                    <td>${new Date(t.date).toLocaleDateString()}</td>
+                    <td>
+                        <span class="transaction-id">${t.id}</span>
+                    </td>
+                    <td>
+                        <div class="transaction-description">
+                            <strong>${t.description}</strong>
+                            ${t.notes ? `<small>${t.notes}</small>` : ''}
+                        </div>
+                    </td>
+                    <td>${t.service_name || '—'}</td>
+                    <td>${t.customer_name || '—'}</td>
+                    <td class="amount gross">${formatCurrency(t.gross_amount)}</td>
+                    <td class="amount fee">${formatCurrency(t.fee)}</td>
+                    <td class="amount net">${formatCurrency(t.net_amount)}</td>
+                    <td>
+                        <span class="status-badge status-${t.status.toLowerCase()}">
+                            ${t.status}
+                        </span>
+                    </td>
+                    <td>
+                        <div class="action-buttons">
+                            <button class="btn-icon" onclick="viewTransaction('${t.id}')" title="View Details">
+                                👁️
+                            </button>
+                            <button class="btn-icon" onclick="downloadReceipt('${t.id}')" title="Download Receipt">
+                                📥
+                            </button>
+                            <input type="checkbox" class="row-selector" onchange="toggleSelect('${t.id}')">
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+
+            updateTotals(transactions);
+        }
+
+        function updateTotals(transactions) {
+            const totals = transactions.reduce((acc, t) => {
+                acc.gross += t.gross_amount;
+                acc.fee += t.fee;
+                acc.net += t.net_amount;
+                return acc;
+            }, { gross: 0, fee: 0, net: 0 });
+
+            document.getElementById('total-gross').textContent = formatCurrency(totals.gross);
+            document.getElementById('total-fee').textContent = formatCurrency(totals.fee);
+            document.getElementById('total-net').textContent = formatCurrency(totals.net);
+        }
+
+        function initializeDataTable() {
+            if ($.fn.DataTable.isDataTable('#transactions-table')) {
+                $('#transactions-table').DataTable().destroy();
+            }
+
+            transactionsTable = $('#transactions-table').DataTable({
+                pageLength: 25,
+                lengthMenu: [[10, 25, 50, 100, -1], [10, 25, 50, 100, "All"]],
+                order: [[0, 'desc']],
+                columnDefs: [
+                    { targets: [9], orderable: false },
+                    { targets: [4,5,6,7], className: 'dt-body-right' }
+                ],
+                language: {
+                    emptyTable: "No transactions available",
+                    info: "Showing _START_ to _END_ of _TOTAL_ transactions",
+                    infoEmpty: "Showing 0 to 0 of 0 transactions",
+                    search: "Search transactions:"
+                },
+                initComplete: function() {
+                    // Add search input styling
+                    $('.dataTables_filter input').addClass('form-input');
+                    $('.dataTables_length select').addClass('form-select');
+                }
+            });
+        }
+
+        function applyFilters() {
+            const type = document.getElementById('transaction-type').value;
+            const status = document.getElementById('status-filter').value;
+            const startDate = document.getElementById('start-date').value;
+            const endDate = document.getElementById('end-date').value;
+            const minAmount = parseFloat(document.getElementById('min-amount').value) || 0;
+            const maxAmount = parseFloat(document.getElementById('max-amount').value) || Infinity;
+
+            const filtered = allTransactions.filter(t => {
+                // Type filter
+                if (type !== 'all' && t.type !== type) return false;
+                
+                // Status filter
+                if (status !== 'all' && t.status.toLowerCase() !== status) return false;
+                
+                // Date filter
+                const tDate = new Date(t.date);
+                if (startDate && tDate < new Date(startDate)) return false;
+                if (endDate && tDate > new Date(endDate)) return false;
+                
+                // Amount filter
+                if (t.net_amount < minAmount) return false;
+                if (t.net_amount > maxAmount) return false;
+                
+                return true;
+            });
+
+            populateTable(filtered);
+            
+            if (transactionsTable) {
+                transactionsTable.clear();
+                transactionsTable.rows.add(filtered);
+                transactionsTable.draw();
+            }
+        }
+
+        function applyDateFilter() {
+            const days = parseInt(document.getElementById('date-filter').value);
+            if (days === 'all') {
+                document.getElementById('start-date').value = '';
+                document.getElementById('end-date').value = '';
+            } else {
+                const end = new Date();
+                const start = new Date();
+                start.setDate(start.getDate() - days);
+                
+                document.getElementById('start-date').value = start.toISOString().split('T')[0];
+                document.getElementById('end-date').value = end.toISOString().split('T')[0];
+            }
+            applyFilters();
+        }
+
+        function resetFilters() {
+            document.getElementById('transaction-type').value = 'all';
+            document.getElementById('status-filter').value = 'all';
+            document.getElementById('date-filter').value = '30';
+            document.getElementById('start-date').value = '';
+            document.getElementById('end-date').value = '';
+            document.getElementById('min-amount').value = '';
+            document.getElementById('max-amount').value = '';
+            applyDateFilter();
+        }
+
+        function viewTransaction(transactionId) {
+            const transaction = allTransactions.find(t => t.id === transactionId);
+            if (!transaction) return;
+
+            const modal = document.getElementById('transaction-details');
+            modal.innerHTML = `
+                <div class="transaction-detail">
+                    <div class="detail-row">
+                        <strong>Transaction ID:</strong>
+                        <span>${transaction.id}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Date:</strong>
+                        <span>${new Date(transaction.date).toLocaleString()}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Type:</strong>
+                        <span class="transaction-type ${transaction.type}">${transaction.type}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Description:</strong>
+                        <span>${transaction.description}</span>
+                    </div>
+                    ${transaction.service_name ? `
+                        <div class="detail-row">
+                            <strong>Service:</strong>
+                            <span>${transaction.service_name}</span>
+                        </div>
+                    ` : ''}
+                    ${transaction.customer_name ? `
+                        <div class="detail-row">
+                            <strong>Customer:</strong>
+                            <span>${transaction.customer_name}</span>
+                        </div>
+                    ` : ''}
+                    <div class="detail-row">
+                        <strong>Gross Amount:</strong>
+                        <span>${formatCurrency(transaction.gross_amount)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Fee:</strong>
+                        <span>${formatCurrency(transaction.fee)}</span>
+                    </div>
+                    <div class="detail-row total">
+                        <strong>Net Amount:</strong>
+                        <span>${formatCurrency(transaction.net_amount)}</span>
+                    </div>
+                    <div class="detail-row">
+                        <strong>Status:</strong>
+                        <span class="status-badge status-${transaction.status.toLowerCase()}">
+                            ${transaction.status}
+                        </span>
+                    </div>
+                    ${transaction.payment_method ? `
+                        <div class="detail-row">
+                            <strong>Payment Method:</strong>
+                            <span>${transaction.payment_method}</span>
+                        </div>
+                    ` : ''}
+                    ${transaction.reference_id ? `
+                        <div class="detail-row">
+                            <strong>Reference ID:</strong>
+                            <span>${transaction.reference_id}</span>
+                        </div>
+                    ` : ''}
+                </div>
+            `;
+
+            document.getElementById('transaction-modal').classList.add('active');
+        }
+
+        function toggleSelect(transactionId) {
+            if (selectedTransactions.has(transactionId)) {
+                selectedTransactions.delete(transactionId);
+            } else {
+                selectedTransactions.add(transactionId);
+            }
+            
+            const exportBtn = document.getElementById('export-selected');
+            exportBtn.disabled = selectedTransactions.size === 0;
+            exportBtn.textContent = `Export Selected (${selectedTransactions.size})`;
+        }
+
+        function exportSelected() {
+            if (selectedTransactions.size === 0) return;
+            
+            const selected = allTransactions.filter(t => selectedTransactions.has(t.id));
+            exportToCSV(selected);
+        }
+
+        function exportTransactions() {
+            const filtered = getFilteredTransactions();
+            exportToCSV(filtered);
+        }
+
+        function exportToCSV(transactions) {
+            const headers = ['Date', 'Transaction ID', 'Description', 'Service', 'Customer', 
+                           'Gross Amount', 'Fee', 'Net Amount', 'Status'];
+            
+            const csvData = transactions.map(t => [
+                new Date(t.date).toLocaleDateString(),
+                t.id,
+                t.description,
+                t.service_name || '',
+                t.customer_name || '',
+                t.gross_amount,
+                t.fee,
+                t.net_amount,
+                t.status
+            ]);
+
+            csvData.unshift(headers);
+
+            const csv = csvData.map(row => row.join(',')).join('\n');
+            
+            const blob = new Blob([csv], { type: 'text/csv' });
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `transactions-${new Date().toISOString().split('T')[0]}.csv`;
+            a.click();
+            window.URL.revokeObjectURL(url);
+        }
+
+        function generateReport() {
+            document.getElementById('report-modal').classList.add('active');
+        }
+
+        async function generateCustomReport(e) {
+            e.preventDefault();
+
+            const reportData = {
+                type: document.getElementById('report-type').value,
+                start_date: document.getElementById('report-start').value,
+                end_date: document.getElementById('report-end').value,
+                format: document.getElementById('report-format').value,
+                include_fees: document.getElementById('include-fees').checked,
+                include_customer: document.getElementById('include-customer').checked,
+                group_by_month: document.getElementById('group-by-month').checked
+            };
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/provider/earnings/generate-report.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify(reportData)
+                });
+
+                if (reportData.format === 'pdf') {
+                    const blob = await response.blob();
+                    const url = window.URL.createObjectURL(blob);
+                    const a = document.createElement('a');
+                    a.href = url;
+                    a.download = `report-${new Date().toISOString().split('T')[0]}.pdf`;
+                    a.click();
+                    window.URL.revokeObjectURL(url);
+                } else {
+                    const data = await response.json();
+                    if (data.success) {
+                        showNotification('Report generated successfully', 'success');
+                        closeModal('report-modal');
+                    }
+                }
+            } catch (error) {
+                console.error('Error generating report:', error);
+                showNotification('Failed to generate report', 'error');
+            }
+        }
+
+        function downloadReceipt(transactionId) {
+            window.location.href = `/api/provider/earnings/receipt.php?id=${transactionId}`;
+        }
+
+        function getFilteredTransactions() {
+            if (transactionsTable) {
+                const data = transactionsTable.rows({ search: 'applied' }).data();
+                return Array.from(data);
+            }
+            return allTransactions;
+        }
+
+        function formatCurrency(amount) {
+            return new Intl.NumberFormat('en-US', {
+                style: 'currency',
+                currency: 'USD'
+            }).format(amount);
+        }
+
+        function closeModal(modalId) {
+            document.getElementById(modalId).classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+
+        // Make functions global
+        window.viewTransaction = viewTransaction;
+        window.toggleSelect = toggleSelect;
+        window.exportSelected = exportSelected;
+        window.exportTransactions = exportTransactions;
+        window.generateReport = generateReport;
+        window.generateCustomReport = generateCustomReport;
+        window.downloadReceipt = downloadReceipt;
+        window.applyFilters = applyFilters;
+        window.resetFilters = resetFilters;
+        window.closeModal = closeModal;
+    </script>
+</body>
+</html>

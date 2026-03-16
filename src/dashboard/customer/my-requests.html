@@ -1,0 +1,480 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>My Requests - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar (same as index.html) -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Loading...</div>
+                <div class="profile-type">Customer</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/customer/" class="nav-item">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/customer/my-requests.html" class="nav-item active">
+                        <span class="nav-icon">📋</span>
+                        My Requests
+                    </a>
+                    <a href="/src/dashboard/customer/saved-providers.html" class="nav-item">
+                        <span class="nav-icon">⭐</span>
+                        Saved Providers
+                    </a>
+                    <a href="/src/dashboard/customer/messages.html" class="nav-item">
+                        <span class="nav-icon">💬</span>
+                        Messages
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Reviews</div>
+                    <a href="/src/dashboard/customer/reviews/write-review.html" class="nav-item">
+                        <span class="nav-icon">✏️</span>
+                        Write Review
+                    </a>
+                    <a href="/src/dashboard/customer/reviews/my-reviews.html" class="nav-item">
+                        <span class="nav-icon">📝</span>
+                        My Reviews
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Settings</div>
+                    <a href="/src/dashboard/customer/profile.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Profile Settings
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search your requests...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Page Header -->
+                <div class="page-header">
+                    <h1>My Service Requests</h1>
+                    <button class="btn btn-primary" onclick="window.location.href='/src/services/'">
+                        + New Request
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="filters-section">
+                    <div class="filter-tabs">
+                        <button class="filter-tab active" data-filter="all">All</button>
+                        <button class="filter-tab" data-filter="open">Open</button>
+                        <button class="filter-tab" data-filter="assigned">Assigned</button>
+                        <button class="filter-tab" data-filter="in_progress">In Progress</button>
+                        <button class="filter-tab" data-filter="completed">Completed</button>
+                        <button class="filter-tab" data-filter="cancelled">Cancelled</button>
+                    </div>
+
+                    <div class="filter-actions">
+                        <select class="form-select" id="sort-requests">
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="urgent">Most Urgent</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Requests List -->
+                <div class="requests-list">
+                    <div class="dashboard-table">
+                        <div class="table-responsive">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th>ID</th>
+                                        <th>Date</th>
+                                        <th>Service</th>
+                                        <th>Description</th>
+                                        <th>Status</th>
+                                        <th>Provider</th>
+                                        <th>Bids</th>
+                                        <th>Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="requests-table-body">
+                                    <tr>
+                                        <td colspan="8" class="text-center">Loading requests...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div class="pagination" id="pagination"></div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Request Details Modal -->
+    <div class="modal" id="request-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Request Details</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="request-details">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Cancel Request Modal -->
+    <div class="modal" id="cancel-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Cancel Request</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body">
+                <p>Are you sure you want to cancel this request?</p>
+                <div class="form-group">
+                    <label class="form-label">Reason for cancellation (optional)</label>
+                    <select class="form-select" id="cancel-reason">
+                        <option value="">Select a reason</option>
+                        <option value="found_provider">Found a provider</option>
+                        <option value="no_longer_needed">No longer needed</option>
+                        <option value="price_too_high">Price too high</option>
+                        <option value="other">Other</option>
+                    </select>
+                </div>
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" onclick="closeModal()">Keep Request</button>
+                    <button class="btn btn-danger" onclick="confirmCancel()">Cancel Request</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/public/scripts/dashboard.js" type="module"></script>
+    <script>
+        let currentPage = 1;
+        let currentFilter = 'all';
+        let currentSort = 'newest';
+        let selectedRequestId = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            loadUserProfile();
+            loadRequests();
+
+            // Filter tabs
+            document.querySelectorAll('.filter-tab').forEach(tab => {
+                tab.addEventListener('click', () => {
+                    document.querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+                    tab.classList.add('active');
+                    currentFilter = tab.dataset.filter;
+                    currentPage = 1;
+                    loadRequests();
+                });
+            });
+
+            // Sort select
+            document.getElementById('sort-requests').addEventListener('change', (e) => {
+                currentSort = e.target.value;
+                loadRequests();
+            });
+
+            // Search input
+            const searchInput = document.querySelector('.header-search input');
+            searchInput.addEventListener('input', debounce(() => {
+                loadRequests(searchInput.value);
+            }, 500));
+        });
+
+        async function loadUserProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadRequests(search = '') {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const url = `/api/customer/requests.php?page=${currentPage}&filter=${currentFilter}&sort=${currentSort}&search=${encodeURIComponent(search)}`;
+                
+                const response = await fetch(url, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayRequests(data.requests);
+                    displayPagination(data.pagination);
+                }
+            } catch (error) {
+                console.error('Error loading requests:', error);
+                document.getElementById('requests-table-body').innerHTML = 
+                    '<tr><td colspan="8" class="text-center">Error loading requests</td></tr>';
+            }
+        }
+
+        function displayRequests(requests) {
+            const tbody = document.getElementById('requests-table-body');
+
+            if (requests.length === 0) {
+                tbody.innerHTML = `
+                    <tr>
+                        <td colspan="8" class="text-center">
+                            <div class="empty-state">
+                                <p>No requests found</p>
+                                <button class="btn btn-primary" onclick="window.location.href='/src/services/'">
+                                    Create Your First Request
+                                </button>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                return;
+            }
+
+            tbody.innerHTML = requests.map(request => `
+                <tr>
+                    <td>#${request.id}</td>
+                    <td>${new Date(request.created_at).toLocaleDateString()}</td>
+                    <td>${request.service_name}</td>
+                    <td>${request.title.substring(0, 50)}${request.title.length > 50 ? '...' : ''}</td>
+                    <td>
+                        <span class="status-badge status-${request.status.toLowerCase().replace('_', '-')}">
+                            ${request.status.replace('_', ' ')}
+                        </span>
+                    </td>
+                    <td>${request.provider_name || '<em>No provider yet</em>'}</td>
+                    <td>
+                        <span class="bid-count">${request.bid_count || 0}</span>
+                    </td>
+                    <td>
+                        <div class="table-actions">
+                            <button class="btn btn-small btn-secondary" onclick="viewRequest(${request.id})">
+                                View
+                            </button>
+                            ${request.status === 'open' ? `
+                                <button class="btn btn-small btn-danger" onclick="showCancelModal(${request.id})">
+                                    Cancel
+                                </button>
+                            ` : ''}
+                            ${request.status === 'completed' && !request.reviewed ? `
+                                <button class="btn btn-small btn-primary" onclick="writeReview(${request.id})">
+                                    Review
+                                </button>
+                            ` : ''}
+                        </div>
+                    </td>
+                </tr>
+            `).join('');
+        }
+
+        function displayPagination(pagination) {
+            const container = document.getElementById('pagination');
+            
+            if (pagination.total_pages <= 1) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let html = '<div class="pagination-controls">';
+            
+            // Previous button
+            html += `
+                <button class="page-btn" ${pagination.page === 1 ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page - 1})">
+                    ←
+                </button>
+            `;
+
+            // Page numbers
+            for (let i = 1; i <= pagination.total_pages; i++) {
+                if (
+                    i === 1 ||
+                    i === pagination.total_pages ||
+                    (i >= pagination.page - 2 && i <= pagination.page + 2)
+                ) {
+                    html += `
+                        <button class="page-btn ${i === pagination.page ? 'active' : ''}" 
+                                onclick="changePage(${i})">
+                            ${i}
+                        </button>
+                    `;
+                } else if (i === pagination.page - 3 || i === pagination.page + 3) {
+                    html += '<span class="page-ellipsis">...</span>';
+                }
+            }
+
+            // Next button
+            html += `
+                <button class="page-btn" ${pagination.page === pagination.total_pages ? 'disabled' : ''} 
+                        onclick="changePage(${pagination.page + 1})">
+                    →
+                </button>
+            `;
+
+            html += '</div>';
+            container.innerHTML = html;
+        }
+
+        function changePage(page) {
+            currentPage = page;
+            loadRequests();
+        }
+
+        function viewRequest(id) {
+            window.location.href = `/src/dashboard/customer/request-details.html?id=${id}`;
+        }
+
+        function showCancelModal(requestId) {
+            selectedRequestId = requestId;
+            document.getElementById('cancel-modal').classList.add('active');
+        }
+
+        async function confirmCancel() {
+            if (!selectedRequestId) return;
+
+            const reason = document.getElementById('cancel-reason').value;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/customer/cancel-request.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        request_id: selectedRequestId,
+                        reason: reason
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Request cancelled successfully', 'success');
+                    closeModal();
+                    loadRequests();
+                } else {
+                    showNotification(data.message || 'Failed to cancel request', 'error');
+                }
+            } catch (error) {
+                console.error('Error cancelling request:', error);
+                showNotification('Failed to cancel request', 'error');
+            }
+        }
+
+        function writeReview(requestId) {
+            window.location.href = `/src/dashboard/customer/reviews/write-review.html?request=${requestId}`;
+        }
+
+        function closeModal() {
+            document.querySelectorAll('.modal').forEach(modal => {
+                modal.classList.remove('active');
+            });
+            selectedRequestId = null;
+        }
+
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>

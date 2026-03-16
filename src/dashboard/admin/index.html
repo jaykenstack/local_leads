@@ -1,0 +1,648 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - UrgentServices</title>
+    
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/dashboard.css">
+    <link rel="stylesheet" href="/public/styles/admin.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+    <div class="dashboard">
+        <!-- Sidebar -->
+        <aside class="dashboard-sidebar" id="dashboard-sidebar">
+            <div class="sidebar-header">
+                <a href="/" class="logo">
+                    <span>Urgent<span>Services</span></span>
+                </a>
+                <span class="admin-badge">Admin</span>
+            </div>
+
+            <div class="profile-summary">
+                <div class="profile-avatar">
+                    <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="profile-avatar">
+                </div>
+                <div class="profile-name" id="profile-name">Admin User</div>
+                <div class="profile-type">Administrator</div>
+            </div>
+
+            <nav class="sidebar-nav">
+                <div class="nav-section">
+                    <div class="nav-section-title">Main</div>
+                    <a href="/src/dashboard/admin/" class="nav-item active">
+                        <span class="nav-icon">📊</span>
+                        Dashboard
+                    </a>
+                    <a href="/src/dashboard/admin/customers.html" class="nav-item">
+                        <span class="nav-icon">👥</span>
+                        Customers
+                        <span class="badge badge-primary" id="customer-count">0</span>
+                    </a>
+                    <a href="/src/dashboard/admin/providers.html" class="nav-item">
+                        <span class="nav-icon">🔧</span>
+                        Providers
+                        <span class="badge badge-primary" id="provider-count">0</span>
+                    </a>
+                    <a href="/src/dashboard/admin/pending-verification.html" class="nav-item">
+                        <span class="nav-icon">⏳</span>
+                        Pending Verification
+                        <span class="badge badge-warning" id="pending-count">0</span>
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">Management</div>
+                    <a href="/src/dashboard/admin/analytics.html" class="nav-item">
+                        <span class="nav-icon">📈</span>
+                        Analytics
+                    </a>
+                    <a href="/src/dashboard/admin/services.html" class="nav-item">
+                        <span class="nav-icon">🔨</span>
+                        Services
+                    </a>
+                    <a href="/src/dashboard/admin/locations.html" class="nav-item">
+                        <span class="nav-icon">📍</span>
+                        Locations
+                    </a>
+                </div>
+
+                <div class="nav-section">
+                    <div class="nav-section-title">System</div>
+                    <a href="/src/dashboard/admin/settings.html" class="nav-item">
+                        <span class="nav-icon">⚙️</span>
+                        Settings
+                    </a>
+                    <a href="/src/dashboard/admin/logs.html" class="nav-item">
+                        <span class="nav-icon">📋</span>
+                        System Logs
+                    </a>
+                    <a href="#" class="nav-item" onclick="logout()">
+                        <span class="nav-icon">🚪</span>
+                        Logout
+                    </a>
+                </div>
+            </nav>
+        </aside>
+
+        <!-- Main Content -->
+        <main class="dashboard-main">
+            <header class="dashboard-header">
+                <button class="menu-toggle" id="sidebar-toggle">☰</button>
+                
+                <div class="header-search">
+                    <span class="search-icon">🔍</span>
+                    <input type="text" placeholder="Search users, providers...">
+                </div>
+
+                <div class="header-actions">
+                    <div class="header-notification">
+                        <span class="notification-icon">🔔</span>
+                        <span class="notification-badge" id="notification-badge">3</span>
+                    </div>
+                    <div class="header-profile">
+                        <img src="/public/assets/images/avatars/default-avatar.jpg" alt="Profile" id="header-avatar">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-content">
+                <!-- Welcome Section -->
+                <div class="welcome-section">
+                    <h1>Admin Dashboard</h1>
+                    <p>Welcome back! Here's what's happening on your platform today.</p>
+                </div>
+
+                <!-- Stats Cards -->
+                <div class="dashboard-cards">
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Total Users</span>
+                            <span class="stat-card-icon">👥</span>
+                        </div>
+                        <div class="stat-card-value" id="total-users">0</div>
+                        <div class="stat-card-change positive" id="user-growth">+12% this month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Customers</span>
+                            <span class="stat-card-icon">👤</span>
+                        </div>
+                        <div class="stat-card-value" id="total-customers">0</div>
+                        <div class="stat-card-change" id="customer-growth">+8% this month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Providers</span>
+                            <span class="stat-card-icon">🔧</span>
+                        </div>
+                        <div class="stat-card-value" id="total-providers">0</div>
+                        <div class="stat-card-change" id="provider-growth">+15% this month</div>
+                    </div>
+
+                    <div class="stat-card">
+                        <div class="stat-card-header">
+                            <span class="stat-card-title">Pending Verification</span>
+                            <span class="stat-card-icon">⏳</span>
+                        </div>
+                        <div class="stat-card-value" id="pending-verification">0</div>
+                        <div class="stat-card-change warning">Needs attention</div>
+                    </div>
+                </div>
+
+                <!-- Charts Row -->
+                <div class="charts-row">
+                    <div class="chart-card">
+                        <h3>User Growth</h3>
+                        <canvas id="user-chart"></canvas>
+                    </div>
+                    <div class="chart-card">
+                        <h3>Provider vs Customer</h3>
+                        <canvas id="user-type-chart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Recent Users Table -->
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h2>Recent Users</h2>
+                        <a href="/src/dashboard/admin/customers.html" class="view-all">View All →</a>
+                    </div>
+                    
+                    <div class="dashboard-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>User</th>
+                                    <th>Type</th>
+                                    <th>Email</th>
+                                    <th>Joined</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="recent-users-body">
+                                <tr>
+                                    <td colspan="6" class="text-center">Loading users...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+
+                <!-- Pending Providers -->
+                <div class="recent-section">
+                    <div class="section-header">
+                        <h2>Providers Awaiting Verification</h2>
+                        <a href="/src/dashboard/admin/pending-verification.html" class="view-all">View All →</a>
+                    </div>
+
+                    <div class="pending-list" id="pending-providers">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <!-- Recent Activity -->
+                <div class="activity-section">
+                    <h2>Recent Activity</h2>
+                    <div class="activity-list" id="activity-list">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Quick View Modal -->
+    <div class="modal" id="user-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>User Details</h3>
+                <button class="close" onclick="closeModal()">&times;</button>
+            </div>
+            <div class="modal-body" id="user-details">
+                <!-- Loaded dynamically -->
+            </div>
+        </div>
+    </div>
+
+    <script>
+        let userChart = null;
+        let typeChart = null;
+
+        document.addEventListener('DOMContentLoaded', () => {
+            checkAdminAccess();
+            loadAdminProfile();
+            loadDashboardStats();
+            loadRecentUsers();
+            loadPendingProviders();
+            loadRecentActivity();
+            initCharts();
+        });
+
+        async function checkAdminAccess() {
+            const token = localStorage.getItem('auth_token');
+            if (!token) {
+                window.location.href = '/src/auth/login.html';
+                return;
+            }
+
+            try {
+                const response = await fetch('/api/admin/check-access.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (!data.is_admin) {
+                    window.location.href = '/';
+                    showNotification('Access denied', 'error');
+                }
+            } catch (error) {
+                console.error('Error checking admin access:', error);
+            }
+        }
+
+        async function loadAdminProfile() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/user/profile.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('profile-name').textContent = `${data.user.first_name} ${data.user.last_name}`;
+                    if (data.user.avatar) {
+                        document.getElementById('profile-avatar').src = data.user.avatar;
+                        document.getElementById('header-avatar').src = data.user.avatar;
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading profile:', error);
+            }
+        }
+
+        async function loadDashboardStats() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/dashboard-stats.php', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    document.getElementById('total-users').textContent = data.total_users;
+                    document.getElementById('total-customers').textContent = data.total_customers;
+                    document.getElementById('total-providers').textContent = data.total_providers;
+                    document.getElementById('pending-verification').textContent = data.pending_verification;
+                    
+                    document.getElementById('customer-count').textContent = data.total_customers;
+                    document.getElementById('provider-count').textContent = data.total_providers;
+                    document.getElementById('pending-count').textContent = data.pending_verification;
+
+                    // Update growth indicators
+                    document.getElementById('user-growth').textContent = `+${data.user_growth}% this month`;
+                    document.getElementById('customer-growth').textContent = `+${data.customer_growth}% this month`;
+                    document.getElementById('provider-growth').textContent = `+${data.provider_growth}% this month`;
+                }
+            } catch (error) {
+                console.error('Error loading stats:', error);
+            }
+        }
+
+        async function loadRecentUsers() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/recent-users.php?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const tbody = document.getElementById('recent-users-body');
+                
+                if (data.success && data.users.length > 0) {
+                    tbody.innerHTML = data.users.map(user => `
+                        <tr>
+                            <td>
+                                <div class="user-info">
+                                    <img src="${user.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                         alt="${user.name}" class="user-avatar">
+                                    <span>${user.name}</span>
+                                </div>
+                            </td>
+                            <td><span class="user-type ${user.type}">${user.type}</span></td>
+                            <td>${user.email}</td>
+                            <td>${new Date(user.joined).toLocaleDateString()}</td>
+                            <td>
+                                <span class="status-badge status-${user.status}">${user.status}</span>
+                            </td>
+                            <td>
+                                <button class="btn-small btn-secondary" onclick="viewUser(${user.id}, '${user.type}')">
+                                    View
+                                </button>
+                            </td>
+                        </tr>
+                    `).join('');
+                } else {
+                    tbody.innerHTML = '<tr><td colspan="6" class="text-center">No users found</td></tr>';
+                }
+            } catch (error) {
+                console.error('Error loading recent users:', error);
+            }
+        }
+
+        async function loadPendingProviders() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/pending-providers.php?limit=3', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('pending-providers');
+                
+                if (data.success && data.providers.length > 0) {
+                    container.innerHTML = data.providers.map(provider => `
+                        <div class="pending-item">
+                            <div class="provider-info">
+                                <img src="${provider.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                                     alt="${provider.business_name}" class="provider-avatar">
+                                <div>
+                                    <h4>${provider.business_name}</h4>
+                                    <p>${provider.email} • Joined ${new Date(provider.joined).toLocaleDateString()}</p>
+                                </div>
+                            </div>
+                            <div class="pending-actions">
+                                <button class="btn-small btn-success" onclick="verifyProvider(${provider.id})">
+                                    ✓ Verify
+                                </button>
+                                <button class="btn-small btn-secondary" onclick="viewProvider(${provider.id})">
+                                    View
+                                </button>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center">No pending providers</p>';
+                }
+            } catch (error) {
+                console.error('Error loading pending providers:', error);
+            }
+        }
+
+        async function loadRecentActivity() {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/recent-activity.php?limit=5', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                const container = document.getElementById('activity-list');
+                
+                if (data.success && data.activities.length > 0) {
+                    container.innerHTML = data.activities.map(activity => `
+                        <div class="activity-item">
+                            <span class="activity-icon">${activity.icon}</span>
+                            <div class="activity-details">
+                                <p>${activity.description}</p>
+                                <small>${timeAgo(activity.time)}</small>
+                            </div>
+                        </div>
+                    `).join('');
+                } else {
+                    container.innerHTML = '<p class="text-center">No recent activity</p>';
+                }
+            } catch (error) {
+                console.error('Error loading activity:', error);
+            }
+        }
+
+        function initCharts() {
+            // User Growth Chart
+            const ctx1 = document.getElementById('user-chart').getContext('2d');
+            userChart = new Chart(ctx1, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'New Users',
+                        data: [65, 78, 92, 108, 124, 145],
+                        borderColor: '#3b82f6',
+                        backgroundColor: 'rgba(59, 130, 246, 0.1)',
+                        tension: 0.4,
+                        fill: true
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            display: false
+                        }
+                    }
+                }
+            });
+
+            // User Type Chart
+            const ctx2 = document.getElementById('user-type-chart').getContext('2d');
+            typeChart = new Chart(ctx2, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Customers', 'Providers'],
+                    datasets: [{
+                        data: [850, 350],
+                        backgroundColor: ['#3b82f6', '#8b5cf6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom'
+                        }
+                    }
+                }
+            });
+        }
+
+        async function viewUser(userId, type) {
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch(`/api/admin/user-details.php?id=${userId}&type=${type}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                const data = await response.json();
+
+                if (data.success) {
+                    displayUserDetails(data.user);
+                    document.getElementById('user-modal').classList.add('active');
+                }
+            } catch (error) {
+                console.error('Error loading user details:', error);
+            }
+        }
+
+        function displayUserDetails(user) {
+            const container = document.getElementById('user-details');
+            
+            container.innerHTML = `
+                <div class="user-detail">
+                    <img src="${user.avatar || '/public/assets/images/avatars/default-avatar.jpg'}" 
+                         alt="${user.name}" class="detail-avatar">
+                    
+                    <div class="detail-section">
+                        <h4>Basic Information</h4>
+                        <p><strong>Name:</strong> ${user.name}</p>
+                        <p><strong>Email:</strong> ${user.email}</p>
+                        <p><strong>Phone:</strong> ${user.phone || 'Not provided'}</p>
+                        <p><strong>Joined:</strong> ${new Date(user.joined).toLocaleDateString()}</p>
+                        <p><strong>Status:</strong> <span class="status-badge status-${user.status}">${user.status}</span></p>
+                    </div>
+
+                    ${user.type === 'provider' ? `
+                        <div class="detail-section">
+                            <h4>Business Information</h4>
+                            <p><strong>Business Name:</strong> ${user.business_name}</p>
+                            <p><strong>Years in Business:</strong> ${user.years_in_business}</p>
+                            <p><strong>Verified:</strong> ${user.verified ? '✓ Yes' : '✗ No'}</p>
+                            <p><strong>Services:</strong> ${user.services.join(', ')}</p>
+                        </div>
+                    ` : ''}
+
+                    <div class="detail-actions">
+                        <button class="btn btn-secondary" onclick="closeModal()">Close</button>
+                        ${user.type === 'provider' && !user.verified ? `
+                            <button class="btn btn-success" onclick="verifyProvider(${user.id})">
+                                Verify Provider
+                            </button>
+                        ` : ''}
+                        <button class="btn btn-danger" onclick="suspendUser(${user.id})">
+                            Suspend User
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        async function verifyProvider(providerId) {
+            if (!confirm('Verify this provider?')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/verify-provider.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ provider_id: providerId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('Provider verified successfully', 'success');
+                    loadDashboardStats();
+                    loadPendingProviders();
+                } else {
+                    showNotification(data.message || 'Failed to verify provider', 'error');
+                }
+            } catch (error) {
+                console.error('Error verifying provider:', error);
+                showNotification('Failed to verify provider', 'error');
+            }
+        }
+
+        async function suspendUser(userId) {
+            if (!confirm('Suspend this user? They will not be able to access the platform.')) return;
+
+            try {
+                const token = localStorage.getItem('auth_token');
+                const response = await fetch('/api/admin/suspend-user.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ user_id: userId })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    showNotification('User suspended', 'success');
+                    closeModal();
+                    loadRecentUsers();
+                } else {
+                    showNotification(data.message || 'Failed to suspend user', 'error');
+                }
+            } catch (error) {
+                console.error('Error suspending user:', error);
+                showNotification('Failed to suspend user', 'error');
+            }
+        }
+
+        function timeAgo(timestamp) {
+            const seconds = Math.floor((new Date() - new Date(timestamp)) / 1000);
+            
+            if (seconds < 60) return 'just now';
+            if (seconds < 3600) return `${Math.floor(seconds / 60)} minutes ago`;
+            if (seconds < 86400) return `${Math.floor(seconds / 3600)} hours ago`;
+            return `${Math.floor(seconds / 86400)} days ago`;
+        }
+
+        function closeModal() {
+            document.getElementById('user-modal').classList.remove('active');
+        }
+
+        function showNotification(message, type) {
+            const notification = document.createElement('div');
+            notification.className = `notification notification-${type}`;
+            notification.innerHTML = `
+                <div class="notification-content">
+                    <span>${message}</span>
+                    <button class="notification-close" onclick="this.parentElement.parentElement.remove()">×</button>
+                </div>
+            `;
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 5000);
+        }
+
+        function logout() {
+            if (confirm('Are you sure you want to logout?')) {
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('refresh_token');
+                window.location.href = '/';
+            }
+        }
+
+        document.getElementById('sidebar-toggle').addEventListener('click', () => {
+            document.getElementById('dashboard-sidebar').classList.toggle('active');
+        });
+    </script>
+</body>
+</html>
