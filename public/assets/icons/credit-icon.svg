@@ -1,0 +1,6 @@
+<svg width="40" height="40" viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="20" cy="20" r="14" stroke="#F59E0B" stroke-width="2" fill="none"/>
+    <path d="M20 8V20L26 24" stroke="#F59E0B" stroke-width="2"/>
+    <circle cx="20" cy="20" r="2" fill="#F59E0B"/>
+    <text x="20" y="34" font-family="Arial" font-size="8" fill="#F59E0B" text-anchor="middle">CREDITS</text>
+</svg>

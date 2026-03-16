@@ -1,0 +1,22 @@
+<svg width="200" height="200" viewBox="0 0 200 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="100" cy="100" r="100" fill="#E5E7EB"/>
+    
+    <!-- Head -->
+    <circle cx="100" cy="70" r="35" fill="#9CA3AF"/>
+    
+    <!-- Body -->
+    <path d="M50 150 Q100 180 150 150" stroke="#9CA3AF" stroke-width="30" fill="none" stroke-linecap="round"/>
+    
+    <!-- Eyes -->
+    <circle cx="80" cy="60" r="5" fill="white"/>
+    <circle cx="120" cy="60" r="5" fill="white"/>
+    <circle cx="80" cy="60" r="2" fill="#1F2937"/>
+    <circle cx="120" cy="60" r="2" fill="#1F2937"/>
+    
+    <!-- Smile -->
+    <path d="M85 80 Q100 90 115 80" stroke="#1F2937" stroke-width="3" fill="none" stroke-linecap="round"/>
+    
+    <!-- Initial (optional) -->
+    <text x="100" y="130" font-family="Arial" font-size="24" fill="#4B5563" text-anchor="middle">👤</text>
+</svg>

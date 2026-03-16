@@ -1,0 +1,6 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="30" r="28" fill="#3B82F6" stroke="#2563EB" stroke-width="2"/>
+    <path d="M20 25L30 15L40 25L30 45L20 25Z" fill="white" opacity="0.3"/>
+    <path d="M25 30L30 20L35 30L30 40L25 30Z" fill="white"/>
+    <text x="30" y="52" font-family="Arial" font-size="8" fill="white" text-anchor="middle">INSURED</text>
+</svg>

@@ -1,0 +1,7 @@
+<svg width="100" height="50" viewBox="0 0 200 50" xmlns="http://www.w3.org/2000/svg">
+    <rect width="200" height="50" rx="8" fill="#2C3E50"/>
+    <circle cx="40" cy="25" r="12" fill="#27AE60"/>
+    <path d="M35 25L39 29L45 21" stroke="white" stroke-width="2" stroke-linecap="round"/>
+    <text x="65" y="32" font-family="Arial" font-size="14" font-weight="bold" fill="white">SSL</text>
+    <text x="65" y="45" font-family="Arial" font-size="9" fill="#BDC3C7">SECURE</text>
+</svg>

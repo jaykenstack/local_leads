@@ -1,0 +1,5 @@
+<svg width="60" height="60" viewBox="0 0 60 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="30" cy="30" r="28" fill="#F59E0B" stroke="#D97706" stroke-width="2"/>
+    <path d="M30 15L35.49 26.48L48 28.18L38.8 37.02L41.02 49.5L30 42.98L18.98 49.5L21.2 37.02L12 28.18L24.51 26.48L30 15Z" fill="white"/>
+    <text x="30" y="52" font-family="Arial" font-size="8" fill="white" text-anchor="middle">TOP RATED</text>
+</svg>
