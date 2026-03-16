@@ -1,0 +1,349 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UrgentServices - 24/7 Emergency Home Services</title>
+    <meta name="description" content="Find trusted local professionals for emergency plumbing, electrical, HVAC, locksmith, and pest control services. Available 24/7.">
+    
+    <!-- Styles -->
+    <link rel="stylesheet" href="/public/styles/main.css">
+    <link rel="stylesheet" href="/public/styles/landing.css">
+    
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    
+    <!-- Favicon -->
+    <link rel="icon" type="image/x-icon" href="/public/assets/images/favicon.ico">
+</head>
+<body>
+    <!-- Header Component with Login/Signup Buttons -->
+    <header class="header">
+        <div class="container header-content">
+            <a href="/" class="logo">
+                <span class="logo-text">Urgent<span>Services</span></span>
+            </a>
+            
+            <button class="menu-toggle" id="menuToggle" aria-label="Toggle menu">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
+            
+            <nav class="nav" id="mainNav">
+                <a href="/">Home</a>
+                <a href="/src/services/">Services</a>
+                <a href="/src/locations/">Locations</a>
+                <a href="/about.html">About</a>
+                <a href="/contact.html">Contact</a>
+                
+                <div class="nav-buttons">
+                    <a href="/src/auth/login.html" class="btn btn-outline">Log In</a>
+                    <a href="/src/auth/signup.html" class="btn btn-primary">Sign Up Free</a>
+                </div>
+            </nav>
+        </div>
+    </header>
+
+    <main>
+        <!-- Hero Section with Animated Background -->
+        <section class="hero">
+            <div class="hero-background">
+                <div class="hero-shape hero-shape-1"></div>
+                <div class="hero-shape hero-shape-2"></div>
+                <div class="hero-shape hero-shape-3"></div>
+                <div class="hero-grid"></div>
+            </div>
+            
+            <div class="container">
+                <div class="hero-content">
+                    <span class="hero-badge">🔥 24/7 Emergency Service</span>
+                    <h1 class="hero-title">
+                        Emergency Services <br/>
+                        <span class="gradient-text">When You Need Them Most</span>
+                    </h1>
+                    <p class="hero-subtitle">
+                        24/7 availability. Verified professionals. Fast response guaranteed.
+                    </p>
+                    
+                    <div class="hero-cta">
+                        <a href="tel:+1234567890" class="btn btn-emergency btn-large">
+                            <span class="btn-icon">📞</span>
+                            Call Now: (234) 567-890
+                        </a>
+                        <a href="#services" class="btn btn-outline-light btn-large">
+                            Browse Services
+                            <span class="btn-arrow">→</span>
+                        </a>
+                    </div>
+                    
+                    <div class="hero-stats">
+                        <div class="stat-item">
+                            <span class="stat-number">50k+</span>
+                            <span class="stat-label">Happy Customers</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">5k+</span>
+                            <span class="stat-label">Verified Pros</span>
+                        </div>
+                        <div class="stat-divider"></div>
+                        <div class="stat-item">
+                            <span class="stat-number">24/7</span>
+                            <span class="stat-label">Emergency Support</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="hero-image">
+                    <div class="hero-card">
+                        <div class="hero-card-header">
+                            <span class="card-badge">⚡ Emergency</span>
+                            <span class="card-time">15 min ago</span>
+                        </div>
+                        <div class="hero-card-body">
+                            <div class="card-request">
+                                <span class="request-title">Plumbing Emergency</span>
+                                <span class="request-location">New York, NY</span>
+                            </div>
+                            <div class="card-progress">
+                                <div class="progress-bar">
+                                    <div class="progress-fill" style="width: 75%"></div>
+                                </div>
+                                <span class="progress-text">3 pros responding</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Trusted By Section -->
+        <section class="trusted-section">
+            <div class="container">
+                <p class="trusted-label">Trusted by leading companies</p>
+                <div class="trusted-logos">
+                    <div class="logo-item">🏢 Company 1</div>
+                    <div class="logo-item">🏢 Company 2</div>
+                    <div class="logo-item">🏢 Company 3</div>
+                    <div class="logo-item">🏢 Company 4</div>
+                    <div class="logo-item">🏢 Company 5</div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Grid -->
+        <section id="services" class="services">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Our Services</span>
+                    <h2>Professional Services at Your Fingertips</h2>
+                    <p>Connect with trusted, verified professionals for all your urgent needs</p>
+                </div>
+                
+                <div class="services-grid" id="services-grid"></div>
+                
+                <div class="services-cta">
+                    <a href="/src/services/" class="btn btn-outline btn-large">
+                        View All Services
+                        <span class="btn-arrow">→</span>
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- How It Works -->
+        <section class="how-it-works">
+            <div class="container">
+                <div class="section-header light">
+                    <span class="section-badge">Simple Process</span>
+                    <h2>How It Works</h2>
+                    <p>Get help in four simple steps</p>
+                </div>
+                
+                <div class="steps-grid">
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <span class="step-icon">🔍</span>
+                            <span class="step-number">1</span>
+                        </div>
+                        <h3>Describe Your Need</h3>
+                        <p>Tell us what service you need and when</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <span class="step-icon">📋</span>
+                            <span class="step-number">2</span>
+                        </div>
+                        <h3>Get Matched</h3>
+                        <p>Receive quotes from verified professionals</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <span class="step-icon">✅</span>
+                            <span class="step-number">3</span>
+                        </div>
+                        <h3>Choose & Book</h3>
+                        <p>Select the best pro and schedule service</p>
+                    </div>
+                    
+                    <div class="step-card">
+                        <div class="step-icon-wrapper">
+                            <span class="step-icon">💰</span>
+                            <span class="step-number">4</span>
+                        </div>
+                        <h3>Pay Securely</h3>
+                        <p>Pay online only when satisfied</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Emergency Banner -->
+        <section class="emergency-cta">
+            <div class="container">
+                <div class="emergency-content">
+                    <span class="emergency-badge">🚨 24/7 Emergency</span>
+                    <h2>Need Help Right Now?</h2>
+                    <p>Our emergency team is standing by 24/7 to assist you</p>
+                    <a href="tel:+1234567890" class="btn btn-emergency btn-large">
+                        📞 Call Emergency Line
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <div class="container">
+                <div class="section-header">
+                    <span class="section-badge">Testimonials</span>
+                    <h2>What Our Customers Say</h2>
+                    <p>Trusted by thousands of homeowners and businesses</p>
+                </div>
+                
+                <div class="testimonials-grid" id="testimonials-grid"></div>
+            </div>
+        </section>
+
+        <!-- CTA Section -->
+        <section class="cta-section">
+            <div class="container">
+                <div class="cta-card">
+                    <div class="cta-content">
+                        <h2>Ready to Get Started?</h2>
+                        <p>Join thousands of satisfied customers who found their perfect service professional</p>
+                        <div class="cta-buttons">
+                            <a href="/src/auth/signup.html" class="btn btn-primary btn-large">
+                                Create Free Account
+                            </a>
+                            <a href="/src/services/" class="btn btn-outline-light btn-large">
+                                Browse Services
+                            </a>
+                        </div>
+                    </div>
+                    <div class="cta-image">
+                        <div class="cta-stats">
+                            <div class="cta-stat">
+                                <span class="cta-stat-number">50k+</span>
+                                <span class="cta-stat-label">Active Users</span>
+                            </div>
+                            <div class="cta-stat">
+                                <span class="cta-stat-number">5k+</span>
+                                <span class="cta-stat-label">Service Pros</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <!-- Footer Component -->
+    <div id="footer"></div>
+
+    <!-- Scripts -->
+    <script src="/public/scripts/main.js" type="module"></script>
+    <script>
+        // Load components
+        fetch('/src/components/footer.html')
+            .then(r => r.text())
+            .then(d => document.getElementById('footer').innerHTML = d);
+
+        // Load services dynamically
+        document.addEventListener('DOMContentLoaded', () => {
+            loadServices();
+            loadTestimonials();
+            
+            // Mobile menu toggle
+            document.getElementById('menuToggle').addEventListener('click', () => {
+                document.getElementById('mainNav').classList.toggle('active');
+                document.getElementById('menuToggle').classList.toggle('active');
+            });
+        });
+
+        async function loadServices() {
+            const services = [
+                { icon: '🔧', name: 'Plumbing', description: 'Emergency plumbing, repairs, installations', slug: 'plumbing', color: '#3b82f6' },
+                { icon: '⚡', name: 'Electrical', description: 'Wiring, repairs, panel upgrades', slug: 'electrical', color: '#f59e0b' },
+                { icon: '❄️', name: 'HVAC', description: 'Heating, cooling, ventilation', slug: 'hvac', color: '#10b981' },
+                { icon: '🔑', name: 'Locksmith', description: 'Lockouts, repairs, security systems', slug: 'locksmith', color: '#8b5cf6' },
+                { icon: '🐜', name: 'Pest Control', description: 'Extermination, prevention, removal', slug: 'pest-control', color: '#ef4444' }
+            ];
+
+            const grid = document.getElementById('services-grid');
+            grid.innerHTML = services.map(service => `
+                <a href="/src/services/${service.slug}/" class="service-card" style="--card-color: ${service.color}">
+                    <div class="service-icon">${service.icon}</div>
+                    <h3>${service.name}</h3>
+                    <p>${service.description}</p>
+                    <span class="service-link">Learn More →</span>
+                </a>
+            `).join('');
+        }
+
+        async function loadTestimonials() {
+            const testimonials = [
+                {
+                    name: 'John D.',
+                    location: 'New York, NY',
+                    rating: 5,
+                    comment: 'My basement flooded at 2 AM. They had a plumber at my door in 20 minutes. Amazing service!',
+                    avatar: '/public/assets/images/avatars/default-avatar.jpg'
+                },
+                {
+                    name: 'Sarah M.',
+                    location: 'Los Angeles, CA',
+                    rating: 5,
+                    comment: 'Lost power during a storm. Electrician arrived quickly and fixed the issue. Highly recommend!',
+                    avatar: '/public/assets/images/avatars/default-avatar.jpg'
+                },
+                {
+                    name: 'Mike R.',
+                    location: 'Chicago, IL',
+                    rating: 5,
+                    comment: 'AC died in 100° heat. They had someone out within the hour. Fair price, great work.',
+                    avatar: '/public/assets/images/avatars/default-avatar.jpg'
+                }
+            ];
+
+            const grid = document.getElementById('testimonials-grid');
+            grid.innerHTML = testimonials.map(t => `
+                <div class="testimonial-card">
+                    <div class="testimonial-rating">${'★'.repeat(t.rating)}</div>
+                    <p class="testimonial-content">"${t.comment}"</p>
+                    <div class="testimonial-author">
+                        <img src="${t.avatar}" alt="${t.name}" class="author-avatar">
+                        <div>
+                            <div class="author-name">${t.name}</div>
+                            <div class="author-location">${t.location}</div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+    </script>
+</body>
+</html>

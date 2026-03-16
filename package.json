@@ -1,0 +1,26 @@
+{
+  "name": "local-lead-gen-website",
+  "version": "1.0.0",
+  "description": "Multi-niche lead generation marketplace",
+  "main": "index.html",
+  "scripts": {
+    "start": "php -S localhost:8000",
+    "dev": " concurrently \"php -S localhost:8000\" \"npm run watch\"",
+    "watch": "nodemon -e php,html,css,js --ignore public/assets/",
+    "build": "npm run build:css && npm run build:js",
+    "build:css": "cleancss -o public/styles/main.min.css public/styles/main.css",
+    "build:js": "uglifyjs public/scripts/*.js -o public/scripts/main.min.js",
+    "test": "phpunit tests",
+    "db:migrate": "php database/migrate.php",
+    "db:seed": "php database/seed.php"
+  },
+  "keywords": ["lead-generation", "marketplace", "services", "emergency"],
+  "author": "Your Company",
+  "license": "MIT",
+  "devDependencies": {
+    "concurrently": "^7.6.0",
+    "nodemon": "^2.0.22",
+    "clean-css-cli": "^5.6.2",
+    "uglify-js": "^3.17.4"
+  }
+}
